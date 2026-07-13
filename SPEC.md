@@ -33,8 +33,8 @@ renewal/
   img/  fonts/  favicon.ico  robots.txt  sitemap.xml
 ```
 
-- 폰트: 한글 `Pretendard Variable`(로컬 woff2, preload + font-display:swap),
-  영문/숫자 `Sora`(Google Fonts, preconnect). 숫자는 `font-variant-numeric: tabular-nums`.
+- 폰트: 한글 `Pretendard Variable` v1.3.9 가변 다이나믹 서브셋(로컬 vendoring),
+  영문/숫자 `Sora` Latin 가변 폰트(로컬 woff2). 숫자는 `font-variant-numeric: tabular-nums`.
 - GA4: `G-0Y5QD1HBGN` (기존 속성 유지, async gtag).
 - SEO: title/description/canonical(https://wickedstorm.kr/)/OG(og-image.png)/twitter card/
   JSON-LD Organization(주소·전화·이메일)/robots.txt/sitemap.xml(index, privacy 2개 URL).
