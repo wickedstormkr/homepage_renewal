@@ -1,6 +1,6 @@
 /* WICKED STORM 리뉴얼 — main.js
- * 성능 헌법(SPEC §0): 상시 rAF 루프는 Lenis 하나뿐.
- * 그 외 rAF는 전부 bounded(시간 제한: 인트로 2.2s / 스파크 300ms / 카운트업 1.2s).
+ * 성능 헌법(SPEC §0): 사용자 입력과 무관한 상시 rAF 루프를 만들지 않는다.
+ * 직접 사용하는 rAF는 전부 bounded(시간 제한: 인트로 2.2s / 스파크 300ms / 카운트업 1.2s).
  * 캔버스는 인트로 1회 + 핀-스크럽 onUpdate + 디바운스 resize 에서만 그린다.
  */
 (function () {
@@ -9,21 +9,10 @@
   var doc = document, root = doc.documentElement, win = window;
   var REDUCE = win.matchMedia && win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasGSAP = (typeof win.gsap !== 'undefined') && (typeof win.ScrollTrigger !== 'undefined');
-  var hasLenis = (typeof win.Lenis !== 'undefined');
   var IO = ('IntersectionObserver' in win);
 
   if (!hasGSAP) root.classList.add('nogsap');
   if (hasGSAP) gsap.registerPlugin(ScrollTrigger);
-
-  /* ============================================================
-   *  Lenis — 유일하게 허용된 상시 rAF 루프
-   * ============================================================ */
-  var lenis = null;
-  if (!REDUCE && hasLenis) {
-    lenis = new Lenis({ duration: 1.1, smoothWheel: true, wheelMultiplier: 1, touchMultiplier: 1.4 });
-    if (hasGSAP) lenis.on('scroll', ScrollTrigger.update);
-    (function raf(t) { lenis.raf(t); win.requestAnimationFrame(raf); })(0); // ← 상시 루프(단 하나)
-  }
 
   /* ============================================================
    *  상단 스크롤 프로그레스 바 (transform:scaleX)
@@ -92,43 +81,67 @@
     var btn = doc.getElementById('menuBtn'), drawer = doc.getElementById('drawer');
     if (!btn || !drawer) return;
     var open = false, hideTimer = null;
-    function set(next) {
+    var desktopMq = win.matchMedia ? win.matchMedia('(min-width: 961px)') : null;
+    var brand = doc.querySelector('.brand');
+    function focusables() {
+      return [btn].concat([].slice.call(drawer.querySelectorAll('a[href],button:not([disabled])')));
+    }
+    function set(next, restoreFocus) {
       open = next;
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
       if (open) {
         clearTimeout(hideTimer);
         drawer.hidden = false;
-        win.requestAnimationFrame(function () { drawer.classList.add('open'); });
+        win.requestAnimationFrame(function () {
+          drawer.classList.add('open');
+          var firstLink = drawer.querySelector('a[href]');
+          if (firstLink) firstLink.focus();
+        });
         root.classList.add('nav-open');
         doc.body.style.overflow = 'hidden';
-        if (lenis) lenis.stop();
       } else {
         drawer.classList.remove('open');
         root.classList.remove('nav-open');
         doc.body.style.overflow = '';
-        if (lenis) lenis.start();
+        if (restoreFocus !== false) btn.focus();
         hideTimer = setTimeout(function () { if (!open) drawer.hidden = true; }, 420);
       }
     }
     btn.addEventListener('click', function () { set(!open); });
     drawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
-    win.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) set(false); });
+    win.addEventListener('keydown', function (e) {
+      if (!open) return;
+      if (e.key === 'Escape') { e.preventDefault(); set(false); return; }
+      if (e.key !== 'Tab') return;
+      var items = focusables(), first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && doc.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && doc.activeElement === last) { e.preventDefault(); first.focus(); }
+      else if (items.indexOf(doc.activeElement) < 0) { e.preventDefault(); first.focus(); }
+    });
+    function closeAtDesktop(e) {
+      if (!e.matches || !open) return;
+      set(false, false);
+      if (brand) brand.focus();
+    }
+    if (desktopMq) {
+      if (desktopMq.addEventListener) desktopMq.addEventListener('change', closeAtDesktop);
+      else if (desktopMq.addListener) desktopMq.addListener(closeAtDesktop);
+    }
   })();
 
   /* ============================================================
-   *  앵커 부드러운 이동 (Lenis / 폴백)
+   *  앵커 부드러운 이동
    * ============================================================ */
   (function () {
-    doc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    doc.querySelectorAll('a[href^="#"]:not(.skip-link)').forEach(function (a) {
       a.addEventListener('click', function (e) {
         var id = a.getAttribute('href');
         if (!id || id === '#' || id.length < 2) return;
         var el = doc.querySelector(id);
         if (!el) return;
         e.preventDefault();
-        if (lenis) lenis.scrollTo(el, { offset: -76 });
-        else el.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
+        el.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
       });
     });
   })();
@@ -342,7 +355,7 @@
   /* ============================================================
    *  히어로 인트로 카피 리빌 (GSAP, 로드 1회)
    * ============================================================ */
-  if (hasGSAP && !REDUCE && doc.querySelector('.hero h1 .line-inner')) {
+  if (hasGSAP && !REDUCE && win.matchMedia('(min-width: 961px)').matches && doc.querySelector('.hero h1 .line-inner')) {
     var tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
     // CSS 초기 translateY(110%)를 GSAP이 px 단위 y로 파싱하므로, y:0으로 중화 + yPercent로만 구동
     tl.fromTo('.hero h1 .line-inner', { y: 0, yPercent: 110 }, { y: 0, yPercent: 0, duration: .9, stagger: .1 }, 0)
@@ -536,6 +549,8 @@
   (function () {
     var track = doc.getElementById('streamTrack');
     if (!track) return;
+    var toggle = doc.getElementById('streamToggle');
+    var capture = doc.getElementById('capture');
     var GAP = 9;
     var actors = ['학습자', '수강생', 'A반 학생', '튜티'];
     var events = [
@@ -628,21 +643,25 @@
     }
 
     drawSpark(spark);
-    if (REDUCE) return;                                             // 정적 행 유지(모바일은 CSS로 2/3행 노출)
+    if (REDUCE) {                                                   // 정적 행 유지(모바일은 CSS로 2/3행 노출)
+      if (toggle) toggle.hidden = true;
+      if (capture) capture.classList.add('motion-paused');
+      return;
+    }
 
-    // JS 모션 모드: 정적 행 제거 → 1행씩 쌓아올리기 시작
-    while (track.firstChild) track.removeChild(track.firstChild);
-    track.appendChild(makeRow());
+    // 사전 렌더 행을 그대로 사용해 첫 화면 높이를 보존한 뒤, 이후부터 한 행씩 교체한다.
+    while (track.children.length > visibleRows()) track.removeChild(track.lastElementChild);
     setViewportH();                                                 // 반응형 행 높이를 미리 예약(레이아웃 점프 방지)
 
-    var timer = null, visible = true, heroIn = true;
+    var timer = null, visible = true, heroIn = true, userPaused = false;
+    function shouldRun() { return visible && heroIn && !userPaused; }
     // 필 단계(<노출행): 700ms 간격 append / 정상 단계: 2400ms 슬라이드
     function scheduleNext() {
       var rowLimit = visibleRows();
       var delay = track.children.length < rowLimit ? 700 : 2400;
       timer = setTimeout(function () {
         timer = null;
-        if (visible && heroIn) {
+        if (shouldRun()) {
           if (track.children.length < visibleRows()) {              // 필 단계: 슬라이드 없이 한 행 추가
             track.appendChild(makeRow());
             if (Math.random() < 0.55) swapInsight();
@@ -651,18 +670,34 @@
             pushRow();                                              // 정상 단계: 6행째부터 슬라이드
           }
         }
-        if (visible && heroIn) scheduleNext();
+        if (shouldRun()) scheduleNext();
       }, delay);
     }
-    function start() { if (!timer) scheduleNext(); }
+    function start() { if (!timer && shouldRun()) scheduleNext(); }
     function stop() { if (timer) { clearTimeout(timer); timer = null; } }
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        userPaused = !userPaused;
+        toggle.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
+        toggle.setAttribute('aria-label', userPaused ? '학습 데이터 수집 애니메이션 계속' : '학습 데이터 수집 애니메이션 일시정지');
+        toggle.textContent = userPaused ? '계속' : '일시정지';
+        if (capture) capture.classList.toggle('motion-paused', userPaused);
+        if (userPaused) {
+          stop();
+          if (sparkId != null) win.cancelAnimationFrame(sparkId);
+        } else {
+          start();
+        }
+      });
+      toggle.setAttribute('aria-label', '학습 데이터 수집 애니메이션 일시정지');
+    }
     var hero = doc.getElementById('hero');
     if (IO && hero) {
       new IntersectionObserver(function (es) {
-        es.forEach(function (e) { heroIn = e.isIntersecting; if (heroIn && visible) start(); else stop(); });
+        es.forEach(function (e) { heroIn = e.isIntersecting; if (shouldRun()) start(); else stop(); });
       }, { threshold: 0 }).observe(hero);
     }
-    doc.addEventListener('visibilitychange', function () { visible = !doc.hidden; if (visible && heroIn) start(); else stop(); });
+    doc.addEventListener('visibilitychange', function () { visible = !doc.hidden; if (shouldRun()) start(); else stop(); });
     // 디바운스 resize: 행 수 정리 + viewport 높이 재계산(상시 루프 아님)
     var vrt = null;
     win.addEventListener('resize', function () {
@@ -730,20 +765,29 @@
       return;
     }
     if (!IO) return;
+    var inView = new WeakMap(), userPaused = new WeakMap();
     function safePlay(v) {
+      if (userPaused.get(v)) return;
       var p = v.play();
       if (p && p.catch) p.catch(function () {});                    // play() reject 무시(콘솔 에러 0 원칙)
     }
-    var inView = new WeakMap();
     var io = new IntersectionObserver(function (ents) {
       ents.forEach(function (en) {
         var v = en.target;
-        inView.set(v, en.isIntersecting);
-        if (en.isIntersecting) { if (!doc.hidden) safePlay(v); }
+        var active = en.isIntersecting && en.intersectionRatio >= 0.25;
+        inView.set(v, active);
+        if (active) { if (!doc.hidden) safePlay(v); }
         else v.pause();
       });
     }, { threshold: 0.25 });
-    vids.forEach(function (v) { io.observe(v); });
+    vids.forEach(function (v) {
+      userPaused.set(v, false);
+      v.addEventListener('pause', function () {
+        if (inView.get(v) && !doc.hidden) userPaused.set(v, true);
+      });
+      v.addEventListener('play', function () { userPaused.set(v, false); });
+      io.observe(v);
+    });
     doc.addEventListener('visibilitychange', function () {          // 탭 hidden 시 일괄 정지
       if (doc.hidden) { vids.forEach(function (v) { v.pause(); }); }
       else { vids.forEach(function (v) { if (inView.get(v)) safePlay(v); }); }

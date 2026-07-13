@@ -280,10 +280,10 @@ export function renderArticle(post, options = {}) {
   };
 
   const thumbnailMarkup = image.hasThumbnail
-    ? `\n      <figure class="detail-thumb">\n        <img src="${escapeHtml(image.articleSrc)}" alt="${escapeHtml(title)}">\n      </figure>`
+    ? `\n      <figure class="detail-thumb">\n        <a class="detail-image-link" href="${escapeHtml(image.articleSrc)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(`${title} 원본 이미지 크게 보기 (새 창)`)}">\n          <img src="${escapeHtml(image.articleSrc)}" alt="${escapeHtml(title)}">\n          <span>원본 이미지 크게 보기 <span aria-hidden="true">↗</span></span>\n        </a>\n      </figure>`
     : '';
 
-  return `<!doctype html>
+  return `<!DOCTYPE html>
 <html lang="ko" class="no-js">
 <head>
 <meta charset="utf-8">
@@ -310,14 +310,14 @@ export function renderArticle(post, options = {}) {
 
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="../img/favicon.png">
-<link rel="stylesheet" href="../fonts/pretendard/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../fonts/pretendard/pretendardvariable-dynamic-subset.min.css" media="(min-width: 961px)">
 <link rel="stylesheet" href="../css/style.css">
 <script type="application/ld+json">
 ${safeJsonLd(jsonLd)}
 </script>
 </head>
 <body>
-<a class="skip-link" href="#article">본문 바로가기</a>
+<a class="skip-link" href="#top">본문 바로가기</a>
 <div class="progress" aria-hidden="true"></div>
 
 <header id="hdr">
@@ -351,7 +351,7 @@ ${safeJsonLd(jsonLd)}
     <div class="wrap">
       <article class="board-detail" aria-labelledby="article-title">
         <div class="detail-eyebrow"><span class="ntag">${escapeHtml(label)}</span><time datetime="${published}">${escapeHtml(post.date)}</time></div>
-        <h1 class="h-lg" id="article-title" style="font-size:clamp(24px,3.4vw,40px);line-height:1.24;margin-bottom:26px">${escapeHtml(title)}</h1>${thumbnailMarkup}
+        <h1 id="article-title">${escapeHtml(title)}</h1>${thumbnailMarkup}
         <div class="detail-body">${sanitizeArticleBody(body) || `<p>${escapeHtml(description)}</p>`}</div>
         <p class="detail-back"><a href="../news.html">← 소식 목록으로</a></p>
       </article>

@@ -50,7 +50,7 @@
   function cardEl(post) {
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
-      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
+      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="" loading="lazy"></div>'
       : '';
     var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
 
@@ -82,7 +82,7 @@
   function boardCardEl(post) {
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
-      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
+      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="" loading="lazy"></div>'
       : '';
     var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
     var el = doc.createElement('a');
@@ -260,20 +260,30 @@
     var btn = doc.getElementById('menuBtn'), drawer = doc.getElementById('drawer');
     if (btn && drawer) {
       var open = false, hideTimer = null;
-      var set = function (next) {
+      var desktopMq = win.matchMedia ? win.matchMedia('(min-width: 961px)') : null;
+      var brand = doc.querySelector('.brand');
+      var focusables = function () {
+        return [btn].concat([].slice.call(drawer.querySelectorAll('a[href],button:not([disabled])')));
+      };
+      var set = function (next, restoreFocus) {
         open = next;
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
         btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
         if (open) {
           clearTimeout(hideTimer);
           drawer.hidden = false;
-          win.requestAnimationFrame(function () { drawer.classList.add('open'); }); // 1회성
+          win.requestAnimationFrame(function () {
+            drawer.classList.add('open');
+            var firstLink = drawer.querySelector('a[href]');
+            if (firstLink) firstLink.focus();
+          }); // 1회성
           root.classList.add('nav-open');
           doc.body.style.overflow = 'hidden';
         } else {
           drawer.classList.remove('open');
           root.classList.remove('nav-open');
           doc.body.style.overflow = '';
+          if (restoreFocus !== false) btn.focus();
           hideTimer = setTimeout(function () { if (!open) drawer.hidden = true; }, 420);
         }
       };
@@ -281,7 +291,24 @@
       drawer.querySelectorAll('a').forEach(function (a) {
         a.addEventListener('click', function () { set(false); });
       });
-      win.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) set(false); });
+      win.addEventListener('keydown', function (e) {
+        if (!open) return;
+        if (e.key === 'Escape') { e.preventDefault(); set(false); return; }
+        if (e.key !== 'Tab') return;
+        var items = focusables(), first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && doc.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && doc.activeElement === last) { e.preventDefault(); first.focus(); }
+        else if (items.indexOf(doc.activeElement) < 0) { e.preventDefault(); first.focus(); }
+      });
+      var closeAtDesktop = function (e) {
+        if (!e.matches || !open) return;
+        set(false, false);
+        if (brand) brand.focus();
+      };
+      if (desktopMq) {
+        if (desktopMq.addEventListener) desktopMq.addEventListener('change', closeAtDesktop);
+        else if (desktopMq.addListener) desktopMq.addListener(closeAtDesktop);
+      }
     }
 
     var bar = doc.querySelector('.progress');
