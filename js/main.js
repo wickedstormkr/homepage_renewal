@@ -330,7 +330,6 @@
       .from('.hero-copy .eyebrow', { y: 18, opacity: 0, duration: .7 }, .12)
       .from('.hero-lead', { y: 18, opacity: 0, duration: .7 }, '-=.52')
       .from('.hero-cta', { y: 18, opacity: 0, duration: .7 }, '-=.55')
-      .from('.hero-trust', { y: 18, opacity: 0, duration: .7 }, '-=.55')
       .from('.capture', { y: 40, opacity: 0, duration: .9 }, .45); // 캡처 패널 진입(SPEC 씬1)
   }
 
@@ -345,7 +344,7 @@
       if (doc.querySelector('.hero')) {
         var pinTl = gsap.timeline({
           scrollTrigger: {
-            trigger: '.hero', start: 'top top', end: '+=130%', scrub: .6, pin: true, anticipatePin: 1,
+            trigger: '.hero', start: 'top top', end: '+=55%', scrub: .6, pin: true, anticipatePin: 1,
             onUpdate: function (self) { if (canvas) canvas.scrub(self.progress); }
           }
         });
@@ -363,8 +362,7 @@
       if (pw) {
         pw.classList.add('armed');
         pipeST = ScrollTrigger.create({
-          trigger: pw, start: 'center center', end: '+=130%',
-          pin: true, anticipatePin: 1, scrub: true,
+          trigger: pw, start: 'top 78%', end: 'bottom 24%', scrub: true,
           onUpdate: function (self) {
             var p = self.progress, rw = rail ? rail.clientWidth : 0;
             line.style.transform = 'scaleX(' + p + ')';
@@ -589,18 +587,24 @@
     }
 
     var viewport = track.parentNode;                               // .stream-viewport
-    function setViewportH() {                                       // JS 모션 모드에서만 고정 높이(5행)
+    function visibleRows() {
+      if (win.innerWidth <= 560) return 2;
+      if (win.innerWidth <= 960) return 3;
+      return 5;
+    }
+    function setViewportH() {                                       // 화면 폭에 맞춰 2/3/5행 높이 예약
       if (!viewport) return;
       var first = track.querySelector('.xrow');
       if (!first) return;
       var rh = first.offsetHeight;
-      if (rh > 0) viewport.style.height = (5 * rh + 4 * GAP) + 'px';
+      var rows = visibleRows();
+      if (rh > 0) viewport.style.height = (rows * rh + (rows - 1) * GAP) + 'px';
     }
 
     var sliding = false;
     function pushRow() {
       track.appendChild(makeRow());
-      if (track.children.length > 5 && !sliding) {
+      if (track.children.length > visibleRows() && !sliding) {
         sliding = true;
         var first = track.children[0];
         var rowH = first.offsetHeight + GAP;
@@ -630,21 +634,22 @@
     }
 
     drawSpark(spark);
-    if (REDUCE) return;                                             // 정적 5행 유지(타이머 미기동)
+    if (REDUCE) return;                                             // 정적 행 유지(모바일은 CSS로 2/3행 노출)
 
     // JS 모션 모드: 정적 행 제거 → 1행씩 쌓아올리기 시작
     while (track.firstChild) track.removeChild(track.firstChild);
     track.appendChild(makeRow());
-    setViewportH();                                                 // 5행 높이를 미리 예약(레이아웃 점프 방지)
+    setViewportH();                                                 // 반응형 행 높이를 미리 예약(레이아웃 점프 방지)
 
     var timer = null, visible = true, heroIn = true;
-    // 필 단계(<5행): 700ms 간격 append / 정상 단계: 2400ms 슬라이드 — bounded setTimeout 체인
+    // 필 단계(<노출행): 700ms 간격 append / 정상 단계: 2400ms 슬라이드
     function scheduleNext() {
-      var delay = track.children.length < 5 ? 700 : 2400;
+      var rowLimit = visibleRows();
+      var delay = track.children.length < rowLimit ? 700 : 2400;
       timer = setTimeout(function () {
         timer = null;
         if (visible && heroIn) {
-          if (track.children.length < 5) {                          // 필 단계: 슬라이드 없이 한 행 추가
+          if (track.children.length < visibleRows()) {              // 필 단계: 슬라이드 없이 한 행 추가
             track.appendChild(makeRow());
             if (Math.random() < 0.55) swapInsight();
             pushSpark();
@@ -664,11 +669,15 @@
       }, { threshold: 0 }).observe(hero);
     }
     doc.addEventListener('visibilitychange', function () { visible = !doc.hidden; if (visible && heroIn) start(); else stop(); });
-    // 디바운스 resize: viewport 높이 재계산(상시 루프 아님)
+    // 디바운스 resize: 행 수 정리 + viewport 높이 재계산(상시 루프 아님)
     var vrt = null;
     win.addEventListener('resize', function () {
       clearTimeout(vrt);
-      vrt = setTimeout(setViewportH, 200);
+      vrt = setTimeout(function () {
+        var limit = visibleRows();
+        while (!sliding && track.children.length > limit) track.removeChild(track.lastElementChild);
+        setViewportH();
+      }, 200);
     }, { passive: true });
     start();
   })();
