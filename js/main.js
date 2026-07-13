@@ -517,31 +517,6 @@
   })();
 
   /* ============================================================
-   *  뉴스 아코디언 (1개만 열림, aria-expanded, height 트랜지션)
-   * ============================================================ */
-  (function () {
-    var cards = [].slice.call(doc.querySelectorAll('.ncard'));
-    function close(card) {
-      card.classList.remove('open');
-      card.querySelector('.nhead').setAttribute('aria-expanded', 'false');
-      card.querySelector('.npanel').style.height = '0px';
-    }
-    cards.forEach(function (card) {
-      var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
-      btn.addEventListener('click', function () {
-        var isOpen = card.classList.contains('open');
-        cards.forEach(function (c) { if (c !== card) close(c); });
-        if (isOpen) { close(card); }
-        else {
-          card.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-          panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
-        }
-      });
-    });
-  })();
-
-  /* ============================================================
    *  히어로 오브: 뷰포트 밖이면 애니메이션 정지 (SPEC §0-4)
    * ============================================================ */
   (function () {

@@ -50,7 +50,7 @@ npm install \
   @aws-sdk/client-cloudfront@^3 \
   @aws-sdk/s3-presigned-post@^3
 
-zip -r ../admin-api.zip index.mjs package.json node_modules -x '*.DS_Store'
+zip -r ../admin-api.zip index.mjs news-artifacts.mjs package.json node_modules -x '*.DS_Store'
 cd -
 ```
 
@@ -83,7 +83,7 @@ aws iam create-role \
   --assume-role-policy-document file:///tmp/admin-api-trust.json
 ```
 
-### 2-2. 권한 정책 (해당 버킷 `data/*`·`img/uploads/*`의 Get/PutObject + CloudFront invalidation만)
+### 2-2. 권한 정책 (게시물·정적 글·사이트맵·업로드만 제한 접근)
 
 ```bash
 cat > /tmp/admin-api-policy.json <<EOF
@@ -91,13 +91,38 @@ cat > /tmp/admin-api-policy.json <<EOF
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "PostsAndUploadsObjectAccess",
+      "Sid": "ReadPosts",
       "Effect": "Allow",
-      "Action": ["s3:GetObject", "s3:PutObject"],
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::${BUCKET}/data/posts.json"
+    },
+    {
+      "Sid": "PublishSiteObjects",
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
       "Resource": [
-        "arn:aws:s3:::${BUCKET}/data/*",
+        "arn:aws:s3:::${BUCKET}/data/posts.json",
+        "arn:aws:s3:::${BUCKET}/sitemap.xml",
+        "arn:aws:s3:::${BUCKET}/news/*",
         "arn:aws:s3:::${BUCKET}/img/uploads/*"
       ]
+    },
+    {
+      "Sid": "DeleteGeneratedArticles",
+      "Effect": "Allow",
+      "Action": "s3:DeleteObject",
+      "Resource": "arn:aws:s3:::${BUCKET}/news/*"
+    },
+    {
+      "Sid": "ListGeneratedArticles",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::${BUCKET}",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["news/", "news/*"]
+        }
+      }
     },
     {
       "Sid": "CloudFrontInvalidation",
@@ -125,17 +150,16 @@ aws iam put-role-policy \
   --policy-document file:///tmp/admin-api-policy.json
 ```
 
-주의: 이 정책은 버킷 전체가 아니라 `data/*`·`img/uploads/*` 프리픽스에만, 그리고
-지정된 CloudFront 배포 하나에만 권한을 준다. 버킷 목록(`ListBucket`), 다른 오브젝트
-삭제 권한 등은 의도적으로 부여하지 않는다.
+주의: 이 정책은 버킷 전체 쓰기·삭제를 열지 않는다. `ListBucket`은 `news/`
+목록 조회에만, `DeleteObject`는 관리 API가 생성하는 `news/*.html` 정리에만
+사용한다. 코드도 같은 패턴을 다시 검사한 뒤 삭제한다.
 
 **presigned POST와 IAM 권한**: `/upload-url`은 `createPresignedPost`로 S3
 presigned **POST**(폼 업로드) 자격 증명을 발급하지만, S3 쪽에서 실제로 수행되는
 API 액션은 여전히 `PutObject`다(HTTP 메서드/폼 방식만 다를 뿐, IAM 액션은 PUT
-presign과 동일하게 `s3:PutObject`). 즉 위 정책의 `PostsAndUploadsObjectAccess`
-Statement(`s3:GetObject`, `s3:PutObject` on `img/uploads/*`)로 충분하며, 이번
-변경으로 **IAM 정책을 추가로 수정할 필요는 없다**. ACL 지정 등 별도 조건을 쓰지
-않는 한 `s3:PutObjectAcl` 같은 추가 권한도 필요 없다.
+presign과 동일하게 `s3:PutObject`). 즉 위 정책의 `PublishSiteObjects`
+Statement(`s3:PutObject` on `img/uploads/*`)로 충분하다. ACL 지정 등 별도 조건을
+쓰지 않는 한 `s3:PutObjectAcl` 같은 추가 권한도 필요 없다.
 
 IAM은 전파에 수 초~수십 초 걸릴 수 있다. 다음 단계에서 `create-function`이
 `InvalidParameterValueException`(role not assumable)로 실패하면 몇 초 후 재시도.
@@ -240,35 +264,42 @@ window.WS_CONFIG = {
 
 ---
 
-## 6. 정적 사이트 반영 순서 (robots.txt / posts.json / site-config.js)
+## 6. 정적 사이트 반영 순서 (생성기 / robots.txt / site-config.js)
 
 관리자 페이지가 검색엔진에 노출되지 않도록, **`robots.txt`(Disallow: /admin.html)를
 `admin.html` 자체보다 먼저 또는 같이** 업로드한다. 권장 순서:
 
 ```bash
-# 1) robots.txt — admin.html 비공개 규칙을 가장 먼저 반영
+# 1) posts.json을 기준으로 news/*.html과 sitemap.xml을 재생성·검증
+node scripts/generate-news.mjs
+node scripts/generate-news.mjs --check
+
+# 2) robots.txt — admin.html 비공개 규칙을 가장 먼저 반영
 aws s3 cp robots.txt "s3://${BUCKET}/robots.txt" --cache-control "max-age=3600"
 
-# 2) 시드 데이터 (Phase D에서 만든 data/posts.json)
+# 3) 시드 데이터
 aws s3 cp data/posts.json "s3://${BUCKET}/data/posts.json" \
   --content-type "application/json; charset=utf-8" --cache-control "max-age=60"
 
-# 3) site-config.js (Function URL 반영본) 포함, 나머지 정적 파일 동기화
+# 4) site-config.js (Function URL 반영본), 정적 글과 sitemap 포함 동기화
 aws s3 sync . "s3://${BUCKET}/" \
-  --exclude "lambda/*" --exclude ".git/*" --exclude "*.DS_Store"
+  --exclude "lambda/*" --exclude "scripts/*" --exclude ".git/*" --exclude "*.DS_Store"
 
-# 4) CloudFront 캐시 무효화 (robots.txt, admin.html, site-config.js, posts.json)
+# 5) CloudFront 캐시 무효화
 aws cloudfront create-invalidation \
   --distribution-id "$DIST_ID" \
-  --paths "/robots.txt" "/admin.html" "/js/site-config.js" "/data/posts.json"
+  --paths "/robots.txt" "/admin.html" "/js/site-config.js" "/data/posts.json" "/sitemap.xml" "/news/*"
 ```
 
 이후 게시판 저장(`PUT /posts`)은 Lambda가 자체적으로
-`/data/posts.json`을 무효화하므로 수동 invalidation은 불필요하다.
+`/data/posts.json`, `/sitemap.xml`, `/news/*`를 무효화하므로 수동 invalidation은 불필요하다.
 
 ---
 
 ## 7. 배포 후 curl 스모크 테스트
+
+> `PUT /posts`는 게시물 전체를 교체한다. 아래 쓰기 테스트는 반드시 스테이징
+> 버킷·Lambda에서만 실행하고, 운영 환경에서는 7-1~7-3의 읽기 검증만 수행한다.
 
 ```bash
 # 7-1. CORS preflight — 204 + Access-Control-Allow-Origin 헤더 확인
@@ -284,11 +315,14 @@ curl -i "$FUNCTION_URL/posts"
 curl -i "$FUNCTION_URL/posts" \
   -H "Authorization: Bearer $ADMIN_TOKEN"
 
-# 7-4. PUT /posts — 스키마 검증 통과 시 200 {"ok":true}
+# 7-4. PUT /posts — 200 + 정적 글·sitemap 동시 게시
 curl -i -X PUT "$FUNCTION_URL/posts" \
   -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"version":1,"updated":"2026-07-11","posts":[]}'
+  -d '{"version":1,"updated":"2026-07-13","posts":[{"id":"smoke-static","category":"news","date":"2026.07.13","title":"정적 글 게시 확인","summary":"생성 경로를 확인합니다.","body":"<p>생성 본문</p>","thumb":null,"externalUrl":null,"pinned":false}]}'
+
+curl -I "https://wickedstorm.kr/news/smoke-static.html"
+curl -s "https://wickedstorm.kr/sitemap.xml" | grep 'news/smoke-static.html'
 
 # 7-5. 잘못된 스키마 — 400 {"error":"..."} 기대
 curl -i -X PUT "$FUNCTION_URL/posts" \
@@ -301,7 +335,7 @@ curl -i -X PUT "$FUNCTION_URL/posts" \
 curl -i -X PUT "$FUNCTION_URL/posts" \
   -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"version":1,"posts":[{"id":"smoke-xss","category":"news","date":"2026-07-11","title":"t","summary":"s","body":"<script>alert(1)</script><p>ok</p>","thumb":null,"externalUrl":null,"pinned":false}]}'
+  -d '{"version":1,"updated":"2026-07-13","posts":[{"id":"smoke-xss","category":"news","date":"2026.07.13","title":"t","summary":"s","body":"<script>alert(1)</script><p>ok</p>","thumb":null,"externalUrl":null,"pinned":false}]}'
 
 curl -s "$FUNCTION_URL/posts" -H "Authorization: Bearer $ADMIN_TOKEN" | \
   grep -o '"body":"[^"]*ok</p>"' # &lt;script&gt;...&lt;/script&gt;<p>ok</p> 형태여야 정상
@@ -311,7 +345,7 @@ curl -s "$FUNCTION_URL/posts" -H "Authorization: Bearer $ADMIN_TOKEN" | \
 curl -i -X PUT "$FUNCTION_URL/posts" \
   -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"version":1,"posts":[{"id":"smoke-img","category":"news","date":"2026-07-11","title":"t","summary":"s","body":"<img src=\"./img/uploads/ws-1.webp\" alt=\"워크샵\" onerror=\"alert(1)\"><img src=\"https://evil.com/x.png\">","thumb":null,"externalUrl":null,"pinned":false}]}'
+  -d '{"version":1,"updated":"2026-07-13","posts":[{"id":"smoke-img","category":"news","date":"2026.07.13","title":"t","summary":"s","body":"<img src=\"./img/uploads/ws-1.webp\" alt=\"워크샵\" onerror=\"alert(1)\"><img src=\"https://evil.com/x.png\">","thumb":null,"externalUrl":null,"pinned":false}]}'
 
 curl -s "$FUNCTION_URL/posts" -H "Authorization: Bearer $ADMIN_TOKEN" | \
   jq -r '.posts[] | select(.id=="smoke-img") | .body' # 아래 기대값과 비교:
@@ -322,7 +356,7 @@ curl -s "$FUNCTION_URL/posts" -H "Authorization: Bearer $ADMIN_TOKEN" | \
 curl -i -X PUT "$FUNCTION_URL/posts" \
   -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"version":1,"posts":[{"id":"smoke-url","category":"news","date":"2026-07-11","title":"t","summary":"s","body":"b","thumb":null,"externalUrl":"javascript:alert(1)","pinned":false}]}'
+  -d '{"version":1,"updated":"2026-07-13","posts":[{"id":"smoke-url","category":"news","date":"2026.07.13","title":"t","summary":"s","body":"b","thumb":null,"externalUrl":"javascript:alert(1)","pinned":false}]}'
 
 # 7-8. POST /upload-url — presigned POST(폼 업로드) 자격 증명 발급
 UPLOAD_JSON=$(curl -s -X POST "$FUNCTION_URL/upload-url" \
@@ -354,7 +388,7 @@ eval curl -i -X POST "\"$UPLOAD_URL\"" $FIELD_ARGS -F "file=@thumb.webp;type=ima
 | OPTIONS preflight | 204, `Access-Control-Allow-Origin` 존재 |
 | 토큰 없는 GET /posts | 401 `{"error":"Unauthorized"}` |
 | 토큰 있는 GET /posts | 200, posts.json 그대로 |
-| 정상 PUT /posts | 200 `{"ok":true}` |
+| 정상 PUT /posts | 200 `{"ok":true,"published":...}` + `news/*.html`, `sitemap.xml` 생성 |
 | 스키마 불량 PUT /posts | 400 `{"error":"..."}` |
 | 1MB 초과 PUT /posts | 413 `{"error":"..."}` |
 | **[신규] XSS 페이로드 PUT /posts** | 200 저장, 재조회 시 `body`가 `&lt;script&gt;...&lt;/script&gt;<p>ok</p>` 형태로 정화됨 |
@@ -387,8 +421,9 @@ eval curl -i -X POST "\"$UPLOAD_URL\"" $FIELD_ARGS -F "file=@thumb.webp;type=ima
   명시적으로 켠 경우에만 허용되는 옵트인이다(2절 env 표 참조). **운영 Lambda에는
   `ALLOW_LOCALHOST`를 설정하지 않는다.** 스테이징 도메인이 추가로 필요하면 코드의
   `resolveAllowOrigin`을 수정해야 한다(이번 범위 아님).
-- **최소 권한 유지**: IAM 정책은 `data/*`·`img/uploads/*`와 지정된 CloudFront 배포
-  하나로 한정돼 있다. 버킷/배포를 교체하면 정책의 ARN도 함께 갱신할 것.
+- **최소 권한 유지**: IAM 정책은 `data/posts.json`, `sitemap.xml`, `news/*`,
+  `img/uploads/*`와 지정된 CloudFront 배포 하나로 한정돼 있다. 버킷/배포를
+  교체하면 정책의 ARN도 함께 갱신할 것.
 - **모니터링**: CloudWatch Logs(`/aws/lambda/wickedstorm-admin-api`)에서 401이
   비정상적으로 반복되면 토큰 무차별 대입 시도일 수 있다 — 필요 시 CloudFront/WAF
   레이트 리미팅 추가 검토(이번 범위 밖).
@@ -400,7 +435,7 @@ eval curl -i -X POST "\"$UPLOAD_URL\"" $FIELD_ARGS -F "file=@thumb.webp;type=ima
 ```bash
 cd "lambda/admin-api"
 rm -f ../admin-api.zip
-zip -r ../admin-api.zip index.mjs package.json node_modules -x '*.DS_Store'
+zip -r ../admin-api.zip index.mjs news-artifacts.mjs package.json node_modules -x '*.DS_Store'
 cd -
 
 aws lambda update-function-code \

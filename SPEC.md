@@ -26,9 +26,14 @@
 ```
 renewal/
   index.html            ← 원페이지 본체
+  news.html             ← 전체 소식 목록·카테고리 필터
+  news/*.html           ← posts.json에서 생성되는 개별 정적 글
   privacy.html          ← 개인정보처리방침 (동일 헤더/푸터, 간소)
+  data/posts.json       ← 소식의 단일 데이터 원본
+  scripts/generate-news.mjs
   css/style.css
-  js/main.js
+  js/main.js, js/board.js, js/admin.js
+  lambda/admin-api/     ← 저장 시 글·sitemap을 함께 게시하는 관리 API
   js/vendor/gsap.min.js, ScrollTrigger.min.js, lenis.min.js
   img/  fonts/  favicon.ico  robots.txt  sitemap.xml
 ```
@@ -36,8 +41,9 @@ renewal/
 - 폰트: 한글 `Pretendard Variable` v1.3.9 가변 다이나믹 서브셋(로컬 vendoring),
   영문/숫자 `Sora` Latin 가변 폰트(로컬 woff2). 숫자는 `font-variant-numeric: tabular-nums`.
 - GA4: 개인정보 고지와 동의 정책 확정 전에는 공개 페이지에서 기본 실행하지 않는다.
-- SEO: title/description/canonical(https://wickedstorm.kr/)/OG(og-image.png)/twitter card/
-  JSON-LD Organization(주소·전화·이메일)/robots.txt/sitemap.xml(index, privacy 2개 URL).
+- SEO: title/description/canonical/OG/Twitter card/JSON-LD를 제공한다. 개별 글은
+  고유 canonical과 `NewsArticle` JSON-LD를 갖고, sitemap.xml에 index·목록·내부 글을 나열한다.
+  법적 고지인 privacy.html은 sitemap에서 제외한다.
 - 파비콘: favicon.ico + `<link rel="apple-touch-icon" href="./img/favicon.png">`.
 
 ## 2. 시각 언어 (승인된 프로토타입 계승 — 반드시 프로토 파일을 읽고 이식)
@@ -56,7 +62,8 @@ header(고정) → ① hero(+핀 스크럽) → ② pipeline → ③ product(LRS
 
 콘텐츠 텍스트는 프로토 그대로 사용하되 아래 수정:
 - 뉴스 1번 제목: "위키드스톰, 학습자 프로파일링 방법 특허 **등록**" (본문에 등록번호 10-2767110 포함).
-- 뉴스 카드는 클릭 시 카드 아래로 본문이 펼쳐지는 아코디언(1개만 열림, aria-expanded, height 트랜지션).
+- 뉴스 카드는 검색·공유 가능한 `/news/{id}.html` 정적 글로 이동한다.
+  기존 `news.html#p={id}` 링크는 해당 정적 URL로 자동 이동해 하위 호환을 유지한다.
   본문 텍스트는 현행 사이트 문안(특허/조달/KOLAS 뉴스 — 프로토 이전 대화에서 쓰던 원문 유지, 조달 뉴스에는
   디지털서비스몰 링크 없이 전화·문의 유도만).
 - 클레임 게이트(위반 금지): ADL/KOLAS 로고·마크 사용 금지, "국내 최초/유일/1위" 금지,
@@ -113,7 +120,7 @@ header(고정) → ① hero(+핀 스크럽) → ② pipeline → ③ product(LRS
 - 메인 대시보드 frame: 진입 시 perspective 틸트 정착(rotateX 5deg, y 48, opacity 0 → 0/0/1, 0.9s)
   + 섹션 통과 패럴랙스 y ±24 (scrub). 서브 frame 2개는 stagger 리빌.
 
-### 씬 8 — 뉴스: 카드 3개 stagger 리빌(그 외 정적).
+### 씬 8 — 뉴스: 카드 3개 stagger 리빌. 각 카드는 개별 정적 글로 이동한다.
 ### 씬 9 — 컴퍼니: 숫자 스탯(설립 2021, 등록 특허 2건) 진입 1회 카운트업 1.2s(tabular-nums, IO once). "GS 1등급", "xAPI"는 카운트 없음.
 ### 씬 10 — 컨택트: 좌측 정보/우측 폼 자식 cascade 리빌.
 
@@ -175,6 +182,7 @@ IntersectionObserver threshold 0.12, 등장 후 unobserve.
 - [ ] 폼: 유효성/직접입력 토글/honeypot/전송(엔드포인트 호출) 동작
 - [ ] 클레임 게이트 위반 0건, 뉴스 썸네일 전체 노출(contain)
 - [ ] 콘솔 에러/404 자산 0건
+- [ ] 내부 뉴스 카드가 고유 URL로 열리고 canonical·OG·NewsArticle JSON-LD·sitemap이 동기화됨
 
 ---
 
@@ -207,6 +215,5 @@ IntersectionObserver threshold 0.12, 등장 후 unobserve.
 - [x] 영상: 뷰포트 인/아웃 play/pause, 클레임 프레임 검수 통과, 각 ≤2.5MB
 - [x] 모든 img 선언 비율 = 실측 비율
 
-### 백로그 (오너 요청, 미착수)
-- 뉴스 섹션 "더보기"/아카이브 확장: 1EdTech Korea 출범식 기사 등 아티클 계속 게시,
-  메인 노출 뉴스 고정(pin) 기능. 정적 사이트 구조에서의 구현 방식 별도 스코핑 필요.
+### 뉴스 아카이브 구현 (2026-07-13)
+- `news.html` 전체 목록, 메인 고정(pin), 개별 정적 URL, 생성기, 관리 API 동시 게시를 구현했다.
