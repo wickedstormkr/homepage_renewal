@@ -47,23 +47,42 @@
   })();
 
   /* ============================================================
-   *  헤더: 아래로 스크롤 숨김 / 위로 표시 + 20px 이후 불투명
+   *  헤더: 탐색 맥락을 유지하고 20px 이후 불투명 처리
    * ============================================================ */
   (function () {
     var hdr = doc.getElementById('hdr');
     if (!hdr) return;
-    var lastY = win.scrollY || 0;
     var onScroll = function () {
       var y = win.scrollY || 0;
       hdr.classList.toggle('scrolled', y > 20);
-      if (!root.classList.contains('nav-open')) {
-        if (y > lastY && y > 220) hdr.classList.add('hide');
-        else hdr.classList.remove('hide');
-      }
-      lastY = y;
     };
     win.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+  })();
+
+  /* ============================================================
+   *  현재 섹션 표시: 데스크톱 주 메뉴 스크롤스파이
+   * ============================================================ */
+  (function () {
+    if (!IO) return;
+    var links = [].slice.call(doc.querySelectorAll('header nav.main a[href^="#"]:not(.cta)'));
+    if (!links.length) return;
+    var byId = {}, sections = [];
+    links.forEach(function (a) {
+      var id = a.getAttribute('href').slice(1), section = doc.getElementById(id);
+      if (!section) return;
+      byId[id] = a; sections.push(section);
+    });
+    var active = null;
+    function setActive(id) {
+      if (active === id) return;
+      links.forEach(function (a) { a.classList.toggle('active', a === byId[id]); });
+      active = id;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { rootMargin: '-28% 0px -62% 0px', threshold: 0 });
+    sections.forEach(function (section) { io.observe(section); });
   })();
 
   /* ============================================================
@@ -716,7 +735,7 @@
       fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
         .then(function (r) {
           if (!r.ok) throw new Error('bad');
-          set('문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.', 'ok');
+          set('문의가 접수되었습니다. 입력한 이메일로 회신드리겠습니다.', 'ok');
           f.reset(); etc.hidden = true; etcIn.required = false;
         })
         .catch(function () { set('전송에 실패했습니다. manager@wickedstorm.kr로 보내주세요.', 'err'); })
