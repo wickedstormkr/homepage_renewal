@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<script>document.documentElement.className="js";</script>
+<title>소식 관리자 — 위키드스톰</title>
+<meta name="theme-color" content="#06070e">
+
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="preload" href="./fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/style.css">
+
+<style>
+  /* 관리자 전용 UI — 공개 스타일시트를 오염시키지 않도록 이 문서 안에서만 정의(기존 팔레트 재사용) */
+  body{padding:0;min-height:100vh}
+  .adm-wrap{width:min(920px,100% - 40px);margin:0 auto;padding:40px 0 80px}
+  .adm-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding-bottom:22px;margin-bottom:28px;border-bottom:1px solid var(--line)}
+  .adm-top h1{font-family:var(--en);font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .adm-top .en-sub{font-family:var(--en);font-size:12px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
+  .banner{background:rgba(233,48,176,.1);border:1px solid rgba(233,48,176,.35);color:#f3b9e2;
+    border-radius:12px;padding:14px 16px;margin-bottom:24px;font-size:14px;line-height:1.6}
+  .banner code{font-family:var(--en);color:#fff}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+  label.fld{display:block;margin-bottom:16px}
+  label.fld>span{display:block;font-size:12.5px;color:var(--muted);margin-bottom:7px;font-weight:600}
+  input[type=text],input[type=url],input[type=password],select,textarea{
+    width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;
+    color:var(--ink);font-family:var(--font);font-size:14.5px;padding:11px 13px;line-height:1.55}
+  textarea{resize:vertical;min-height:96px}
+  textarea#f-body{min-height:180px}
+  select{appearance:none;cursor:pointer}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--violet);outline-offset:1px;border-color:transparent}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;
+    padding:11px 20px;font-family:var(--en);font-weight:700;font-size:14px;cursor:pointer;transition:.18s;border:1px solid transparent}
+  .btn2.p{background:var(--grad-c);color:#06070e}
+  .btn2.p:hover{filter:brightness(1.08)}
+  .btn2.s{background:transparent;border-color:var(--line2);color:var(--ink)}
+  .btn2.s:hover{border-color:#fff}
+  .btn2[disabled]{opacity:.4;cursor:not-allowed;filter:none}
+  .mini{font-family:var(--en);font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;
+    border:1px solid var(--line2);background:transparent;color:var(--muted);cursor:pointer;transition:.16s}
+  .mini:hover{color:#fff;border-color:#fff}
+  .mini.danger:hover{color:#ff8ec6;border-color:rgba(233,48,176,.6)}
+
+  .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+  .toolbar .spacer{flex:1}
+  .status{font-size:13px;min-height:1.2em;color:var(--muted);font-family:var(--en)}
+  .status.ok{color:var(--cyan)}
+  .status.err{color:#ff8ec6}
+  .muted{color:var(--faint);font-size:14px}
+
+  #postList{display:flex;flex-direction:column;gap:10px}
+  .prow{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .prow-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+  .prow .ptitle{font-size:15px;font-weight:600;line-height:1.4}
+  .prow .pdate{font-family:var(--en);font-size:12px;color:var(--faint)}
+  .prow-act{display:flex;gap:6px;flex:none}
+  .badge{font-family:var(--en);font-size:10.5px;font-weight:700;letter-spacing:.05em;
+    padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--muted)}
+  .badge.cat-news{background:rgba(47,124,255,.16);color:#9fc0ff}
+  .badge.cat-story{background:rgba(233,48,176,.16);color:#f3a6da}
+  .badge.cat-insight{background:rgba(124,77,255,.16);color:#b3a1ff}
+  .badge.pin{background:rgba(34,224,214,.16);color:#7fe9e0}
+  .badge.ext{background:rgba(255,255,255,.08);color:var(--faint)}
+
+  .thumb-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  #thumbPreview{display:flex;align-items:center;gap:10px;min-height:56px}
+  #thumbPreview img{width:72px;height:54px;object-fit:contain;object-position:center;padding:4px;
+    border-radius:8px;border:1px solid var(--line2);background:var(--bg2)}
+  #thumbPreview code{font-family:var(--en);font-size:11.5px;color:var(--faint);word-break:break-all}
+  input[type=file]{font-family:var(--en);font-size:12.5px;color:var(--muted)}
+  .check{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--ink)}
+  .check input{width:auto}
+  .editor-foot{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+  .body-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-8px 0 16px}
+  .body-hint{font-size:12.5px;color:var(--faint);line-height:1.5}
+  @media (max-width:560px){.row2{grid-template-columns:1fr}.prow{flex-direction:column;align-items:stretch}.prow-act{justify-content:flex-end}}
+</style>
+</head>
+<body>
+<div class="adm-wrap">
+  <div class="adm-top">
+    <div>
+      <p class="en-sub">Wicked Storm · Admin</p>
+      <h1>소식 관리</h1>
+    </div>
+    <div id="appTop" hidden>
+      <button class="mini" id="btnLogout" type="button">로그아웃</button>
+    </div>
+  </div>
+
+  <div class="banner" id="apiBanner" hidden>
+    ⚠ 관리 API가 배포되지 않았습니다. <code>js/site-config.js</code>의 <code>ADMIN_API</code>를 설정해야 로그인·저장이 가능합니다.
+    자세한 절차는 <code>lambda/admin-api/DEPLOY.md</code>를 참조하세요.
+  </div>
+
+  <!-- 로그인 -->
+  <section id="loginView">
+    <div class="card" style="max-width:440px">
+      <form id="loginForm">
+        <label class="fld">
+          <span>관리 토큰</span>
+          <input type="password" id="f-token" autocomplete="off" placeholder="Bearer 토큰을 입력하세요">
+        </label>
+        <button class="btn2 p" type="submit" style="width:100%">로그인</button>
+        <p class="status" id="loginStatus" role="status" aria-live="polite" style="margin-top:12px"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 관리 앱 -->
+  <section id="appView" hidden>
+    <!-- 목록 -->
+    <div id="listView">
+      <div class="toolbar">
+        <button class="btn2 p" id="btnNew" type="button">＋ 새 글</button>
+        <button class="mini" id="btnReload" type="button">새로고침</button>
+        <span class="spacer"></span>
+        <span class="status" id="toolStatus" role="status" aria-live="polite"></span>
+      </div>
+      <div id="postList"></div>
+    </div>
+
+    <!-- 에디터 -->
+    <div id="editorView" hidden>
+      <div class="card">
+        <h2 id="editorTitle" style="font-size:17px;font-weight:700;margin-bottom:20px">새 글</h2>
+        <form id="editorForm">
+          <label class="fld"><span>제목 *</span><input type="text" id="f-title" placeholder="소식 제목"></label>
+          <div class="row2">
+            <label class="fld"><span>카테고리</span><select id="f-category"></select></label>
+            <label class="fld"><span>날짜 (YYYY.MM.DD) *</span><input type="text" id="f-date" placeholder="2026.07.11"></label>
+          </div>
+          <label class="fld"><span>요약 (목록·검색용 한 줄)</span><textarea id="f-summary" rows="2" placeholder="한 줄 요약"></textarea></label>
+          <label class="fld"><span>본문 (빈 줄로 문단 구분 → 자동 &lt;p&gt; 변환, &lt;strong&gt; 등 인라인 태그 사용 가능)</span><textarea id="f-body" placeholder="첫 문단…&#10;&#10;다음 문단…"></textarea></label>
+          <div class="body-tools">
+            <button class="mini" id="btnBodyImg" type="button">＋ 본문에 이미지 삽입</button>
+            <input type="file" id="f-body-file" accept="image/webp,image/jpeg,image/png" hidden>
+            <span class="body-hint">스토리(워크샵·사내 소식) 글은 사진을 여러 장 본문에 삽입할 수 있습니다. 이미지는 5MB 이하.</span>
+          </div>
+          <label class="fld"><span>외부 링크 URL (입력 시 카드가 새 탭 링크가 됩니다)</span><input type="url" id="f-external" placeholder="https:// (선택)"></label>
+
+          <label class="fld">
+            <span>썸네일</span>
+            <div class="thumb-wrap">
+              <input type="file" id="f-thumb-file" accept="image/webp,image/jpeg,image/png">
+              <button class="mini" id="btnThumbClear" type="button">제거</button>
+              <div id="thumbPreview"><span class="muted">썸네일 없음</span></div>
+            </div>
+            <input type="hidden" id="f-thumb">
+          </label>
+
+          <label class="check" style="margin:6px 0 18px"><input type="checkbox" id="f-pinned"> 메인 페이지 상단 노출(핀)</label>
+
+          <div class="editor-foot">
+            <button class="btn2 p" type="submit">저장</button>
+            <button class="btn2 s" id="btnCancel" type="button">취소</button>
+            <span class="status" id="editorStatus" role="status" aria-live="polite" style="flex:1"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="./js/site-config.js"></script>
+<script src="./js/admin.js" defer></script>
+</body>
+</html>

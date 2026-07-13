@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "updated": "2026-07-11",
+  "posts": [
+    {
+      "id": "2026-07-1edtech-korea",
+      "category": "news",
+      "date": "2026.06.22",
+      "title": "(사)1EdTech Korea 출범 — 위키드스톰, 설립 공동 회원사로 참여",
+      "summary": "국제 교육기술 표준 컨소시엄 1EdTech의 한국 조직 (사)1EdTech Korea가 출범했습니다. 위키드스톰은 설립 공동 회원사이자 이사회 일원으로 참여합니다.",
+      "body": "<p>국제 교육기술 표준 컨소시엄 1EdTech의 한국 조직 <strong>(사)1EdTech Korea</strong>가 공식 출범했습니다. 위키드스톰은 <strong>설립 공동 회원사이자 이사회 일원</strong>으로 참여해, 교육 데이터 표준의 국내 확산을 위한 활동에 함께합니다.</p><p>위키드스톰은 학습경험 데이터를 다루며 쌓은 xAPI·CASE 표준 적용 경험을 바탕으로, 국내 교육 현장에 맞는 표준 도입과 상호운용성 논의에 기여해 나가겠습니다.</p><p>관련 기사: <a href=\"https://v.daum.net/v/20260622181108383\" target=\"_blank\" rel=\"noopener noreferrer\">“표준 없인 AI도 길 잃어”…원에듀테크 코리아, AI 시대 에듀테크 생태계 만든다 (전자신문)</a></p>",
+      "thumb": null,
+      "externalUrl": null,
+      "pinned": false
+    },
+    {
+      "id": "2026-07-note-aidt-standards",
+      "category": "insight",
+      "date": "2026.07.11",
+      "title": "기술 노트 — AI 디지털교과서 교육과정 표준체계 배포 모델",
+      "summary": "2023년 AI 디지털교과서 교육과정 표준체계 배포 모델 설계와 2024년 연계 학습데이터 활용체계 수행 경험을 기술 노트로 정리합니다.",
+      "body": "<p>위키드스톰은 <strong>2023년 AI 디지털교과서 교육과정 표준체계 배포 모델</strong>을 설계했고, <strong>2024년에는 AI 디지털교과서 연계 학습데이터 활용체계</strong>를 수행했습니다. 학습데이터 허브, 국가수준 학습분석 지표, 학습맵을 아우르는 작업이었습니다.</p><p>이 과정에서 다진 표준 기반 데이터 설계의 원칙과 실무 노하우를 기술 노트로 차례로 정리해 전하겠습니다.</p>",
+      "thumb": null,
+      "externalUrl": null,
+      "pinned": false
+    },
+    {
+      "id": "2026-07-note-case-knowledge-space",
+      "category": "insight",
+      "date": "2026.07.11",
+      "title": "기술 노트 — CASE 표준 기반 지식공간 구축",
+      "summary": "과정 중심 평가를 위한 인공지능 기술 개발 과제 1차년도에서 CASE 표준 기반 지식공간을 구축한 과정을 소개합니다.",
+      "body": "<p>위키드스톰은 <strong>과정 중심 평가를 위한 인공지능 기술 개발 과제</strong>의 1차년도에서 <strong>CASE 표준 기반 지식공간</strong>을 구축했습니다. 교육과정의 성취기준과 개념을 표준 구조로 연결해, 평가와 학습을 잇는 뼈대를 마련한 작업입니다.</p><p>지식공간을 어떻게 모델링하고 CASE 표준으로 표현했는지, 설계 과정에서의 선택과 고민을 기술 노트로 나누겠습니다.</p>",
+      "thumb": null,
+      "externalUrl": null,
+      "pinned": false
+    },
+    {
+      "id": "2026-07-llm-wiki-workflow",
+      "category": "insight",
+      "date": "2026.07.11",
+      "title": "사내 LLM Wiki와 AI 워크플로우",
+      "summary": "흩어진 사내 지식을 LLM Wiki로 모으고 AI를 업무 워크플로우에 결합해, 일하는 방식을 다듬어가고 있습니다.",
+      "body": "<p>위키드스톰은 흩어져 있던 사내 지식을 <strong>LLM Wiki</strong>로 모으고 있습니다. 문서와 논의, 반복되는 질문에 대한 답을 한곳에 쌓아 두어, 필요할 때 바로 꺼내 쓸 수 있게 만드는 일입니다.</p><p>여기에 <strong>AI를 업무 워크플로우에 결합</strong>해, 자료를 찾고 정리하고 초안을 만드는 과정을 더 빠르게 바꿔가고 있습니다. 도구를 들이는 데 그치지 않고 일하는 방식 자체를 다듬는 실험을 이어가겠습니다.</p>",
+      "thumb": null,
+      "externalUrl": null,
+      "pinned": false
+    },
+    {
+      "id": "2025-11-patent-anomaly",
+      "category": "news",
+      "date": "2025.11.04",
+      "title": "위키드스톰, xAPI 이상 학습 탐지 시스템 특허 등록",
+      "summary": "xAPI 학습행동 데이터를 분석해 이상 학습 징후를 식별하는 시스템 특허(10-2883249)를 등록했습니다.",
+      "body": "<p>위키드스톰이 <strong>xAPI 학습행동 데이터 기반 이상 학습 탐지 시스템에 관한 특허를 등록</strong>했습니다(등록번호 <strong>10-2883249</strong>). 학습 과정에서 수집되는 xAPI Statement를 분석해, 통상적인 학습 패턴에서 벗어난 이상 징후를 식별하는 방법에 관한 기술입니다.</p><p>이 기술은 수집된 학습 데이터의 신뢰성과 분석 품질을 뒷받침하며, Lecognizer의 분석 파이프라인에서 이상 학습 탐지 축을 이룹니다. 앞서 등록한 학습자 프로파일링 특허(10-2767110)와 함께 위키드스톰의 학습 분석 기술 기반을 넓혀 갑니다.</p>",
+      "thumb": "./img/patent-anomaly.webp",
+      "externalUrl": null,
+      "pinned": true
+    },
+    {
+      "id": "2025-02-patent-profiling",
+      "category": "news",
+      "date": "2025.02.20",
+      "title": "위키드스톰, 학습자 프로파일링 방법 특허 등록",
+      "summary": "학습 데이터로 학습자의 특성과 상태를 분류·예측하는 프로파일링 방법 특허(10-2767110)를 등록했습니다.",
+      "body": "<p>위키드스톰이 <strong>학습자 프로파일링 방법에 관한 특허를 등록</strong>했습니다(등록번호 <strong>10-2767110</strong>). 학습 활동에서 발생하는 데이터를 기반으로 학습자의 특성과 상태를 정밀하게 분류·예측하는 방법에 관한 기술입니다.</p><p>xAPI 표준으로 수집한 학습경험 데이터를 분석해 맞춤형 진단과 문항 추천의 근거를 마련하며, Lecognizer LRS·LAP의 분석 파이프라인에 적용해 나가고 있습니다.</p>",
+      "thumb": "./img/patent-profiling.webp",
+      "externalUrl": null,
+      "pinned": true
+    },
+    {
+      "id": "2024-07-lecognizer-procurement",
+      "category": "news",
+      "date": "2024.07.22",
+      "title": "학습 데이터 수집 솔루션 Lecognizer V1.0, 공공 조달 시장 진입 추진",
+      "summary": "Lecognizer V1.0이 xAPI 국제 표준 기반 학습기록저장소로 공공 조달 시장 진입 절차를 진행하고 있습니다.",
+      "body": "<p>학습경험 데이터 수집·표준화 솔루션 <strong>Lecognizer V1.0</strong>이 공공 조달 시장 진입을 위한 절차를 진행하고 있습니다. 공공·교육기관이 xAPI 국제 표준 기반의 학습기록저장소를 보다 간편하게 도입할 수 있도록 준비하고 있습니다.</p><p>도입 범위와 연계 방식, 구매 절차에 관한 문의는 <strong>02-2205-1470</strong> 또는 <strong>manager@wickedstorm.kr</strong>로 연락 주시기 바랍니다.</p>",
+      "thumb": "./img/feed-img01.webp",
+      "externalUrl": null,
+      "pinned": true
+    },
+    {
+      "id": "2024-06-ai-model-validation",
+      "category": "news",
+      "date": "2024.06.11",
+      "title": "AI 학습 분석 진단·추천 모델 성능 검증 완료",
+      "summary": "인공지능 학습 분석 진단·추천 모델이 외부 시험기관의 성능시험을 통해 검증받았습니다.",
+      "body": "<p>위키드스톰의 <strong>인공지능 학습 분석 진단·추천 모델</strong>이 외부 시험기관의 성능시험을 통해 성능을 검증받았습니다. 학습 수준 진단과 취약 영역 기반 문항 추천의 정확도를 객관적으로 확인한 결과입니다.</p><p>해당 모델은 초등 수학 수업 지원시스템 등 실제 서비스 현장에서 누적된 학습 데이터를 바탕으로 지속적으로 고도화되어 왔습니다.</p>",
+      "thumb": "./img/feed-img02.webp",
+      "externalUrl": null,
+      "pinned": false
+    }
+  ]
+}

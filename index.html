@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ko" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className="js";</script>
+<title>WICKED STORM · 위키드스톰 — 학습 데이터를 살아있는 인사이트로</title>
+<meta name="description" content="위키드스톰은 학습 활동을 xAPI Statement로 수집·표준화하고 AI로 분석해 실행 가능한 인사이트로 바꿉니다. Lecognizer LRS·LAP, 1EdTech Korea, GROWA.">
+<link rel="canonical" href="https://wickedstorm.kr/">
+<meta name="theme-color" content="#06070e">
+
+<!-- OG / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WICKED STORM">
+<meta property="og:title" content="WICKED STORM · 위키드스톰 — 학습 데이터를 살아있는 인사이트로">
+<meta property="og:description" content="학습 활동을 xAPI로 수집·표준화하고 AI로 분석해 실행 가능한 인사이트로. Lecognizer LRS·LAP, 1EdTech Korea, GROWA.">
+<meta property="og:url" content="https://wickedstorm.kr/">
+<meta property="og:image" content="https://wickedstorm.kr/img/og-image.png">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WICKED STORM · 위키드스톰">
+<meta name="twitter:description" content="학습 데이터를 살아있는 인사이트로 — xAPI · AI · 교육 데이터 표준.">
+<meta name="twitter:image" content="https://wickedstorm.kr/img/og-image.png">
+
+<!-- 파비콘 -->
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="./img/favicon.png">
+
+<!-- 폰트: 한글 로컬 preload + 영문 Sora preconnect -->
+<link rel="preload" href="./fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./css/style.css">
+
+<!-- JSON-LD Organization -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Organization",
+  "name":"위키드스톰 (Wicked Storm Inc.)",
+  "url":"https://wickedstorm.kr/",
+  "logo":"https://wickedstorm.kr/img/og-image.png",
+  "email":"manager@wickedstorm.kr",
+  "telephone":"+82-2-2205-1470",
+  "address":{
+    "@type":"PostalAddress",
+    "streetAddress":"마곡중앙로 161-8, A동 901~905호",
+    "addressLocality":"강서구",
+    "addressRegion":"서울특별시",
+    "addressCountry":"KR"
+  },
+  "sameAs":[]
+}
+</script>
+
+<!-- GA4 (기존 속성 유지) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0Y5QD1HBGN"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());
+gtag('config','G-0Y5QD1HBGN');
+</script>
+</head>
+<body>
+<a class="skip-link" href="#top">본문 바로가기</a>
+<div class="progress" aria-hidden="true"></div>
+
+<header id="hdr">
+  <div class="hwrap">
+    <a class="brand" href="#top" aria-label="WICKED STORM 홈"><img src="./img/logo-white.svg" alt="WICKED STORM" width="208" height="26"></a>
+    <nav class="main" aria-label="주요 메뉴">
+      <a href="#product">Product</a>
+      <a href="#standards">Standards</a>
+      <a href="#growa">GROWA</a>
+      <a href="#news">News</a>
+      <a class="cta" href="#contact">도입 문의</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<nav class="drawer" id="drawer" aria-label="모바일 메뉴" hidden>
+  <a href="#product">Product</a>
+  <a href="#standards">Standards</a>
+  <a href="#growa">GROWA</a>
+  <a href="#news">News</a>
+  <a href="#company">Company</a>
+  <a class="cta" href="#contact">도입 문의 →</a>
+</nav>
+
+<main id="top">
+<!-- ① HERO -->
+<section class="hero" id="hero">
+  <div class="orbs" aria-hidden="true"><span></span><span></span></div>
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="veil" aria-hidden="true"></div>
+
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt=""> Living Data · AI Insight</p>
+      <h1>
+        <span class="line"><span class="line-inner">흩어진 학습 데이터를</span></span>
+        <span class="line"><span class="line-inner"><span class="g">살아있는 인사이트</span>로</span></span>
+      </h1>
+      <p class="hero-lead">위키드스톰은 학습 활동을 xAPI Statement로 수집·표준화하고, AI로 분석해 실행 가능한 인사이트로 바꿉니다.</p>
+      <div class="hero-cta">
+        <a class="btn p" href="#contact">도입 문의</a>
+        <a class="btn s" href="#product">제품 보기</a>
+      </div>
+      <div class="hero-trust">
+        <span><b>1EdTech Korea</b> 이사회 참여</span>
+        <span class="sep"></span>
+        <span>GS 1등급 · 특허 등록 2건</span>
+        <span class="sep"></span>
+        <span>일본 시장 진출 · GROWA</span>
+      </div>
+    </div>
+
+    <!-- xAPI 실시간 캡처 뷰 -->
+    <div class="capture" id="capture">
+      <div class="cap-top">
+        <span class="cap-badge"><img class="sym" src="./img/symbol.png" alt=""> Lecognizer · xAPI Capture</span>
+        <span class="cap-live">실시간 수집</span>
+      </div>
+      <div class="stream-viewport">
+        <div class="stream-track" id="streamTrack">
+          <!-- 무JS/reduced-motion/초기 상태에서도 보이도록 5행 사전 렌더 -->
+          <div class="xrow"><span class="dot"></span><span class="chip actor">학습자</span><span class="arrow">→</span><span class="chip verb">완료함</span><span class="arrow">→</span><span class="chip object">도형 퀴즈</span><span class="chip result">정답률 85%</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">수강생</span><span class="arrow">→</span><span class="chip verb">시청함</span><span class="arrow">→</span><span class="chip object">개념 강의 04</span><span class="chip result">진도 100%</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">A반 학생</span><span class="arrow">→</span><span class="chip verb">제출함</span><span class="arrow">→</span><span class="chip object">서술형 과제</span><span class="chip result">제출 완료</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">튜티</span><span class="arrow">→</span><span class="chip verb">풀이함</span><span class="arrow">→</span><span class="chip object">오답 노트</span><span class="chip result">8 / 10</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">수강생</span><span class="arrow">→</span><span class="chip verb">응답함</span><span class="arrow">→</span><span class="chip object">실시간 퀴즈</span><span class="chip result">정답</span></div>
+        </div>
+      </div>
+      <div class="cap-foot">
+        <span class="ins-label">AI<br>Insight</span>
+        <svg class="spark" viewBox="0 0 240 34" preserveAspectRatio="none" aria-hidden="true">
+          <polyline id="sparkline" fill="none" stroke="url(#sg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" points=""></polyline>
+          <defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#7c4dff"></stop><stop offset="1" stop-color="#22e0d6"></stop></linearGradient></defs>
+        </svg>
+        <span class="ins-chip" id="insChip">진단 · 도형 취약</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 핀-스크럽 오버레이 캡션 (초기 숨김, scrub 후반 페이드인) -->
+  <div class="hero-overlay" id="heroOverlay" aria-hidden="true">
+    <p class="ho-main">흩어진 기록이 <span class="g">구조</span>가 되는 순간</p>
+    <p class="ho-sub">위키드스톰은 이 변환을 자동화합니다.</p>
+  </div>
+</section>
+
+<!-- ② PIPELINE -->
+<section class="band" style="padding-top:clamp(56px,7vw,96px)">
+  <div class="wrap">
+    <div class="pipe-wrap rv" id="pipeWrap">
+      <div class="pipe-rail" aria-hidden="true">
+        <span class="pipe-line" id="pipeLine"></span>
+        <span class="pipe-dot" id="pipeDot"></span>
+      </div>
+      <div class="pipe">
+        <div class="step"><span class="n"><em>01</em> · Collect</span><h3>수집</h3><p>학습 이벤트를 xAPI로 연결</p><p class="step-detail"><span>LMS·콘텐츠·평가 도구에서 발생하는 학습 이벤트를 xAPI Statement로 실시간 수집합니다.</span></p></div>
+        <div class="step"><span class="n"><em>02</em> · Normalize</span><h3>표준화</h3><p>분석 가능한 표준 구조로</p><p class="step-detail"><span>Actor · Verb · Object 구조로 정규화해, 시스템이 달라도 같은 언어로 기록합니다.</span></p></div>
+        <div class="step"><span class="n"><em>03</em> · Analyze</span><h3>AI 진단</h3><p>진단·추천 모델 적용</p><p class="step-detail"><span>누적된 학습 기록으로 학습 수준을 진단하고 취약 영역을 예측합니다.</span></p></div>
+        <div class="step"><span class="n"><em>04</em> · Act</span><h3>인사이트</h3><p>리포트와 운영 판단으로</p><p class="step-detail"><span>역할별 대시보드와 리포트로 다음 학습 액션을 제안합니다.</span></p></div>
+      </div>
+    </div>
+    <figure class="frame media-frame rv"><video muted loop playsinline preload="none" poster="./media/pipeline-poster.webp"><source src="./media/pipeline-loop.mp4" type="video/mp4"></video><figcaption class="note">Lecognizer 파이프라인 — 수집 · 저장 · 분석, 모두 실제 화면</figcaption></figure>
+  </div>
+</section>
+
+<!-- ③ PRODUCT -->
+<section class="band" id="product">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Product</p>
+      <h2 class="h-lg" style="margin-top:16px">수집부터 분석까지,<br>하나의 학습 데이터 <span class="g">운영 흐름</span></h2>
+    </div>
+
+    <div class="feature stag">
+      <div class="feat-copy">
+        <p class="kick rv">Learning Record Store</p>
+        <h3 class="rv">Lecognizer <span class="gc">LRS</span></h3>
+        <p class="rv">xAPI 기반으로 학습경험 데이터를 수집·저장·시각화하는 학습기록저장소. 흩어진 학습 활동을 하나의 표준 데이터로 모읍니다.</p>
+        <ul class="rv">
+          <li>xAPI Statement 조회·필터링 (JSON / Table / CSV)</li>
+          <li>권한별 대시보드와 11종 시각화 차트</li>
+          <li>SSO·SAML·OAuth2 다중 인증 연계</li>
+        </ul>
+        <span class="feat-badge rv">GS 인증 1등급 · 제24-0016호</span>
+      </div>
+      <figure class="frame rv fade"><img src="./img/dash-main-public.webp" alt="Lecognizer 운영 대시보드 화면 예시" width="1319" height="684" loading="lazy"></figure>
+    </div>
+
+    <div class="feature reverse stag">
+      <div class="feat-copy">
+        <p class="kick rv">Analytics &amp; AI Model</p>
+        <h3 class="rv">LAP &amp; <span class="gc">AI Model</span></h3>
+        <p class="rv">수집된 학습활동 데이터를 AI로 분석해 진단·추천·리포트로 확장하는 학습분석 플랫폼. 데이터를 실행 가능한 인사이트로 바꿉니다.</p>
+        <ul class="rv">
+          <li>학습 패턴·성취도 분석과 AI 진단</li>
+          <li>취약 영역 기반 맞춤 문항 추천</li>
+          <li>목적별 리포트 추출 (PDF / HTML / PNG)</li>
+        </ul>
+      </div>
+      <figure class="frame rv fade"><img src="./img/ai-diag-public.webp" alt="AI 학습 진단 화면 예시" width="1180" height="694" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ④ REFERENCES -->
+<section class="band" id="references">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> References</p>
+      <h2 class="h-lg" style="margin-top:16px">공공·교육 현장에서<br>검증된 <span class="g">데이터 역량</span></h2>
+      <p class="sec-lead">전국 단위의 학습 데이터 수집·분석 경험으로 공공기관과 교육기관의 데이터 기반 혁신을 함께 만들어 왔습니다.</p>
+    </div>
+    <div class="ref-grid stag">
+      <article class="ref-card rv">
+        <p class="rorg">교육부 · 국가 수준</p>
+        <h3>AI 디지털교과서 학습데이터<br>활용 체계 구축</h3>
+        <p>2025년 도입되는 AI 디지털교과서의 학습 데이터를 xAPI 국제 표준으로 수집해 국가 수준 학습 분석을 지원합니다.</p>
+        <div class="rtags"><span>AI 디지털교과서</span><span>xAPI</span><span>국가 수준</span></div>
+      </article>
+      <article class="ref-card rv">
+        <p class="rorg">KERIS · 초등 수학</p>
+        <h3>인공지능 활용 초등수학<br>수업 지원시스템</h3>
+        <p>게이미피케이션 기반 수업 지원시스템에서 학습 행동·경험 데이터를 수집하고, 수준 진단·문항 추천 모델을 개발·적용했습니다.</p>
+        <div class="rtags"><span>학습 진단</span><span>문항 추천</span><span>게이미피케이션</span></div>
+      </article>
+      <article class="ref-card rv">
+        <p class="rorg">인사혁신처 · 인재개발</p>
+        <h3>인재개발플랫폼<br>소셜러닝 데이터화</h3>
+        <p>소셜 커뮤니티와 실시간 대규모 화상 세미나의 소셜러닝 경험을 데이터로 구체화해 수집했습니다.</p>
+        <div class="rtags"><span>소셜 러닝</span><span>커뮤니티</span><span>웨비나</span></div>
+      </article>
+      <article class="ref-card rv">
+        <p class="rorg">서울시 · 교육플랫폼</p>
+        <h3>서울형 교육플랫폼<br>화상 멘토링 분석</h3>
+        <p>화상 멘토링의 멘토·멘티 상호작용, 감정 상태와 발화를 학습 데이터로 수집해 심도 깊은 학습 분석을 지원합니다.</p>
+        <div class="rtags"><span>화상 멘토링</span><span>상호작용</span><span>감정 분석</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ STANDARDS / 1EDTECH -->
+<section class="band std" id="standards">
+  <div class="wrap">
+    <div class="std-top">
+      <div class="rv">
+        <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Standards Leadership</p>
+        <h2 class="h-lg" style="margin-top:16px">표준을 쓰는 것을 넘어,<br><span class="gc">표준을 함께 만듭니다</span></h2>
+        <p class="sec-lead">위키드스톰은 국제 교육기술 표준 컨소시엄 1EdTech의 한국 조직 <b style="color:#dfe3f7">1EdTech Korea</b> 이사회에 참여하여, 교육 데이터 표준의 국내 확산을 이끕니다. xAPI·CASE 등 학습기록 표준은 실제 제품과 레퍼런스 설계에 적용해 왔고, Open Badges 3.0·CLR 2.0 등 성취증거 표준은 적용을 준비하고 있습니다.</p>
+      </div>
+      <div class="rv x" style="text-align:right">
+        <span class="powered"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> 1EdTech Korea 이사회 — <b>Wicked&nbsp;Storm</b></span>
+      </div>
+    </div>
+    <div class="std-grid stag">
+      <a class="std-card rv pulse" href="https://github.com/adlnet/xAPI-Spec" target="_blank" rel="noopener noreferrer" aria-label="xAPI 공식 스펙 (새 창)"><div class="k on">xAPI</div><p>학습경험 Statement 수집·표준화 (Lecognizer LRS)</p><span class="tag apply">적용</span></a>
+      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/case" target="_blank" rel="noopener noreferrer" aria-label="CASE 공식 스펙 (새 창)"><div class="k on">CASE</div><p>성취기준·역량 정렬 의미계층 설계</p><span class="tag apply">적용</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/open-badges" target="_blank" rel="noopener noreferrer" aria-label="Open Badges 3.0 공식 스펙 (새 창)"><div class="k">Open Badges 3.0</div><p>디지털 성취 증거(배지) 발행 표준</p><span class="tag soon">적용 예정</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/clr" target="_blank" rel="noopener noreferrer" aria-label="CLR 2.0 공식 스펙 (새 창)"><div class="k">CLR 2.0</div><p>종합 학습 기록(Comprehensive Learner Record)</p><span class="tag soon">적용 예정</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/edu-api" target="_blank" rel="noopener noreferrer" aria-label="EduAPI 공식 스펙 (새 창)"><div class="k">EduAPI</div><p>차세대 교육 데이터 연동 API</p><span class="tag soon">적용 예정</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/workstream/credentials" target="_blank" rel="noopener noreferrer" aria-label="Digital Credentials 공식 스펙 (새 창)"><div class="k">Digital Credentials</div><p>검증 가능한 디지털 자격증명 생태계</p><span class="tag soon">적용 예정</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/caliper" target="_blank" rel="noopener noreferrer" aria-label="Caliper 공식 스펙 (새 창)"><div class="k">Caliper</div><p>학습 이벤트 상호운용 모델</p><span class="tag ref">설계 참조</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/oneroster" target="_blank" rel="noopener noreferrer" aria-label="OneRoster 공식 스펙 (새 창)"><div class="k">OneRoster</div><p>명단·성적 연동 표준</p><span class="tag ref">설계 참조</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/lti" target="_blank" rel="noopener noreferrer" aria-label="LTI 공식 스펙 (새 창)"><div class="k">LTI</div><p>학습 도구 상호운용</p><span class="tag ref">설계 참조</span></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/qti" target="_blank" rel="noopener noreferrer" aria-label="QTI 공식 스펙 (새 창)"><div class="k">QTI</div><p>평가 문항 상호운용</p><span class="tag ref">설계 참조</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ⑥ GROWA -->
+<section class="band growa" id="growa">
+  <div class="wrap">
+    <div class="growa-top">
+      <div class="rv">
+        <p class="badge-jp"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Global · Japan</p>
+        <img class="growa-logo" src="./img/growa-logo.png" alt="GROWA" width="140" height="34" loading="lazy">
+        <h2 class="h-lg">일본 시장을 향한<br>AI <span class="gc">학습경험 플랫폼</span></h2>
+        <p class="sec-lead">GROWA는 위키드스톰이 개발 중인 AI 기반 LXP입니다. 강사가 강의 설계부터 평가·학습자 개입·리포트까지 한 흐름으로 다룰 수 있도록, AI 어시스턴트를 화면 전반에 결합했습니다. 일본 대학 대상 차세대 LMS 사업의 기준 설계로 발전시키고 있습니다.</p>
+        <div class="feat">
+          <span>AI 강의 설계</span><span>평가·과제</span><span>학습자 개입</span><span>인사이트 리포트</span>
+        </div>
+        <p class="note">※ 제품 화면 예시 (개발 중 프로토타입)</p>
+      </div>
+      <div>
+        <div class="frame growa-main"><img src="./img/growa-dash.webp" alt="GROWA 강사 대시보드 화면 예시" width="1200" height="866" loading="lazy"></div>
+        <div class="growa-sub stag">
+          <div class="frame rv"><img src="./img/growa-ai.webp" alt="GROWA AI 어시스턴트 화면 예시" width="1200" height="866" loading="lazy"></div>
+          <div class="frame rv"><img src="./img/growa-intervention.webp" alt="GROWA 학습 개입 화면 예시" width="1200" height="917" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑦ NEWS -->
+<section class="band" id="news">
+  <div class="wrap">
+    <div class="sec-head rv rowlink">
+      <div>
+        <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Feed · Update</p>
+        <h2 class="h-lg" style="margin-top:16px">최근 소식</h2>
+      </div>
+      <a class="sec-more" href="./news.html">전체 보기 →</a>
+    </div>
+    <div class="news-grid stag">
+      <article class="ncard rv">
+        <button class="nhead" aria-expanded="false" aria-controls="np1">
+          <div class="nimg"><img src="./img/patent-anomaly.webp" alt="특허증 제10-2883249호 — xAPI 학습 행동 데이터를 기반으로 한 이상 학습 탐지 시스템" width="900" height="1272" loading="lazy"></div>
+          <div class="nbody">
+            <div class="nmeta"><span class="ntag">NEWS</span> 2025.11.04</div>
+            <h3 id="nh1">위키드스톰, xAPI 이상 학습 탐지 시스템 특허 등록</h3>
+            <span class="nmore">자세히 보기 <i>+</i></span>
+          </div>
+        </button>
+        <div class="npanel" id="np1" role="region" aria-labelledby="nh1">
+          <div class="npanel-inner">
+            <p>위키드스톰이 <strong>xAPI 학습행동 데이터 기반 이상 학습 탐지 시스템에 관한 특허를 등록</strong>했습니다(등록번호 <strong>10-2883249</strong>). 학습 과정에서 수집되는 xAPI Statement를 분석해, 통상적인 학습 패턴에서 벗어난 이상 징후를 식별하는 방법에 관한 기술입니다.</p>
+            <p>이 기술은 수집된 학습 데이터의 신뢰성과 분석 품질을 뒷받침하며, Lecognizer의 분석 파이프라인에서 이상 학습 탐지 축을 이룹니다. 앞서 등록한 학습자 프로파일링 특허(10-2767110)와 함께 위키드스톰의 학습 분석 기술 기반을 넓혀 갑니다.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="ncard rv">
+        <button class="nhead" aria-expanded="false" aria-controls="np2">
+          <div class="nimg"><img src="./img/patent-profiling.webp" alt="특허증 제10-2767110호 — 학습자 성향 분석을 위한 LLM 기반 학습자 프로파일링 방법" width="900" height="1272" loading="lazy"></div>
+          <div class="nbody">
+            <div class="nmeta"><span class="ntag">NEWS</span> 2025.02.20</div>
+            <h3 id="nh2">위키드스톰, 학습자 프로파일링 방법 특허 등록</h3>
+            <span class="nmore">자세히 보기 <i>+</i></span>
+          </div>
+        </button>
+        <div class="npanel" id="np2" role="region" aria-labelledby="nh2">
+          <div class="npanel-inner">
+            <p>위키드스톰이 <strong>학습자 프로파일링 방법에 관한 특허를 등록</strong>했습니다(등록번호 <strong>10-2767110</strong>). 학습 활동에서 발생하는 데이터를 기반으로 학습자의 특성과 상태를 정밀하게 분류·예측하는 방법에 관한 기술입니다.</p>
+            <p>xAPI 표준으로 수집한 학습경험 데이터를 분석해 맞춤형 진단과 문항 추천의 근거를 마련하며, Lecognizer LRS·LAP의 분석 파이프라인에 적용해 나가고 있습니다.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="ncard rv">
+        <button class="nhead" aria-expanded="false" aria-controls="np3">
+          <div class="nimg"><img src="./img/feed-img01.webp" alt="Lecognizer V1.0" width="833" height="833" loading="lazy"></div>
+          <div class="nbody">
+            <div class="nmeta"><span class="ntag">NEWS</span> 2024.07.22</div>
+            <h3 id="nh3">학습 데이터 수집 솔루션 Lecognizer V1.0, 공공 조달 시장 진입 추진</h3>
+            <span class="nmore">자세히 보기 <i>+</i></span>
+          </div>
+        </button>
+        <div class="npanel" id="np3" role="region" aria-labelledby="nh3">
+          <div class="npanel-inner">
+            <p>학습경험 데이터 수집·표준화 솔루션 <strong>Lecognizer V1.0</strong>이 공공 조달 시장 진입을 위한 절차를 진행하고 있습니다. 공공·교육기관이 xAPI 국제 표준 기반의 학습기록저장소를 보다 간편하게 도입할 수 있도록 준비하고 있습니다.</p>
+            <p>도입 범위와 연계 방식, 구매 절차에 관한 문의는 <strong>02-2205-1470</strong> 또는 <strong>manager@wickedstorm.kr</strong>로 연락 주시기 바랍니다.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ⑧ COMPANY -->
+<section class="band" id="company" style="background:linear-gradient(180deg,var(--bg),#080a16)">
+  <div class="wrap">
+    <div class="co-grid">
+      <div class="rv">
+        <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Company</p>
+        <h2 class="h-lg" style="margin-top:16px">데이터로 미래를 만드는<br><span class="gc">게임 체인저</span></h2>
+        <p class="sec-lead">위키드스톰은 AI 기술로 에듀테크의 미래를 만듭니다. 학습 데이터를 수집·표준화·분석해, 교육 현장의 의사결정이 데이터 위에서 이루어지도록 돕습니다.</p>
+        <p class="sec-lead" style="margin-top:14px;color:var(--muted);font-size:15px">AI 커스텀 개발 · AI 분석 솔루션 · 데이터 컨설팅</p>
+      </div>
+      <div class="co-stats rv">
+        <div class="co-stat"><b class="tnum"><span data-count="2021">2021</span></b><span>설립 연도</span></div>
+        <div class="co-stat"><b class="tnum"><span data-count="30">30</span><span class="unit">명</span></b><span>구성원</span></div>
+        <div class="co-stat"><b class="tnum"><span data-count="3">3</span></b><span>핵심 사업 영역</span></div>
+        <div class="co-stat"><b>xAPI</b><span>국제 표준 기반</span></div>
+      </div>
+    </div>
+    <figure class="frame media-frame rv"><video muted loop playsinline preload="none" poster="./media/company-poster.webp"><source src="./media/company-loop.mp4" type="video/mp4"></video><figcaption class="note">AI Insight, Empowered Education — 위키드스톰 회사소개 필름</figcaption></figure>
+
+    <!-- 연혁 -->
+    <div class="history" id="history">
+      <div class="hist-head rv">
+        <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> History</p>
+        <h3 class="hist-title"><span class="yr gc">2021 – 2026</span>, 기록이 쌓아온 길</h3>
+      </div>
+      <ol class="hist-list stag" aria-label="위키드스톰 연혁 2021–2026">
+        <li class="hist-item rv">
+          <div class="hist-year">2021</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><span>㈜위키드스톰 설립</span></li>
+              <li><a href="#references">인사혁신처 국가인재개발 지능형 오픈 플랫폼 LRS 구축(2단계)<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KIRD 차세대 통합교육시스템 학습분석 컨설팅</li>
+              <li>비상교육 스마트 플랫폼 컨설팅·구축</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2022</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#references">KERIS K-에듀 통합플랫폼 ISMP — 학습분석 지표·분석 표준 수립<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">서울시 서울형 교육 플랫폼 LRS 구축<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>인사혁신처 3단계 — 실시간 화상 xAPI 수집</li>
+              <li>벤처기업 인증</li>
+              <li>한국무역협회 FTA 통합 플랫폼 활성화</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2023</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#product">지능형 학습분석 솔루션 Lecognizer 출시<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">과정 중심 평가 AI 기술 개발 — CASE 표준 지식공간 구축(산업부)<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KERIS AI디지털교과서 개발 가이드라인 공동 집필</li>
+              <li>KERIS 초등수학 수업 지원시스템 고도화</li>
+              <li>중기부 디딤돌 과제 선정</li>
+              <li>AIDT 교육과정 표준체계 배포 모델 설계</li>
+              <li>동아출판 AIDT 플랫폼 구축</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2024</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#product">Lecognizer GS 인증 1등급 획득<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">KERIS AIDT 연계 학습데이터 활용체계 구축(학습데이터 허브)<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KERIS 초등수학 지원시스템 운영</li>
+              <li>나라장터 디지털쇼핑몰 제품 등록</li>
+              <li>AI 학습 진단·추천 모델 인증</li>
+              <li>특허 출원 2건(xAPI 이상 학습 탐지·LLM 학습자 프로파일링)</li>
+              <li>KERIS 학습데이터 사전 개발 연구</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2025</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="./news.html#p=2025-02-patent-profiling">특허 등록 — LLM 기반 학습자 프로파일링(10-2767110)<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="./news.html#p=2025-11-patent-anomaly">특허 등록 — xAPI 이상 학습 탐지 시스템(10-2883249)<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KERIS 초등수학 지원시스템 운영</li>
+              <li>중기부 시장대응형 과제 선정</li>
+              <li>이노비즈 인증(AA)</li>
+              <li>강원아이로 AI 플랫폼 구축</li>
+              <li>KERIS 시도교육청 학습데이터 수집 연계 체제</li>
+              <li>NICE디앤알 차세대 시스템 구축</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2026</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#standards">(사)1EdTech Korea 설립 공동 회원사·이사회 참여<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">KERIS 국제 표준 기반 학습데이터 표준화 체계·활용 모델 구축<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>강원도·경기도교육청 AI 플랫폼 운영</li>
+              <li>경기도 AI 교원 역량 통합지원시스템 LRS 구축</li>
+              <li>AIDT 학습데이터 허브 LRS 유지관리</li>
+              <li>NetLearning 경영진 미팅·제품 시연</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ⑨ CONTACT -->
+<section class="band" id="contact" style="background:linear-gradient(180deg,#080a16,var(--bg))">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="rv">
+        <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Contact</p>
+        <h2 class="h-lg" style="margin-top:16px">학습 데이터·표준·AI<br>도입을 함께 <span class="g">검토</span>하겠습니다</h2>
+        <p class="sec-lead">제품 구성, 표준 연계, 공공·글로벌 적용 범위까지 함께 논의합니다.</p>
+        <div class="ci-info" style="margin-top:26px">
+          <span class="lab">Tel</span><a href="tel:0222051470">02-2205-1470</a>
+          <span class="lab">Email</span><a href="mailto:manager@wickedstorm.kr">manager@wickedstorm.kr</a>
+          <span class="lab">Address</span><p>서울시 강서구 마곡중앙로 161-8, A동 901~905호</p>
+        </div>
+      </div>
+      <form class="cform rv" id="cform" novalidate>
+        <noscript><p class="status err" style="min-height:auto">문의 폼은 JavaScript가 필요합니다. 브라우저에서 JavaScript를 활성화하시거나 <a href="mailto:manager@wickedstorm.kr" style="color:#cbb4ff;text-decoration:underline">manager@wickedstorm.kr</a>로 문의해 주세요.</p></noscript>
+        <div class="row2">
+          <label>이름 *<input type="text" name="userName" required autocomplete="name" placeholder="이름"></label>
+          <label>소속 *<input type="text" name="userCompany" required autocomplete="organization" placeholder="소속/기관"></label>
+        </div>
+        <label>이메일 *<input type="email" name="userEmail" required autocomplete="email" placeholder="abc@example.com"></label>
+        <label>유입 경로 *
+          <select name="userTraffic" required>
+            <option value="">유입 경로를 선택하세요</option>
+            <option value="direct">직접 입력</option>
+            <option value="portal">포털 검색</option>
+            <option value="job_posting">구인 공고</option>
+            <option value="news">기사/뉴스</option>
+            <option value="referral">지인 추천/공유</option>
+            <option value="etc">기타</option>
+          </select>
+        </label>
+        <label data-etc hidden><span data-etc-label>유입 경로 직접 입력 *</span><input type="text" name="userTrafficEtc" placeholder="직접 입력해 주세요"></label>
+        <label>문의사항 *<textarea name="userMemo" rows="5" required placeholder="도입 목적, 연계 대상, 일정 등"></textarea></label>
+        <!-- honeypot -->
+        <label class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        <label class="check"><input type="checkbox" name="checkPrivacy" required> 문의 확인을 위한 <a href="./privacy.html">개인정보 수집·이용</a>에 동의합니다.</label>
+        <button class="btn p" type="submit" data-submit>문의하기</button>
+        <p class="status" role="status" aria-live="polite" data-status></p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="./img/logo-white.svg" alt="WICKED STORM" width="208" height="26" loading="lazy">
+        <p>서울시 강서구 마곡중앙로 161-8, A동 901~905호</p>
+        <p>Tel 02-2205-1470 · Fax 02-2205-1471 · manager@wickedstorm.kr</p>
+        <!-- TODO: 사업자등록번호 자리 (확인 후 기입) -->
+      </div>
+      <nav class="foot-nav" aria-label="푸터 메뉴">
+        <a href="#product">Product</a><a href="#standards">Standards</a><a href="#growa">GROWA</a><a href="#news">News</a><a href="./privacy.html">개인정보처리방침</a>
+      </nav>
+    </div>
+    <p class="legal">AI Insight, Empowered Education. — © 2026 Wicked Storm Inc.</p>
+  </div>
+</footer>
+
+<script src="./js/vendor/gsap.min.js" defer></script>
+<script src="./js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="./js/vendor/lenis.min.js" defer></script>
+<script src="./js/main.js" defer></script>
+<script src="./js/site-config.js" defer></script>
+<script src="./js/board.js" defer></script>
+</body>
+</html>
