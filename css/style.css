@@ -255,7 +255,7 @@ nav.main .cta:hover{color:#fff}
 .media-frame figcaption{padding:12px 18px;font-size:12.5px;color:var(--faint);border-top:1px solid var(--line);background:#0e1020}
 
 /* ---- 레퍼런스 ---- */
-.ref-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .ref-card{position:relative;padding:34px 32px;border-radius:20px;background:var(--panel);border:1px solid var(--line);
   overflow:hidden;transition:border-color .25s,transform .25s}
 .ref-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);
@@ -265,6 +265,14 @@ nav.main .cta:hover{color:#fff}
   background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .ref-card h3{margin:12px 0 14px;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
 .ref-card p{color:var(--muted);font-size:14.5px;line-height:1.65}
+.ref-featured{grid-column:1/-1;display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(32px,5vw,76px);align-items:end;
+  padding:clamp(34px,4vw,54px)}
+.ref-featured h3{font-size:clamp(26px,3vw,40px);margin-top:16px}
+.ref-proof{padding:24px 26px;border-radius:16px;background:rgba(255,255,255,.035);border:1px solid var(--line)}
+.ref-card .ref-role{display:grid;grid-template-columns:42px 1fr;gap:14px;margin-top:22px;padding-top:18px;
+  border-top:1px solid var(--line);font-size:13.5px;color:#c5cae3}
+.ref-card .ref-role span{font-family:var(--en);font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--cyan)}
+.ref-featured .ref-role{margin-top:0;padding-top:0;border-top:0}
 .ref-card .rtags{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}
 .ref-card .rtags span{font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;
   background:rgba(255,255,255,.05);border:1px solid var(--line);color:#c3c8e3}
@@ -275,20 +283,37 @@ nav.main .cta:hover{color:#fff}
 .powered{display:inline-flex;align-items:center;gap:12px;padding:11px 20px;border-radius:999px;
   border:1px solid var(--line2);background:rgba(124,77,255,.08);font-family:var(--en);font-weight:600;font-size:14px;color:#d7dbf3}
 .powered b{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.std-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:44px}
-.std-card{display:block;position:relative;padding:22px 20px;border-radius:16px;background:var(--panel);border:1px solid var(--line);
+.std-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:44px}
+.std-card{display:block;position:relative;min-height:168px;padding:30px 28px;border-radius:18px;background:var(--panel);border:1px solid var(--line);
   transition:border-color .25s,transform .25s}
 .std-card:hover{border-color:var(--line2);transform:translateY(-3px)}
 .std-card::after{content:"↗";position:absolute;top:12px;right:14px;font-size:11px;color:var(--faint);opacity:0;transition:opacity .25s}
 .std-card:hover::after{opacity:1}
-.std-card .k{font-family:var(--en);font-size:17px;font-weight:800;letter-spacing:-.01em}
+.std-card .k{font-family:var(--en);font-size:26px;font-weight:800;letter-spacing:-.02em}
 .std-card .k.on{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.std-card p{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5}
-.std-card .tag{display:inline-block;margin-top:12px;font-size:10.5px;font-family:var(--en);font-weight:700;letter-spacing:.08em;
+.std-card p{margin-top:10px;color:var(--muted);font-size:14.5px;line-height:1.55}
+.std-card .tag{display:inline-block;margin-top:18px;font-size:11.5px;font-family:var(--en);font-weight:700;letter-spacing:.08em;
   text-transform:uppercase;padding:3px 9px;border-radius:6px}
 .tag.apply{background:rgba(34,224,214,.14);color:#7bece3}
 .tag.soon{background:rgba(124,77,255,.16);color:#b3a1ff}
 .tag.ref{background:rgba(255,255,255,.06);color:var(--faint)}
+.std-groups{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.std-group{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);overflow:hidden}
+.std-group summary{position:relative;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:20px 54px 20px 22px;
+  list-style:none;cursor:pointer;font-weight:700;color:#d7dbf3}
+.std-group summary::-webkit-details-marker{display:none}
+.std-group summary::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font-family:var(--en);
+  font-size:20px;font-weight:500;color:var(--cyan)}
+.std-group[open] summary::after{content:"−"}
+.std-group summary small{font-family:var(--en);font-size:11.5px;font-weight:600;color:var(--faint)}
+.std-list{display:grid;padding:0 14px 14px}
+.std-list a{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;padding:14px 10px;border-top:1px solid var(--line)}
+.std-list a:hover b{color:var(--cyan)}
+.std-list b,.std-list small{display:block}
+.std-list b{font-family:var(--en);font-size:14px;transition:color .2s}
+.std-list small{margin-top:3px;font-size:12.5px;color:var(--muted)}
+.std-list em{font-style:normal;white-space:nowrap;font-size:10.5px;font-family:var(--en);font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 9px;border-radius:6px}
 /* '적용' 카드 진입 시 보더 글로우 1회 펄스 (bounded, 1 iteration) */
 .std-card.pulse.in{animation:cardglow 1.2s ease 1}
 @keyframes cardglow{0%,100%{box-shadow:0 0 0 0 rgba(124,77,255,0)}
@@ -440,8 +465,10 @@ html.js .ref-card.in::before{transform:scaleY(1)}
   .menu-btn{display:block}
   .hero-grid,.std-top,.growa-top,.co-grid{grid-template-columns:1fr}
   .std-grid{grid-template-columns:repeat(2,1fr)}
+  .std-groups{grid-template-columns:1fr}
   .pipe{grid-template-columns:1fr 1fr}
   .prod-grid,.news-grid,.growa-sub,.feature,.ref-grid,.contact-grid,.cform .row2,.co-stats{grid-template-columns:1fr}
+  .ref-featured{grid-template-columns:1fr}
   .feature.reverse .feat-copy{order:0}
   .capture{margin-top:0}
   .hero{min-height:auto;padding:100px 0 48px}
