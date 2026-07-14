@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <script>document.documentElement.className="js";</script>
-<title>소식 관리자 | 위키드스톰</title>
+<title>소식 관리자 — 위키드스톰</title>
 <meta name="theme-color" content="#06070e">
 
 <link rel="icon" href="./favicon.ico" sizes="any">
-<link rel="stylesheet" href="./fonts/pretendard/pretendardvariable-dynamic-subset.min.css" media="(min-width: 961px)">
+<link rel="stylesheet" href="./fonts/pretendard/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="./css/style.css">
 
 <style>
@@ -25,8 +25,8 @@
   .banner code{font-family:var(--en);color:#fff}
 
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
-  .fld{display:block;margin-bottom:16px}
-  .fld>span,.fld>label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:7px;font-weight:600}
+  label.fld{display:block;margin-bottom:16px}
+  label.fld>span{display:block;font-size:12.5px;color:var(--muted);margin-bottom:7px;font-weight:600}
   input[type=text],input[type=url],input[type=password],select,textarea{
     width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;
     color:var(--ink);font-family:var(--font);font-size:14.5px;padding:11px 13px;line-height:1.55}
@@ -147,15 +147,15 @@
           </div>
           <label class="fld"><span>외부 링크 URL (입력 시 카드가 새 탭 링크가 됩니다)</span><input type="url" id="f-external" placeholder="https:// (선택)"></label>
 
-          <div class="fld">
-            <label for="f-thumb-file">썸네일</label>
+          <label class="fld">
+            <span>썸네일</span>
             <div class="thumb-wrap">
               <input type="file" id="f-thumb-file" accept="image/webp,image/jpeg,image/png">
               <button class="mini" id="btnThumbClear" type="button">제거</button>
               <div id="thumbPreview"><span class="muted">썸네일 없음</span></div>
             </div>
             <input type="hidden" id="f-thumb">
-          </div>
+          </label>
 
           <label class="check" style="margin:6px 0 18px"><input type="checkbox" id="f-pinned"> 메인 페이지 상단 노출(핀)</label>
 

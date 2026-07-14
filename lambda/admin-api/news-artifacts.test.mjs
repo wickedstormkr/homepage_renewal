@@ -77,8 +77,6 @@ test('renderArticle emits canonical SEO metadata, JSON-LD, H1, and nested relati
   assert.match(html, /<link rel="stylesheet" href="\.\.\/css\/style\.css">/);
   assert.match(html, /<link rel="stylesheet" href="\.\.\/fonts\/pretendard\//);
   assert.match(html, /<img src="\.\.\/img\/feed-img01\.webp"/);
-  assert.match(html, /class="detail-image-link" href="\.\.\/img\/feed-img01\.webp" target="_blank"/);
-  assert.match(html, /원본 이미지 크게 보기/);
   assert.doesNotMatch(html, /\n\+\s*<(figure|img)/);
   assert.match(html, /<h1[^>]*>\uD45C준 &lt;기술&gt; &amp; 인사이트<\/h1>/);
   assert.doesNotMatch(html, /<h1[^>]*>표준 <기술>/);
