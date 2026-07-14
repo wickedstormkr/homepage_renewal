@@ -26,8 +26,11 @@
 <link rel="icon" href="./favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="./img/favicon.png">
 
-<!-- Pretendard 가변 다이나믹 서브셋: 현재 문서에 필요한 글리프만 로드 -->
-<link rel="stylesheet" href="./fonts/pretendard/pretendardvariable-dynamic-subset.min.css">
+<!-- 폰트: 한글 로컬 preload + 영문 Sora preconnect -->
+<link rel="preload" href="./fonts/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="./css/style.css">
 
@@ -552,6 +555,7 @@ gtag('config','G-0Y5QD1HBGN');
 
 <script src="./js/vendor/gsap.min.js" defer></script>
 <script src="./js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="./js/vendor/lenis.min.js" defer></script>
 <script src="./js/main.js" defer></script>
 <script src="./js/site-config.js" defer></script>
 <script src="./js/board.js" defer></script>

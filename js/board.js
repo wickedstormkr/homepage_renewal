@@ -242,15 +242,6 @@
       return null;
     }
 
-    /* 인라인 스냅샷과 원격 JSON이 같으면 DOM을 다시 만들지 않는다.
-     * 첫 페인트 전에 스냅샷을 동기 렌더해 footer 밀림(CLS)을 막고,
-     * 관리자가 갱신한 원격 데이터가 다를 때만 목록을 교체한다. */
-    function postsSignature(posts) {
-      return JSON.stringify((posts || []).slice().sort(byDateDesc).map(function (p) {
-        return [p.id, p.category, p.date, p.title, p.summary, p.body, p.thumb, p.externalUrl, !!p.pinned];
-      }));
-    }
-
     function renderDetail(post) {
       var tag = CAT_LABEL[post.category] || 'NEWS';
       var thumb = post.thumb
@@ -310,15 +301,12 @@
       if (viaFallback) quiet('board fetch 실패 — 정적 스냅샷으로 렌더', err);
     }
 
-    var fallbackPosts = win.WS_POSTS_FALLBACK && win.WS_POSTS_FALLBACK.posts;
-    if (fallbackPosts && fallbackPosts.length) boot(fallbackPosts, false);
-
     fetchPosts().then(function (data) {
-      var remotePosts = (data && data.posts) || [];
-      if (!loaded || postsSignature(remotePosts) !== postsSignature(allPosts)) boot(remotePosts, false);
+      boot((data && data.posts) || [], false);
     }).catch(function (err) {
-      // fetch 실패(file:// 열람·오프라인 등): 이미 렌더한 스냅샷을 그대로 유지
-      if (loaded) { quiet('board fetch 실패 — 정적 스냅샷 유지', err); return; }
+      // fetch 실패(file:// 열람·오프라인 등): news.html 인라인 정적 스냅샷이 있으면 정상 렌더
+      var fb = win.WS_POSTS_FALLBACK;
+      if (fb && fb.posts && fb.posts.length) { boot(fb.posts, true, err); return; }
       grid.innerHTML = '<p class="board-empty">소식을 불러오지 못했어요. ' +
         '<a href="./index.html#news">메인 페이지</a>에서 확인해 주세요.</p>';
       if (statusEl) statusEl.textContent = '소식을 불러오지 못했습니다.';
