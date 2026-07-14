@@ -7,7 +7,7 @@
  *  - 저장: PUT /posts (전체 JSON)
  * API 계약:
  *  GET  /posts        → {"version":1,"updated":"...","posts":[...]}
- *  PUT  /posts        → {"ok":true,"published":8,"deleted":0,"warning"?:"..."}
+ *  PUT  /posts        → {"ok":true}
  *  POST /upload-url   {"filename","contentType","size"} → {"upload":{"url","fields":{...}},"publicPath"}
  *  오류               → {"error":"..."}
  */
@@ -25,7 +25,6 @@
   var state = { version: 1, updated: '', posts: [] };
   var editing = null;        // 편집 중인 post (신규는 임시 객체)
   var editingIsNew = false;
-  var persisting = false;
 
   function $(id) { return doc.getElementById(id); }
   function esc(s) {
@@ -244,29 +243,26 @@
 
   function saveEditor() {
     if (!apiConfigured()) { setEditorStatus('API가 배포되지 않아 저장할 수 없습니다.', 'err'); return; }
-    if (persisting) { setEditorStatus('이전 변경을 저장 중입니다.', 'err'); return; }
     var post = collectEditor();
     if (!post) return;
     // upsert
     var idx = -1;
     for (var i = 0; i < state.posts.length; i++) if (state.posts[i].id === post.id) { idx = i; break; }
     if (idx >= 0) state.posts[idx] = post; else state.posts.push(post);
-    persist('게시 완료', function () { closeEditor(); renderList(); });
+    persist('게시 완료 (캐시 반영 1~2분)', function () { closeEditor(); renderList(); });
   }
 
   function deletePost(id) {
     if (!apiConfigured()) { alert('API가 배포되지 않아 삭제할 수 없습니다.'); return; }
-    if (persisting) { setToolStatus('이전 변경을 저장 중입니다.', 'err'); return; }
     var p = findPost(id);
     if (!p) return;
     if (!win.confirm('“' + p.title + '” 글을 삭제할까요?')) return;
     state.posts = state.posts.filter(function (x) { return x.id !== id; });
-    persist('삭제 완료', renderList);
+    persist('삭제 완료 (캐시 반영 1~2분)', renderList);
   }
 
   function togglePin(id) {
     if (!apiConfigured()) { alert('API가 배포되지 않아 변경할 수 없습니다.'); return; }
-    if (persisting) { setToolStatus('이전 변경을 저장 중입니다.', 'err'); return; }
     var p = findPost(id);
     if (!p) return;
     p.pinned = !p.pinned;
@@ -275,8 +271,6 @@
 
   /* PUT /posts 전체 저장 */
   function persist(okMsg, done) {
-    if (persisting) return;
-    persisting = true;
     state.updated = todayISO();
     setToolStatus('저장 중…', '');
     api('/posts', {
@@ -285,12 +279,10 @@
       body: JSON.stringify({ version: state.version || 1, updated: state.updated, posts: state.posts })
     }).then(function (res) {
       if (res && res.ok === false) throw new Error(res.error || '저장 실패');
-      setToolStatus(res && res.warning ? (okMsg + ' · ' + res.warning) : okMsg, res && res.warning ? 'warn' : 'ok');
+      setToolStatus(okMsg, 'ok');
       if (done) done();
     }).catch(function (err) {
       setToolStatus('저장 실패: ' + err.message, 'err');
-    }).then(function () {
-      persisting = false;
     });
   }
 

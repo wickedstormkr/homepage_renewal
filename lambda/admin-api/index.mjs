@@ -7,7 +7,7 @@
 // 라우팅
 //   OPTIONS *          CORS preflight
 //   GET     /posts     인증 필요 → S3 data/posts.json 반환 (admin.js 로그인 검증 겸용)
-//   PUT     /posts     인증 필요 → 검증(+정화) 후 posts.json·정적 글·sitemap 게시
+//   PUT     /posts     인증 필요 → 검증(+정화) 후 S3 data/posts.json 저장 + CloudFront invalidation
 //   POST    /upload-url 인증 필요 → presigned POST 발급 (img/uploads/*, 최대 5MB)
 //
 // 필요 env: BUCKET, DISTRIBUTION_ID, ADMIN_TOKEN, ALLOWED_ORIGIN
@@ -19,15 +19,12 @@ import {
   S3Client,
   GetObjectCommand,
   PutObjectCommand,
-  ListObjectsV2Command,
-  DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
 import {
   CloudFrontClient,
   CreateInvalidationCommand,
 } from '@aws-sdk/client-cloudfront';
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post';
-import { isValidPostId, normalizeDate, renderNewsArtifacts } from './news-artifacts.mjs';
 
 // ---------------------------------------------------------------------------
 // 설정
@@ -41,13 +38,6 @@ const DEFAULT_ALLOWED_ORIGIN = 'https://wickedstorm.kr';
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || DEFAULT_ALLOWED_ORIGIN;
 
 const POSTS_KEY = 'data/posts.json';
-const SITEMAP_KEY = 'sitemap.xml';
-const NEWS_PREFIX = 'news/';
-const GENERATED_ARTICLE_KEY_RE = /^news\/[a-z0-9][a-z0-9-]{0,99}\.html$/;
-const POST_ID_RE_DESCRIPTION = '^[a-z0-9][a-z0-9-]{0,99}$';
-const GENERATED_CACHE_CONTROL = 'public, max-age=300';
-const PUT_BATCH_SIZE = 10;
-const DELETE_BATCH_SIZE = 1000;
 const UPLOAD_PREFIX = 'img/uploads/';
 const MAX_BODY_BYTES = 1024 * 1024; // 1MB
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB — presigned POST content-length-range와 동일
@@ -167,91 +157,36 @@ async function handlePutPosts(event, cors) {
   const validationError = validatePostsPayload(payload);
   if (validationError) return errorResponse(400, validationError, cors);
 
-  // 검증 통과 후 알려진 필드만으로 재구성하고, 쓰기 전에 모든 산출물을 메모리에서 렌더한다.
+  // 검증 통과 후 알려진 필드만으로 재구성해 저장(잉여 필드 폐기) + body는 XSS 정화.
   const cleanPayload = buildCleanPayload(payload);
   const body = JSON.stringify(cleanPayload);
-  let artifacts;
+
   try {
-    artifacts = renderNewsArtifacts(cleanPayload);
-  } catch (err) {
-    console.error('News artifact render failed:', err);
-    return errorResponse(
-      err instanceof TypeError ? 400 : 500,
-      err instanceof TypeError ? 'Posts could not be rendered' : 'Failed to render news artifacts',
-      cors
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: BUCKET,
+        Key: POSTS_KEY,
+        Body: body,
+        ContentType: 'application/json; charset=utf-8',
+        CacheControl: 'max-age=60',
+      })
     );
-  }
-
-  const articleEntries = artifacts.articlePaths.map((key) => {
-    const html = artifacts.files.get(key);
-    if (!GENERATED_ARTICLE_KEY_RE.test(key) || typeof html !== 'string') {
-      throw new TypeError(`Invalid generated article artifact: ${key}`);
-    }
-    return [key, html];
-  });
-  const sitemap = artifacts.files.get(SITEMAP_KEY);
-  if (typeof sitemap !== 'string') {
-    console.error('Generated sitemap is missing');
-    return errorResponse(500, 'Failed to render sitemap', cors);
-  }
-
-  let existingArticleKeys;
-  try {
-    existingArticleKeys = await listGeneratedArticleKeys();
   } catch (err) {
-    console.error('S3 article listing failed:', err);
-    return errorResponse(500, 'Failed to inspect existing news artifacts', cors);
+    console.error('S3 PutObject failed:', err);
+    return errorResponse(500, 'Failed to save posts.json', cors);
   }
-  const desiredArticleKeys = new Set(artifacts.articlePaths);
-  const staleArticleKeys = existingArticleKeys.filter((key) => !desiredArticleKeys.has(key));
 
+  // 캐시 무효화는 부가 작업 — 실패해도 저장 자체는 성공 처리(max-age=60이라 곧 자연 만료됨).
   try {
-    // 글 HTML과 sitemap이 모두 준비된 뒤 posts.json을 마지막 공개 포인터로 저장한다.
-    await putGeneratedArticles(articleEntries);
-    await putTextObject(
-      SITEMAP_KEY,
-      sitemap,
-      'application/xml; charset=utf-8',
-      GENERATED_CACHE_CONTROL
-    );
-    await putTextObject(POSTS_KEY, body, 'application/json; charset=utf-8', 'max-age=60');
-  } catch (err) {
-    console.error('S3 news publish failed:', err);
-    return errorResponse(500, 'Failed to publish news artifacts', cors);
-  }
-
-  // stale 정리 실패는 이미 완료된 게시를 뒤집지 않는다. 다음 게시에서도 다시 탐지된다.
-  let deleted = 0;
-  let warning;
-  if (staleArticleKeys.length) {
-    try {
-      await deleteGeneratedArticles(staleArticleKeys);
-      deleted = staleArticleKeys.length;
-    } catch (firstError) {
-      console.error('Stale article deletion failed, retrying once:', firstError);
-      try {
-        await deleteGeneratedArticles(staleArticleKeys);
-        deleted = staleArticleKeys.length;
-      } catch (retryError) {
-        console.error('Stale article deletion retry failed:', retryError);
-        warning = '게시물은 저장됐지만 이전 글 파일 정리는 다음 게시 때 다시 시도됩니다.';
-      }
-    }
-  }
-
-  // 캐시 무효화는 부가 작업이며, 실패해도 각 객체의 짧은 max-age 뒤 자연 반영된다.
-  try {
-    await invalidatePaths(['/' + POSTS_KEY, '/' + SITEMAP_KEY, '/news/*']);
+    await invalidatePaths(['/' + POSTS_KEY]);
   } catch (err) {
     console.error('CloudFront invalidation failed (non-fatal):', err);
   }
 
-  const result = { ok: true, published: artifacts.articlePaths.length, deleted };
-  if (warning) result.warning = warning;
   return {
     statusCode: 200,
     headers: { ...cors, 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify(result),
+    body: JSON.stringify({ ok: true }),
   };
 }
 
@@ -323,78 +258,6 @@ async function handleUploadUrl(event, cors) {
 }
 
 // ---------------------------------------------------------------------------
-// 정적 뉴스 산출물 게시
-//
-// news/ 프리픽스는 이 Lambda가 관리하는 생성 공간이다. 단, 정확한
-// news/{post-id}.html 형식만 목록화·삭제해 다른 파일을 건드리지 않는다.
-// ---------------------------------------------------------------------------
-
-async function listGeneratedArticleKeys() {
-  const keys = [];
-  let continuationToken;
-
-  do {
-    const out = await s3.send(new ListObjectsV2Command({
-      Bucket: BUCKET,
-      Prefix: NEWS_PREFIX,
-      ContinuationToken: continuationToken,
-    }));
-
-    for (const item of out.Contents || []) {
-      const key = item && item.Key;
-      if (typeof key === 'string' && GENERATED_ARTICLE_KEY_RE.test(key)) keys.push(key);
-    }
-
-    if (out.IsTruncated && !out.NextContinuationToken) {
-      throw new Error('S3 returned a truncated article listing without a continuation token');
-    }
-    continuationToken = out.IsTruncated ? out.NextContinuationToken : undefined;
-  } while (continuationToken);
-
-  return keys;
-}
-
-async function putTextObject(key, body, contentType, cacheControl) {
-  await s3.send(new PutObjectCommand({
-    Bucket: BUCKET,
-    Key: key,
-    Body: body,
-    ContentType: contentType,
-    CacheControl: cacheControl,
-  }));
-}
-
-async function putGeneratedArticles(entries) {
-  for (let i = 0; i < entries.length; i += PUT_BATCH_SIZE) {
-    const batch = entries.slice(i, i + PUT_BATCH_SIZE);
-    await Promise.all(batch.map(([key, html]) =>
-      putTextObject(key, html, 'text/html; charset=utf-8', GENERATED_CACHE_CONTROL)
-    ));
-  }
-}
-
-async function deleteGeneratedArticles(keys) {
-  for (let i = 0; i < keys.length; i += DELETE_BATCH_SIZE) {
-    const batch = keys.slice(i, i + DELETE_BATCH_SIZE);
-    if (batch.some((key) => !GENERATED_ARTICLE_KEY_RE.test(key))) {
-      throw new TypeError('Refusing to delete an object outside the generated article namespace');
-    }
-
-    const out = await s3.send(new DeleteObjectsCommand({
-      Bucket: BUCKET,
-      Delete: {
-        Objects: batch.map((Key) => ({ Key })),
-        Quiet: true,
-      },
-    }));
-    if (out.Errors && out.Errors.length) {
-      const failedKeys = out.Errors.map((error) => error.Key || '(unknown)').join(', ');
-      throw new Error(`S3 failed to delete generated articles: ${failedKeys}`);
-    }
-  }
-}
-
-// ---------------------------------------------------------------------------
 // 인증
 // ---------------------------------------------------------------------------
 
@@ -435,8 +298,8 @@ function validatePostsPayload(payload) {
   if (typeof payload.version !== 'number' || !Number.isFinite(payload.version)) {
     return '"version" must be a number';
   }
-  if (typeof payload.updated !== 'string' || !normalizeDate(payload.updated)) {
-    return '"updated" must be a valid YYYY-MM-DD date';
+  if (payload.updated !== undefined && typeof payload.updated !== 'string') {
+    return '"updated" must be a string';
   }
   if (!Array.isArray(payload.posts)) {
     return '"posts" must be an array';
@@ -451,8 +314,11 @@ function validatePostsPayload(payload) {
     if (!post || typeof post !== 'object' || Array.isArray(post)) {
       return `${prefix} must be an object`;
     }
-    if (!isValidPostId(post.id)) {
-      return `${prefix}.id must match ${POST_ID_RE_DESCRIPTION}`;
+    if (typeof post.id !== 'string' || !post.id.trim()) {
+      return `${prefix}.id is required`;
+    }
+    if (post.id.length > MAX_LENGTHS.id) {
+      return `${prefix}.id exceeds ${MAX_LENGTHS.id} characters`;
     }
     if (seenIds.has(post.id)) {
       return `${prefix}.id "${post.id}" is duplicated`;
@@ -467,9 +333,6 @@ function validatePostsPayload(payload) {
     }
     if (post.date.length > MAX_LENGTHS.date) {
       return `${prefix}.date exceeds ${MAX_LENGTHS.date} characters`;
-    }
-    if (!normalizeDate(post.date)) {
-      return `${prefix}.date must be a valid YYYY.MM.DD date`;
     }
     if (typeof post.title !== 'string' || !post.title.trim()) {
       return `${prefix}.title is required`;

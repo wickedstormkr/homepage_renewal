@@ -1,6 +1,6 @@
 /* WICKED STORM — board.js
  * 소식 게시판 공용 렌더러.
- *  - news.html: 전체 목록 + 탭 필터 + 레거시 #p=<id> 정적 URL 이동 + 헤더/드로어 크롬
+ *  - news.html: 전체 목록 + 탭 필터 + 딥링크(#p=<id>) + 헤더/드로어 크롬
  *  - index.html: #news 그리드를 pinned 상위 3건으로 프로그레시브 재렌더
  * main.js/GSAP에 의존하지 않는다. 상시 rAF 루프 없음(드로어 open은 1회성 rAF).
  */
@@ -42,12 +42,10 @@
     }
   }
 
-  function articleUrl(post) {
-    var id = String(post && post.id || '');
-    return /^[a-z0-9][a-z0-9-]{0,99}$/.test(id) ? './news/' + id + '.html' : './news.html';
-  }
-
+  var uid = 0;
   function cardEl(post) {
+    uid++;
+    var pid = 'np' + uid, hid = 'nh' + uid;
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
       ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
@@ -66,18 +64,21 @@
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
         '<span class="nmore">바로가기 <i>↗</i></span></div>';
     } else {
-      el = doc.createElement('a');
+      el = doc.createElement('article');
       el.className = 'ncard rv';
-      el.href = articleUrl(post);
-      el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">자세히 보기 <i>→</i></span></div>';
+      var body = post.body || ('<p>' + esc(post.summary || '') + '</p>');
+      el.innerHTML =
+        '<button class="nhead" aria-expanded="false" aria-controls="' + pid + '">' + img + meta +
+        '<h3 id="' + hid + '">' + esc(post.title) + '</h3>' +
+        '<span class="nmore">자세히 보기 <i>+</i></span></div></button>' +
+        '<div class="npanel" id="' + pid + '" role="region" aria-labelledby="' + hid + '"><div class="npanel-inner">' + body + '</div></div>';
     }
     el.setAttribute('data-cat', post.category || 'news');
     el.setAttribute('data-id', post.id || '');
     return el;
   }
 
-  /* news.html 게시판용 카드 — 내부 글은 검색 가능한 정적 HTML로 연결.
+  /* news.html 게시판용 카드 — 아코디언 대신 상세 화면 링크(#p=<id>).
    * externalUrl 글은 기존과 동일하게 새 탭 링크로 강등. */
   function boardCardEl(post) {
     var tag = CAT_LABEL[post.category] || 'NEWS';
@@ -96,13 +97,39 @@
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
         '<span class="nmore">바로가기 <i>↗</i></span></div>';
     } else {
-      el.href = articleUrl(post);
+      el.href = '#p=' + encodeURIComponent(post.id || '');
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
         '<span class="nmore">자세히 보기 <i>→</i></span></div>';
     }
     el.setAttribute('data-cat', post.category || 'news');
     el.setAttribute('data-id', post.id || '');
     return el;
+  }
+
+  /* 아코디언(한 번에 하나만 열림) — main.js는 개별 바인딩이라 동적 카드는 여기서 바인딩 */
+  function bindAccordion(container) {
+    var cards = [].slice.call(container.querySelectorAll('.ncard'));
+    function close(card) {
+      var b = card.querySelector('.nhead'), p = card.querySelector('.npanel');
+      if (!b || !p) return;
+      card.classList.remove('open');
+      b.setAttribute('aria-expanded', 'false');
+      p.style.height = '0px';
+    }
+    cards.forEach(function (card) {
+      var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
+      if (!btn || !panel) return; // 외부 링크 카드는 아코디언 아님
+      btn.addEventListener('click', function () {
+        var isOpen = card.classList.contains('open');
+        cards.forEach(function (c) { if (c !== card) close(c); });
+        if (isOpen) { close(card); }
+        else {
+          card.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
+        }
+      });
+    });
   }
 
   /* 최소 IO 리빌 (없거나 reduced-motion이면 즉시 표시) */
@@ -140,19 +167,28 @@
       posts.forEach(function (p) { var el = cardEl(p); frag.appendChild(el); made.push(el); });
       grid.innerHTML = '';
       grid.appendChild(frag);
+      bindAccordion(grid);
       reveal(made);
     }).catch(function (err) {
       quiet('feed fetch 실패 — 정적 카드 유지', err); // file:// 포함, 조용히
     });
   }
 
-  /* ---------- news.html: 전체 게시판 + 레거시 해시 호환 ---------- */
+  /* ---------- news.html: 전체 게시판(목록 ↔ 상세 라우팅) ---------- */
   function initBoardPage(grid) {
     var tabs = [].slice.call(doc.querySelectorAll('.board-tab'));
     var statusEl = doc.getElementById('boardStatus');
+    var listView = doc.getElementById('boardList');
+    var detailView = doc.getElementById('boardDetail');
     var filter = 'all';
     var allPosts = [];
     var loaded = false;
+
+    // 라우팅 상태
+    var view = 'list';          // 'list' | 'detail'
+    var listScrollY = 0;        // 목록 → 상세 진입 시점의 스크롤 위치(복귀 시 복원)
+    var navFromCard = false;     // 카드 클릭으로 상세에 진입했는지(뒤로가기 판단용)
+    var detailFromList = false;  // 현재 상세가 목록에서 진입한 것인지
 
     reveal(doc.querySelectorAll('.sec-head.rv, .board-tabs.rv'));
 
@@ -195,6 +231,12 @@
       t.addEventListener('click', function () { setFilter(t.getAttribute('data-cat')); });
     });
 
+    // 내부 카드(#p=…) 클릭을 뒤로가기 판단용으로 표시 — 해시 변경 자체는 <a> 기본 동작이 처리
+    grid.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a.ncard') : null;
+      if (a && /#p=/.test(a.getAttribute('href') || '')) navFromCard = true;
+    });
+
     function findById(id) {
       for (var i = 0; i < allPosts.length; i++) if ((allPosts[i].id || '') === id) return allPosts[i];
       return null;
@@ -209,23 +251,62 @@
       }));
     }
 
-    function redirectLegacyHash() {
-      if (!loaded) return false;
+    function renderDetail(post) {
+      var tag = CAT_LABEL[post.category] || 'NEWS';
+      var thumb = post.thumb
+        ? '<div class="detail-thumb"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '"></div>'
+        : '';
+      var body = post.body || ('<p>' + esc(post.summary || '') + '</p>');
+      detailView.innerHTML =
+        '<div class="detail-eyebrow"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>' +
+        '<h2 tabindex="-1">' + esc(post.title) + '</h2>' +
+        thumb +
+        '<div class="detail-body">' + body + '</div>' +
+        '<p class="detail-back"><a href="#" class="detail-back-link">← 목록으로</a></p>';
+      var back = detailView.querySelector('.detail-back-link');
+      if (back) back.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (detailFromList) win.history.back();   // 목록에서 왔으면 히스토리 되감기(스크롤·탭 유지)
+        else win.location.hash = '';              // 딥링크/직접 진입이면 해시만 비워 목록 표시
+      });
+      var h2 = detailView.querySelector('h2');
+      if (h2) { try { h2.focus({ preventScroll: true }); } catch (_) { h2.focus(); } }
+    }
+
+    function showDetail(post) {
+      if (view === 'list') { listScrollY = win.scrollY || win.pageYOffset || 0; detailFromList = navFromCard; }
+      navFromCard = false;
+      view = 'detail';
+      if (listView) listView.hidden = true;
+      renderDetail(post);
+      if (detailView) detailView.hidden = false;
+      win.scrollTo(0, 0);
+    }
+
+    function showList() {
+      var wasDetail = (view === 'detail');
+      view = 'list';
+      if (detailView) { detailView.hidden = true; detailView.innerHTML = ''; }
+      if (listView) listView.hidden = false;
+      if (wasDetail) win.scrollTo(0, listScrollY);
+    }
+
+    function route() {
+      if (!loaded) return; // 데이터 준비 전에는 렌더 후 재호출됨
       var m = /#p=([^&]+)/.exec(win.location.hash || '');
       var id = m ? decodeURIComponent(m[1]) : null;
       var post = id ? findById(id) : null;
-      if (!post || safeExternalUrl(post.externalUrl)) return false;
-      win.location.replace(articleUrl(post));
-      return true;
+      if (post && !safeExternalUrl(post.externalUrl)) showDetail(post);
+      else showList();
     }
 
-    win.addEventListener('hashchange', redirectLegacyHash);
+    win.addEventListener('hashchange', route);
 
     function boot(posts, viaFallback, err) {
       allPosts = posts.slice().sort(byDateDesc);
       loaded = true;
-      if (redirectLegacyHash()) return;
       renderGrid();
+      route();
       if (viaFallback) quiet('board fetch 실패 — 정적 스냅샷으로 렌더', err);
     }
 
