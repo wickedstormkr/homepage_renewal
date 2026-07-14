@@ -35,7 +35,7 @@ renewal/
 
 - 폰트: 한글 `Pretendard Variable` v1.3.9 가변 다이나믹 서브셋(로컬 vendoring),
   영문/숫자 `Sora` Latin 가변 폰트(로컬 woff2). 숫자는 `font-variant-numeric: tabular-nums`.
-- GA4: 개인정보 고지와 동의 정책 확정 전에는 공개 페이지에서 기본 실행하지 않는다.
+- GA4: `G-0Y5QD1HBGN` (기존 속성 유지, async gtag).
 - SEO: title/description/canonical(https://wickedstorm.kr/)/OG(og-image.png)/twitter card/
   JSON-LD Organization(주소·전화·이메일)/robots.txt/sitemap.xml(index, privacy 2개 URL).
 - 파비콘: favicon.ico + `<link rel="apple-touch-icon" href="./img/favicon.png">`.
@@ -156,10 +156,10 @@ IntersectionObserver threshold 0.12, 등장 후 unobserve.
   honeypot(name="website") / 유입경로 direct·etc 선택 시 추가 입력란 표시(+required, 라벨 전환) /
   인라인 상태 메시지(role=status) / 전송 중 버튼 disabled / 성공 시 reset.
   개인정보 동의 체크(라벨에 privacy.html 링크).
-- privacy.html: 수집 항목(이름·소속·이메일·문의내용·유입경로) / 보유 1년 / AWS 위탁 /
-  권리행사 연락처 / 법인명·대표·사업자등록번호를 공개한다.
+- privacy.html: 이전 초안(수집 항목: 이름·소속·이메일·문의내용·유입경로 / 보유 1년 / AWS 위탁 /
+  권리행사 연락처) + "법무 검토 전 초안" HTML 주석 TODO.
 - 푸터: 주소/전화/팩스/이메일 + privacy 링크 + "AI Insight, Empowered Education." + © 2026.
-  법인명·대표·사업자등록번호와 확인된 팩스번호를 함께 공개한다.
+  사업자등록번호는 HTML 주석 TODO로 자리만.
 
 ## 7. 완료 기준 (Definition of Done)
 
