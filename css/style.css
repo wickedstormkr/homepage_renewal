@@ -71,18 +71,14 @@ section{position:relative;z-index:2}
 
 /* ---- 헤더 ---- */
 header{position:fixed;top:0;left:0;right:0;z-index:50;height:76px;display:flex;align-items:center;
-  transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+  transition:transform .35s ease,background .3s,border-color .3s;border-bottom:1px solid transparent}
 header.scrolled{background:rgba(8,9,18,.96);border-bottom-color:var(--line)}
+header.hide{transform:translateY(-100%)}
 .hwrap{width:min(var(--wrap),100% - 48px);margin-inline:auto;display:flex;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:12px}
 .brand img{height:21px}
-nav.main{display:flex;gap:22px;align-items:center;font-family:var(--en);font-size:13.5px;font-weight:600}
+nav.main{display:flex;gap:32px;align-items:center;font-family:var(--en);font-size:14px;font-weight:600}
 nav.main a{color:var(--muted);transition:color .18s}nav.main a:hover{color:#fff}
-nav.main a:not(.cta){position:relative}
-nav.main a:not(.cta)::after{content:"";position:absolute;left:0;right:0;bottom:-9px;height:2px;background:var(--grad-c);
-  transform:scaleX(0);transform-origin:left;transition:transform .2s}
-nav.main a.active,nav.main a[aria-current="page"]{color:#fff}
-nav.main a.active::after,nav.main a[aria-current="page"]::after{transform:scaleX(1)}
 nav.main .cta{padding:9px 20px;border-radius:999px;background:var(--grad);color:#fff;letter-spacing:-.01em}
 nav.main .cta:hover{color:#fff}
 
@@ -318,11 +314,6 @@ nav.main .cta:hover{color:#fff}
 .std-list small{margin-top:3px;font-size:12.5px;color:var(--muted)}
 .std-list em{font-style:normal;white-space:nowrap;font-size:10.5px;font-family:var(--en);font-weight:700;letter-spacing:.06em;
   text-transform:uppercase;padding:3px 9px;border-radius:6px}
-.context-cta{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-top:30px;padding:24px 4px;
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.context-cta p{font-family:var(--en);font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--cyan);text-transform:uppercase}
-.context-cta h3{margin-top:6px;font-size:18px;line-height:1.45}
-.context-cta .btn{flex:none}
 /* '적용' 카드 진입 시 보더 글로우 1회 펄스 (bounded, 1 iteration) */
 .std-card.pulse.in{animation:cardglow 1.2s ease 1}
 @keyframes cardglow{0%,100%{box-shadow:0 0 0 0 rgba(124,77,255,0)}
@@ -336,9 +327,6 @@ nav.main .cta:hover{color:#fff}
   letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px}
 .feat{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 .feat span{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#c7cbe6}
-.text-cta{display:inline-flex;align-items:center;gap:8px;margin-top:24px;color:#fff;font-weight:700;font-size:14px}
-.text-cta span{color:var(--cyan);transition:transform .2s}
-.text-cta:hover span{transform:translateX(4px)}
 .note{margin-top:22px;font-size:12.5px;color:var(--faint)}
 .growa-main{will-change:transform}
 .growa-sub{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
@@ -481,8 +469,6 @@ html.js .ref-card.in::before{transform:scaleY(1)}
   .pipe{grid-template-columns:1fr 1fr}
   .prod-grid,.news-grid,.growa-sub,.feature,.ref-grid,.contact-grid,.cform .row2,.co-stats{grid-template-columns:1fr}
   .ref-featured{grid-template-columns:1fr}
-  .contact-grid .cform{order:1}
-  .contact-grid>div{order:2}
   .feature.reverse .feat-copy{order:0}
   .capture{margin-top:0}
   .hero{min-height:auto;padding:100px 0 48px}
@@ -511,7 +497,6 @@ html.js .ref-card.in::before{transform:scaleY(1)}
   .stream-track>.xrow:nth-child(n+3){display:none}
   .cap-foot{gap:9px;padding-top:12px}
   .ins-chip{font-size:11.5px;padding:6px 10px}
-  .context-cta{align-items:flex-start;flex-direction:column}
 }
 
 /* ---- reduced-motion: 모든 콘텐츠 정적 완전 노출 ---- */

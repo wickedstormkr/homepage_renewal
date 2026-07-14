@@ -332,9 +332,15 @@
 
     var hdr = doc.getElementById('hdr');
     if (hdr) {
+      var lastY = win.scrollY || 0;
       win.addEventListener('scroll', function () {
         var y = win.scrollY || 0;
         hdr.classList.toggle('scrolled', y > 20);
+        if (!root.classList.contains('nav-open')) {
+          if (y > lastY && y > 220) hdr.classList.add('hide');
+          else hdr.classList.remove('hide');
+        }
+        lastY = y;
       }, { passive: true });
     }
 

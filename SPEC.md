@@ -150,13 +150,13 @@ IntersectionObserver threshold 0.12, 등장 후 unobserve.
 
 ## 6. 헤더/내비/폼 (운영 품질)
 
-- 헤더: 스크롤 방향과 관계없이 고정 노출 + 20px 이후 불투명 배경. 주 메뉴는 Product / References / Standards / Company / News / 도입 문의 순서다.
+- 헤더: 위로 스크롤 시 표시/아래로 스크롤 시 숨김(translateY(-100%), 현행 사이트 UX 계승) + 20px 이후 불투명 배경.
 - 모바일(≤960px): 햄버거 → 풀폭 드로어(링크 탭 시 닫힘, aria-expanded, ESC 닫힘, 열림 중 body 스크롤 잠금).
-- 앵커 이동: 네이티브 부드러운 이동, reduced-motion 시 기본 점프.
+- 앵커 이동: Lenis.scrollTo(부드럽게), reduced-motion 시 기본 점프.
 - 문의 폼: POST `https://v6pa5eyigfdkbuzm2rskahdf6y0xfsre.lambda-url.ap-northeast-2.on.aws`
   payload `{name, affiliation, email, inquiry, userTraffic, userTrafficEtc?, subject}`
   subject = `Contact Us 문의 접수: {name}님 (소속: {affiliation})`.
-  honeypot(name="website") / 유입경로는 선택 항목 / direct·etc 선택 시 추가 입력란 표시(+required, 라벨 전환) /
+  honeypot(name="website") / 유입경로 direct·etc 선택 시 추가 입력란 표시(+required, 라벨 전환) /
   인라인 상태 메시지(role=status) / 전송 중 버튼 disabled / 성공 시 reset.
   개인정보 동의 체크(라벨에 privacy.html 링크).
 - privacy.html: 수집 항목(이름·소속·이메일·문의내용·유입경로) / 보유 1년 / AWS 위탁 /
