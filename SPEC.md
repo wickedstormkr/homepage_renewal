@@ -100,21 +100,18 @@ header(고정) → ① hero(+핀 스크럽) → ② pipeline → ③ product(LRS
 - LRS/LAP frame에 hover: translateY(-4px) (CSS).
 
 ### 씬 5 — 레퍼런스
-- 핵심 사례 1개를 풀폭으로 강조하고 나머지 3개를 근거 카드로 배치한다.
-- 각 사례에는 수행 연도·기관·역할·구현 범위를 표시하고 근거 없는 성과 수치는 사용하지 않는다.
-- 카드 stagger 0.08 reveal + 각 카드 좌측 그라디언트 스파인 scaleY 0→1 (transform-origin top, 진입 1회).
+- 카드 4개 stagger 0.08 reveal + 각 카드 좌측 그라디언트 스파인 scaleY 0→1 (transform-origin top, 진입 1회).
 
 ### 씬 6 — 표준/1EdTech
 - powered 배지: x +32→0 + fade (진입 1회).
-- 실제 적용 중인 xAPI·CASE 2개만 주 카드로 노출하고 진입 시 보더 글로우를 1회 실행한다.
-- 적용 준비 4개와 설계 참조 4개는 네이티브 details 그룹으로 접어 상태를 구분한다.
+- 8개 카드 웨이브 stagger(행 우선 0.05s). '적용' 4개는 진입 시 보더 글로우 1회 펄스(CSS keyframe 1회).
 
 ### 씬 7 — GROWA
 - 메인 대시보드 frame: 진입 시 perspective 틸트 정착(rotateX 5deg, y 48, opacity 0 → 0/0/1, 0.9s)
   + 섹션 통과 패럴랙스 y ±24 (scrub). 서브 frame 2개는 stagger 리빌.
 
 ### 씬 8 — 뉴스: 카드 3개 stagger 리빌(그 외 정적).
-### 씬 9 — 컴퍼니: 숫자 스탯(설립 2021, 등록 특허 2건) 진입 1회 카운트업 1.2s(tabular-nums, IO once). "GS 1등급", "xAPI"는 카운트 없음.
+### 씬 9 — 컴퍼니: 숫자 스탯(2021, 30, 3) 진입 1회 카운트업 1.2s(tabular-nums, IO once). "xAPI"는 카운트 없음.
 ### 씬 10 — 컨택트: 좌측 정보/우측 폼 자식 cascade 리빌.
 
 리빌 공통: `.rv`는 **JS가 `js` 클래스를 html에 붙인 뒤에만** 초기 숨김이 적용되도록
