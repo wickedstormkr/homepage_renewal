@@ -108,6 +108,11 @@
         var el = doc.querySelector(id);
         if (!el) return;
         e.preventDefault();
+        // 접근성: 시각 스크롤과 함께 대상으로 포커스를 옮긴다. 이렇게 해야 스킵링크·앵커가
+        // 키보드 사용자에게도 실제 '이동'이 되어(다음 Tab이 대상 본문에서 이어짐) 기능한다.
+        // 네이티브로 포커스 불가한 대상(<main>/<section> 등)엔 tabindex="-1"을 1회 부여한다.
+        if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+        try { el.focus({ preventScroll: true }); } catch (_) { el.focus(); }
         if (lenis) lenis.scrollTo(el, { offset: -76 });
         else el.scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
       });
