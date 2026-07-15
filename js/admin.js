@@ -232,15 +232,19 @@
   function collectEditor() {
     var title = $('f-title').value.trim();
     var date = $('f-date').value.trim();
+    var summary = $('f-summary').value.trim();
     if (!title) { setEditorStatus('제목을 입력하세요.', 'err'); return null; }
     if (!/^\d{4}\.\d{2}\.\d{2}$/.test(date)) { setEditorStatus('날짜 형식은 YYYY.MM.DD 입니다.', 'err'); return null; }
+    // 제목·요약은 정적 아티클 <title>/OG/제목에 원문으로 들어가므로 태그 문자를 금지한다(서버도 400).
+    if (/[<>]/.test(title)) { setEditorStatus('제목에는 < 또는 > 문자를 쓸 수 없습니다.', 'err'); return null; }
+    if (/[<>]/.test(summary)) { setEditorStatus('요약에는 < 또는 > 문자를 쓸 수 없습니다.', 'err'); return null; }
     var ext = $('f-external').value.trim();
     var post = {
       id: editing.id || slugId(date),
       category: $('f-category').value,
       date: date,
       title: title,
-      summary: $('f-summary').value.trim(),
+      summary: summary,
       body: textToBody($('f-body').value),
       thumb: $('f-thumb').value.trim() || null,
       externalUrl: ext || null,

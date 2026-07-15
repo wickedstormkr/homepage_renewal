@@ -292,7 +292,7 @@ function isAuthorized(event) {
 // 검증
 // ---------------------------------------------------------------------------
 
-function validatePostsPayload(payload) {
+export function validatePostsPayload(payload) {
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
     return 'Payload must be a JSON object';
   }
@@ -341,11 +341,20 @@ function validatePostsPayload(payload) {
     if (post.title.length > MAX_LENGTHS.title) {
       return `${prefix}.title exceeds ${MAX_LENGTHS.title} characters`;
     }
+    // 제목·요약은 정적 아티클 <title>/OG/<h1> 등 여러 HTML 컨텍스트에 원문이 삽입되며
+    // 정당한 태그 문자가 들어갈 사유가 없다. "<"/">"를 서버에서 거부해 이스케이프
+    // 왕복 없이 단일 방어한다(기존 저장 데이터·클라 esc()는 그대로 무변).
+    if (/[<>]/.test(post.title)) {
+      return `${prefix}.title must not contain "<" or ">"`;
+    }
     if (typeof post.summary !== 'string') {
       return `${prefix}.summary must be a string`;
     }
     if (post.summary.length > MAX_LENGTHS.summary) {
       return `${prefix}.summary exceeds ${MAX_LENGTHS.summary} characters`;
+    }
+    if (/[<>]/.test(post.summary)) {
+      return `${prefix}.summary must not contain "<" or ">"`;
     }
     if (typeof post.body !== 'string') {
       return `${prefix}.body must be a string`;
@@ -404,8 +413,8 @@ function isValidThumb(value) {
 }
 
 // 검증 통과 후 알려진 필드만으로 payload/post를 재구성한다(잉여 필드는 저장하지 않음).
-// body는 sanitizeBody로 정화한 값을 저장한다. title/summary는 원문 그대로 저장한다
-// (렌더링 시 board.js가 escape 처리하므로 여기서는 정화하지 않는다).
+// body는 sanitizeBody로 정화한 값을 저장한다. title/summary는 "<"/">"가 이미 검증에서
+// 거부됐으므로 트리밍만 해 원문을 저장한다(소비 경로의 esc()와 이중 이스케이프 없음).
 function buildCleanPayload(payload) {
   const clean = {
     version: payload.version,
@@ -413,8 +422,8 @@ function buildCleanPayload(payload) {
       id: post.id,
       category: post.category,
       date: post.date,
-      title: post.title,
-      summary: post.summary,
+      title: post.title.trim(),
+      summary: post.summary.trim(),
       body: sanitizeBody(post.body),
       thumb: post.thumb,
       externalUrl: post.externalUrl,
