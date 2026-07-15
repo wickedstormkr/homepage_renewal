@@ -342,7 +342,7 @@ nav.main .cta:hover{color:#fff}
 .feature .feat-copy .kick{font-family:var(--en);font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .feature .feat-copy h3{margin:12px 0 14px;font-size:clamp(24px,3vw,36px);font-weight:800;letter-spacing:-.03em;line-height:1.2}
 .feature .feat-copy>p{color:var(--muted);font-size:15.5px;line-height:1.72}
-.feature .feat-copy ul{margin-top:22px;display:grid;gap:11px}
+.feature .feat-copy ul{list-style:none;margin-top:22px;display:grid;gap:11px}
 .feature .feat-copy li{position:relative;padding-left:20px;font-size:14.5px;color:#c7cbe6}
 .feature .feat-copy li::before{content:"";position:absolute;left:0;top:9px;width:11px;height:2px;background:var(--grad)}
 .feature .feat-badge{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-family:var(--en);font-size:12px;font-weight:700;
