@@ -515,6 +515,12 @@ nav.main .cta:hover{color:#fff}
 .cform .check a{color:#cbb4ff;text-decoration:underline}
 .cform .status{min-height:20px;font-size:13.5px;font-weight:600}
 .cform .status.ok{color:#22e0d6}.cform .status.err{color:#ff6b8a}
+/* 인라인 필드 오류: status.err와 같은 경고 톤 유지(빨강 과용 금지). label이 grid라
+   input 바로 아래에 8px 간격으로 놓인다. */
+.cform .field-err{font-size:12.5px;font-weight:600;color:#ff6b8a;letter-spacing:-.01em}
+.cform input[aria-invalid="true"],.cform select[aria-invalid="true"],.cform textarea[aria-invalid="true"]{border-color:#ff6b8a}
+.cform .check{flex-wrap:wrap}
+.cform .check .field-err{flex-basis:100%}
 .cform .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
 
 /* ---- CTA 밴드 ---- */

@@ -788,18 +788,60 @@
     // 동작이 바뀌지 않도록 기존 URL을 폴백 기본값으로 유지한다.
     var ENDPOINT = (win.WS_CONFIG && win.WS_CONFIG.CONTACT_API) || 'https://v6pa5eyigfdkbuzm2rskahdf6y0xfsre.lambda-url.ap-northeast-2.on.aws';
 
+    // 인라인 검증: novalidate 폼에서 제출 시 필수 항목을 일괄 검사해 각 필드 아래
+    // 한국어 오류를 붙인다(네이티브 말풍선은 로케일 종속 + 첫 필드만 알림). required·
+    // type=email 속성은 그대로 두고 el.validity로 판정 → 서버측 검증 계약 불변.
+    var FIELD_MSG = {
+      userName: '이름을 입력해 주세요.', userCompany: '소속을 입력해 주세요.',
+      userEmail: '이메일을 입력해 주세요.', userTraffic: '유입 경로를 선택해 주세요.',
+      userTrafficEtc: '유입 경로를 입력해 주세요.', userMemo: '문의사항을 입력해 주세요.',
+      checkPrivacy: '개인정보 수집·이용에 동의해 주세요.'
+    };
+    var FIELDS = ['userName', 'userCompany', 'userEmail', 'userTraffic', 'userTrafficEtc', 'userMemo', 'checkPrivacy'];
+    function msgFor(el) {
+      if (el.validity.typeMismatch && el.type === 'email') return '이메일 형식을 확인해 주세요.';
+      return FIELD_MSG[el.name] || '필수 항목입니다.';
+    }
+    function errHost(el) { return el.closest('label') || el.parentNode; }
+    function showErr(el) {
+      var host = errHost(el), e = host.querySelector('.field-err');
+      if (!e) { e = doc.createElement('span'); e.className = 'field-err'; e.id = 'err-' + el.name; host.appendChild(e); }
+      e.textContent = msgFor(el);
+      el.setAttribute('aria-invalid', 'true');
+      el.setAttribute('aria-describedby', e.id);
+    }
+    function clearErr(el) {
+      var host = errHost(el), e = host.querySelector('.field-err');
+      if (e) e.parentNode.removeChild(e);
+      el.removeAttribute('aria-invalid');
+      el.removeAttribute('aria-describedby');
+    }
+
     sel.addEventListener('change', function () {
       var n = NEED.indexOf(sel.value) >= 0;
       etc.hidden = !n; etcIn.required = n;
       if (n) { etcLab.textContent = sel.value === 'direct' ? '유입 경로 직접 입력 *' : '기타 내용 *'; etcIn.focus(); }
-      else etcIn.value = '';
+      else { etcIn.value = ''; clearErr(etcIn); }                   // 숨김 전환 시 잔여 오류 정리
     });
     function set(m, t) { status.textContent = m; status.className = 'status ' + (t || ''); }
+
+    // 입력·변경 즉시 해당 필드 오류 해제
+    ['userName', 'userCompany', 'userEmail', 'userTrafficEtc', 'userMemo'].forEach(function (n) {
+      if (f[n]) f[n].addEventListener('input', function () { clearErr(f[n]); });
+    });
+    f.userTraffic.addEventListener('change', function () { clearErr(f.userTraffic); });
+    f.checkPrivacy.addEventListener('change', function () { clearErr(f.checkPrivacy); });
 
     f.addEventListener('submit', function (e) {
       e.preventDefault();
       if (f.website.value) return;                                  // honeypot
-      if (!f.checkValidity()) { f.reportValidity(); return; }
+      var firstInvalid = null;
+      FIELDS.forEach(function (n) {
+        var el = f[n]; if (!el) return;
+        if (el.willValidate && !el.checkValidity()) { showErr(el); if (!firstInvalid) firstInvalid = el; }
+        else clearErr(el);
+      });
+      if (firstInvalid) { firstInvalid.focus(); return; }           // 첫 오류 필드로 포커스
       var name = f.userName.value.trim(), aff = f.userCompany.value.trim();
       var payload = {
         name: name, affiliation: aff, email: f.userEmail.value.trim(), inquiry: f.userMemo.value.trim(),
