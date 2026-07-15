@@ -231,8 +231,15 @@
         var pill = row.pills[si];
         var bx = pill.x + (0.12 + Math.random() * 0.76) * pill.w;  // 상태 B: 필 내부 랜덤 좌표
         var by = row.y + (Math.random() - 0.5) * pillH * 0.7;
+        // 곡선 비행 제어점: 시작-도착 중점에서 법선 방향으로 결정론적 오프셋(2차 베지어).
+        // 크기 = 비행거리의 0.15~0.30, 부호는 인덱스 기반 교대 → 궤적이 한쪽으로 쏠리지 않고
+        // 서로 엇갈려 "흘러들어가 정돈되는" 결을 만든다. Math.random은 build에서만 쓴다.
+        var dxk = bx - ax, dyk = by - ay, dk = Math.hypot(dxk, dyk) || 1;
+        var nx = -dyk / dk, ny = dxk / dk, sgn = (k % 2 ? -1 : 1);
+        var mag = dk * (0.15 + Math.random() * 0.15);
+        var cpx = (ax + bx) / 2 + nx * mag * sgn, cpy = (ay + by) / 2 + ny * mag * sgn;
         // 색은 슬롯에서 온다 — 이전엔 ci를 k%3으로 따로 매겨 착지 슬롯과 색이 어긋났다.
-        P.push({ ax: ax, ay: ay, bx: bx, by: by, x: ax, y: ay, r: Math.random() * 1.5 + .9, ci: si, node: Math.random() < .3, s0: row.s0, s1: row.s1 });
+        P.push({ ax: ax, ay: ay, bx: bx, by: by, cpx: cpx, cpy: cpy, ry: row.y, x: ax, y: ay, lt: 0, r: Math.random() * 1.5 + .9, ci: si, node: Math.random() < .3, s0: row.s0, s1: row.s1 });
       }
       // 연결선은 상태 A 근접쌍으로 1회 계산 → 스크럽마다 O(N²) 재계산 방지
       edges = [];
@@ -242,13 +249,24 @@
       }
     }
 
-    // 파티클별 조립 진행도(스태거)로 위치 보간
+    // 착지 이징: smootherstep(6t⁵-15t⁴+10t³) — 양끝이 더 평평해 감속감이 큰 5차 곡선.
+    function ease(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+    // 파티클 lt에서의 2차 베지어 좌표(제어점 cpx/cpy). 본체·궤적이 같은 식을 공유한다.
+    function posAt(q, lt) {
+      var e = ease(clamp01(lt)), m = 1 - e, k = 2 * m * e;
+      return { x: m * m * q.ax + k * q.cpx + e * e * q.bx, y: m * m * q.ay + k * q.cpy + e * e * q.by };
+    }
+    // 파티클별 조립 진행도(스태거)로 곡선 위치 보간 + 최종 정돈(settle)
     function setPos(p) {
+      var st = clamp01((p - 0.9) / 0.1); st = st * st * (3 - 2 * st);   // p 0.9→1.0 정돈 램프
       for (var i = 0; i < P.length; i++) {
         var q = P[i];
         var lt = clamp01((p - q.s0) / (q.s1 - q.s0));
-        var e = lt * lt * (3 - 2 * lt);                            // smoothstep
-        q.x = q.ax + (q.bx - q.ax) * e; q.y = q.ay + (q.by - q.ay) * e;
+        q.lt = lt;
+        var pt = posAt(q, lt);
+        // settle: 착지한 파티클 y를 자기 행 중심선으로 50% 추가 수렴(x는 유지) → 완성 기하가
+        // 더 칼같이 정렬. ease(lt)를 곱해 아직 비행 중인 파티클은 왜곡하지 않는다.
+        q.x = pt.x; q.y = pt.y + (q.ry - pt.y) * 0.5 * st * ease(lt);
       }
     }
 
@@ -261,20 +279,63 @@
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
     }
+    // 비행 궤적: 비행 중(0.08<lt<0.92)에만 현재·lt-0.05·lt-0.10 시점 위치를 잇는 테이퍼 선분 2개.
+    // 파티클 색, 알파≤0.22, 뒤로 갈수록 얇게. 착지 후·시작 전엔 없음(절제). lt는 setPos가 채운다.
+    function drawTrails() {
+      ctx.lineCap = 'round';
+      for (var i = 0; i < P.length; i++) {
+        var q = P[i], lt = q.lt;
+        if (lt <= 0.08 || lt >= 0.92) continue;
+        var rgb = COL[q.ci];
+        var a0 = posAt(q, lt), a1 = posAt(q, lt - 0.05), a2 = posAt(q, lt - 0.10);
+        ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.22)';
+        ctx.lineWidth = Math.max(0.6, q.r * 0.8);
+        ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
+        ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.10)';
+        ctx.lineWidth = Math.max(0.4, q.r * 0.5);
+        ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
+      }
+      ctx.lineCap = 'butt';
+    }
     function drawDots() {
       for (var i = 0; i < P.length; i++) {
-        var p = P[i];
-        if (p.node) ctx.drawImage(sprites[p.ci], p.x - 9, p.y - 9, 18, 18);
-        else { var rgb = COL[p.ci]; ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.6)'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill(); }
+        var p = P[i], rgb = COL[p.ci];
+        if (p.node) {
+          ctx.drawImage(sprites[p.ci], p.x - 9, p.y - 9, 18, 18);
+          // 착지 리플: node 파티클 착지 구간 lt 0.88→1.0에서 반지름 2→7px, 알파 0.3→0 링 1개.
+          // p의 결정론적 함수라 스크럽 역방향에서도 자연스럽게 재생된다(글로우 없음).
+          var rl = (p.lt - 0.88) / 0.12;
+          if (rl > 0 && rl < 1) {
+            ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (0.3 * (1 - rl)) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 2 + rl * 5, 0, 6.283); ctx.stroke();
+          }
+        } else {
+          ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.6)'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+        }
       }
     }
     function drawGuides(p) {
-      var gA = Math.min(1, p * 1.3) * 0.13;
-      if (gA <= 0.004) return;
       ctx.lineWidth = 1;
-      ctx.strokeStyle = 'rgba(150,164,255,' + gA + ')';
-      for (var g = 0; g < guides.length; g++) {
-        ctx.beginPath(); ctx.moveTo(guides[g], guideTop); ctx.lineTo(guides[g], guideBot); ctx.stroke();
+      // 완성 후(p>0.9) 가이드·헤어라인을 절반으로 감쇠 → 완성된 레저가 주인공이 되게 한다.
+      var fade = 1 - 0.5 * clamp01((p - 0.9) / 0.1);
+      // 세로 컬럼 가이드: 표 구조를 살짝 일찍(p*1.5) 암시.
+      var gA = Math.min(1, p * 1.5) * 0.13 * fade;
+      if (gA > 0.004) {
+        ctx.strokeStyle = 'rgba(150,164,255,' + gA + ')';
+        for (var g = 0; g < guides.length; g++) {
+          ctx.beginPath(); ctx.moveTo(guides[g], guideTop); ctx.lineTo(guides[g], guideBot); ctx.stroke();
+        }
+      }
+      // 행 헤어라인(레저 밑줄): 그 행 조립 시작 직전(s0-0.06)부터 페이드인, 알파≤0.08.
+      // 표가 먼저 자리잡는 앤티시페이션 — 파티클 도착 전에 행의 자리를 예고한다.
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var ha = clamp01((p - (row.s0 - 0.06)) / 0.10) * 0.08 * fade;
+        if (ha <= 0.004) continue;
+        var last = row.pills[row.pills.length - 1], hy = row.y + row.pillH / 2 + 3;
+        ctx.strokeStyle = 'rgba(150,164,255,' + ha + ')';
+        ctx.beginPath(); ctx.moveTo(row.pills[0].x, hy); ctx.lineTo(last.x + last.w, hy); ctx.stroke();
       }
     }
     // 필 배경 + 행 완성 글로우(스크럽 중에만 그림 → rAF 불필요)
@@ -283,23 +344,45 @@
         var row = rows[i], rp = clamp01((p - row.s0) / (row.s1 - row.s0));
         if (rp <= 0.001) continue;
         var ph = row.pillH, py = row.y - ph / 2, last = row.pills[row.pills.length - 1];
+        var fillStart = row.pills[0].x, fillEnd = last.x + last.w;
+        var sweepX = fillStart + (fillEnd - fillStart) * rp;        // 기록 헤드 x(좌→우)
         var gl = clamp01((rp - 0.72) / 0.28);                      // 완성 근처에서 램프인
         if (gl > 0.01) {                                           // 1회성 행 글로우
           ctx.save();
           ctx.globalAlpha = gl * 0.16;
           ctx.fillStyle = 'rgba(124,120,255,1)';
-          rr(row.pills[0].x - 6, py - 4, (last.x + last.w) - row.pills[0].x + 12, ph + 8, (ph + 8) / 2);
+          rr(fillStart - 6, py - 4, fillEnd - fillStart + 12, ph + 8, (ph + 8) / 2);
           ctx.fill();
           ctx.restore();
         }
         for (var j = 0; j < row.pills.length; j++) {
           var pl = row.pills[j], col = pl.ci;
+          // 외곽선: 조립 진행 램프(현행 유지)
           rr(pl.x, py, pl.w, ph, ph / 2);
-          ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (rp * 0.2) + ')';
-          ctx.fill();
           ctx.lineWidth = 1;
           ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (rp * 0.6) + ')';
           ctx.stroke();
+          // 채움: 스윕 헤드 뒤로 좌→우로만 채워진다("기록이 써진다"). 최종 채움 알파 0.2(절제).
+          var fw = clamp01((sweepX - pl.x) / pl.w) * pl.w;
+          if (fw > 0.5) {
+            ctx.save();
+            rr(pl.x, py, pl.w, ph, ph / 2); ctx.clip();
+            ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.2)';
+            ctx.fillRect(pl.x, py, fw, ph);
+            ctx.restore();
+          }
+        }
+        // 기록 헤드 스윕: 얇은 수직 라인이 행을 좌→우로 지난다. 가이드색 세로 그라디언트(흰빛 아님),
+        // 알파≤0.35, rp 0.1~0.9 구간에서만(양끝 페이드).
+        var swWin = Math.min(1, (rp - 0.1) / 0.15, (0.9 - rp) / 0.15);
+        if (swWin > 0.01) {
+          var sy0 = py - 4, sy1 = py + ph + 4;
+          var lg = ctx.createLinearGradient(0, sy0, 0, sy1);
+          lg.addColorStop(0, 'rgba(150,164,255,0)');
+          lg.addColorStop(0.5, 'rgba(150,164,255,' + (0.35 * swWin) + ')');
+          lg.addColorStop(1, 'rgba(150,164,255,0)');
+          ctx.fillStyle = lg;
+          ctx.fillRect(sweepX - 0.75, sy0, 1.5, sy1 - sy0);
         }
       }
     }
@@ -325,11 +408,14 @@
         ctx.restore();
         var cA = clamp01((rp - 0.7) / 0.3);                        // 행 완성 시 등장
         if (cA > 0.01) {
-          ctx.fillStyle = 'rgba(34,224,214,' + cA + ')';
-          ctx.beginPath(); ctx.arc(row.checkX, row.y, 3.4, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = 'rgba(34,224,214,' + (cA * 0.5) + ')';
+          // 팝: 알파 페이드가 아니라 반지름 1.3배→1.0배로 ease-out 수축하며 등장(cA의 함수).
+          // 알파는 빠르게 불투명으로 올려 "찍힌다"는 인상을 준다. 글로우 추가 없음.
+          var pop = 1 - (1 - cA) * (1 - cA), sc = 1.3 - 0.3 * pop, aa = Math.min(1, cA * 2.4);
+          ctx.fillStyle = 'rgba(34,224,214,' + aa + ')';
+          ctx.beginPath(); ctx.arc(row.checkX, row.y, 3.4 * sc, 0, 6.283); ctx.fill();
+          ctx.strokeStyle = 'rgba(34,224,214,' + (aa * 0.5) + ')';
           ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.arc(row.checkX, row.y, 5.8, 0, 6.283); ctx.stroke();
+          ctx.beginPath(); ctx.arc(row.checkX, row.y, 5.8 * sc, 0, 6.283); ctx.stroke();
         }
       }
     }
@@ -363,8 +449,9 @@
         ctx.clearRect(0, 0, W, H);
         drawGuides(p);
         drawLines(Math.max(0, 1 - p * 1.5));                       // 무질서 연결선 페이드아웃
-        drawPills(p);                                              // 필 배경 + 완성 글로우
-        drawDots();                                                // 파티클이 필 안으로 착지
+        drawPills(p);                                              // 필 배경(스윕 좌→우 채움) + 완성 글로우
+        drawTrails();                                              // 비행 궤적(필 위, 파티클 아래)
+        drawDots();                                                // 파티클이 필 안으로 착지 + 착지 리플
         drawAccents(p);                                            // actor · check 도트
       }
     };
