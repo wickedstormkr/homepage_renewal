@@ -248,8 +248,9 @@
     // upsert
     var idx = -1;
     for (var i = 0; i < state.posts.length; i++) if (state.posts[i].id === post.id) { idx = i; break; }
+    var prev = snapshot();
     if (idx >= 0) state.posts[idx] = post; else state.posts.push(post);
-    persist('게시 완료 (캐시 반영 1~2분)', function () { closeEditor(); renderList(); });
+    persist('게시 완료 (캐시 반영 1~2분)', function () { closeEditor(); renderList(); }, prev);
   }
 
   function deletePost(id) {
@@ -257,20 +258,27 @@
     var p = findPost(id);
     if (!p) return;
     if (!win.confirm('“' + p.title + '” 글을 삭제할까요?')) return;
+    var prev = snapshot();
     state.posts = state.posts.filter(function (x) { return x.id !== id; });
-    persist('삭제 완료 (캐시 반영 1~2분)', renderList);
+    persist('삭제 완료 (캐시 반영 1~2분)', renderList, prev);
   }
 
   function togglePin(id) {
     if (!apiConfigured()) { alert('API가 배포되지 않아 변경할 수 없습니다.'); return; }
     var p = findPost(id);
     if (!p) return;
+    var prev = snapshot();
     p.pinned = !p.pinned;
-    persist(p.pinned ? '핀 설정됨' : '핀 해제됨', renderList);
+    persist(p.pinned ? '핀 설정됨' : '핀 해제됨', renderList, prev);
   }
 
-  /* PUT /posts 전체 저장 */
-  function persist(okMsg, done) {
+  /* 낙관적 변경 전 state 스냅샷(깊은 복사) — persist 실패 시 롤백에 사용 */
+  function snapshot() { return JSON.parse(JSON.stringify(state)); }
+
+  /* PUT /posts 전체 저장.
+   * prev: 낙관적 변경 직전의 state 스냅샷. 저장 실패 시 이 값으로 복원 후 재렌더해
+   * 화면이 서버(확정되지 않은) 상태와 어긋난 채 남지 않도록 한다. */
+  function persist(okMsg, done, prev) {
     state.updated = todayISO();
     setToolStatus('저장 중…', '');
     api('/posts', {
@@ -282,6 +290,7 @@
       setToolStatus(okMsg, 'ok');
       if (done) done();
     }).catch(function (err) {
+      if (prev) { state = prev; renderList(); }               // 낙관적 변경 롤백 + 화면 동기화
       setToolStatus('저장 실패: ' + err.message, 'err');
     });
   }
