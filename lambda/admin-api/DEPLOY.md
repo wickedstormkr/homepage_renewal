@@ -190,6 +190,23 @@ aws lambda update-function-configuration \
   --environment "Variables={BUCKET=$BUCKET,DISTRIBUTION_ID=$DIST_ID,ADMIN_TOKEN=$ADMIN_TOKEN,ALLOWED_ORIGIN=$ALLOWED_ORIGIN,ALLOW_LOCALHOST=1}"
 ```
 
+### 3-1. 예약 동시성 설정 (문의 폼 Lambda 격리)
+
+이 함수의 Function URL은 `AuthType NONE`(익명 호출 허용)이라 대량 요청 시
+계정 전체 동시성(기본 1000)을 잠식할 수 있다. 그러면 같은 계정의 문의 폼
+Lambda까지 스로틀되어 홍보 채널이 멈춘다. 예약 동시성으로 이 함수의 상한을
+격리해 나머지 함수의 동시성 풀을 지킨다.
+
+```bash
+aws lambda put-function-concurrency \
+  --function-name "$FUNCTION_NAME" \
+  --reserved-concurrent-executions 5 \
+  --region "$REGION"
+```
+
+관리 API는 단일 관리자용이라 5로 충분하다. 값을 올리려면 계정 동시성에서
+문의 폼 몫을 남겨두고 조정한다.
+
 ---
 
 ## 4. Function URL 생성 (AuthType NONE — 인증은 코드가 담당)
@@ -313,7 +330,7 @@ aws cloudfront create-invalidation \
 
 ```bash
 # 자산 유형별 캐시 헤더가 의도대로 붙었는지
-for p in / css/style.css js/main.js fonts/PretendardVariable.woff2 data/posts.json; do
+for p in / css/style.css js/main.js fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.91.woff2 fonts/Sora-latin.woff2 data/posts.json; do
   printf '%-38s ' "$p"; curl -sI "https://wickedstorm.kr/$p" | grep -i '^cache-control' || echo '(없음)'
 done
 
