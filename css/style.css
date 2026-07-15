@@ -199,7 +199,7 @@ nav.main .cta:hover{color:#fff}
 .menu-btn[aria-expanded="true"] span:nth-child(1){transform:rotate(45deg)}
 .menu-btn[aria-expanded="true"] span:nth-child(2){opacity:0}
 .menu-btn[aria-expanded="true"] span:nth-child(3){transform:rotate(-45deg)}
-.drawer{position:fixed;inset:0;z-index:49;background:rgba(6,7,14,.98);display:flex;flex-direction:column;
+.drawer{position:fixed;inset:0;z-index:49;background:#06070e;display:flex;flex-direction:column;
   justify-content:center;gap:8px;padding:0 32px;transform:translateY(-100%);transition:transform .38s cubic-bezier(.4,0,.2,1)}
 .drawer.open{transform:translateY(0)}
 .drawer a{font-family:var(--en);font-size:28px;font-weight:700;color:#fff;padding:14px 0;border-bottom:1px solid var(--line)}
@@ -223,10 +223,12 @@ nav.main .cta:hover{color:#fff}
 .hero .eyebrow{margin-bottom:26px}
 .hero-lead{margin-top:28px;max-width:46ch;color:#b9bed6;font-size:clamp(16px,1.5vw,18.5px);font-weight:500}
 .hero-cta{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap}
-.hero-trust{display:flex;gap:26px;margin-top:44px;flex-wrap:wrap;align-items:center;color:var(--faint);
+.hero-trust{display:flex;column-gap:0;row-gap:12px;margin-top:44px;flex-wrap:wrap;align-items:center;color:var(--faint);
   font-size:13px;font-family:var(--en);font-weight:600}
 .hero-trust b{color:var(--muted)}
-.hero-trust .sep{width:1px;height:14px;background:var(--line2)}
+/* 구분자를 항목의 ::after로 붙여, wrap돼도 이전 줄 끝에 남고 다음 줄 시작에 고아로 오지 않게 한다 */
+.hero-trust>span{display:inline-flex;align-items:center}
+.hero-trust>span:not(:last-child)::after{content:"";width:1px;height:14px;background:var(--line2);margin:0 22px}
 .hero-copy{position:relative;z-index:2}
 
 /* 히어로 카피/캡처를 개별 제어하기 위한 래퍼 */
@@ -390,7 +392,7 @@ nav.main .cta:hover{color:#fff}
   transition:border-color .25s,transform .25s}
 .std-card:hover{border-color:var(--line2);transform:translateY(-3px)}
 .std-card::after{content:"↗";position:absolute;top:12px;right:14px;font-size:11px;color:var(--faint);opacity:0;transition:opacity .25s}
-.std-card:hover::after{opacity:1}
+.std-card:hover::after,.std-card:focus-visible::after{opacity:1}
 .std-card .k{font-family:var(--en);font-size:17px;font-weight:800;letter-spacing:-.01em}
 .std-card .k.on{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .std-card p{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5}
@@ -534,7 +536,7 @@ footer{background:#080a14;border-top:1px solid var(--line);padding:56px 0 40px;f
 .foot-grid img{height:19px;width:auto;margin-bottom:16px}
 .foot-grid p{margin-top:2px}
 .foot-nav{display:flex;gap:22px;font-family:var(--en);font-weight:600;flex-wrap:wrap}
-.foot-nav a{color:var(--muted);transition:color .18s}
+.foot-nav a{color:var(--muted);padding:4px 0;transition:color .18s}
 .foot-nav a:hover{color:#fff}
 footer .legal{margin-top:26px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--faint);font-family:var(--en)}
 

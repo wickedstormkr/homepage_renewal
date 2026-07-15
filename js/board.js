@@ -111,12 +111,14 @@
   /* 아코디언(한 번에 하나만 열림) — main.js는 개별 바인딩이라 동적 카드는 여기서 바인딩 */
   function bindAccordion(container) {
     var cards = [].slice.call(container.querySelectorAll('.ncard'));
+    function label(card, txt) { var m = card.querySelector('.nmore'); if (m && m.firstChild) m.firstChild.nodeValue = txt; }
     function close(card) {
       var b = card.querySelector('.nhead'), p = card.querySelector('.npanel');
       if (!b || !p) return;
       card.classList.remove('open');
       b.setAttribute('aria-expanded', 'false');
       p.style.height = '0px';
+      label(card, '자세히 보기 ');
     }
     cards.forEach(function (card) {
       var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
@@ -129,6 +131,7 @@
           card.classList.add('open');
           btn.setAttribute('aria-expanded', 'true');
           panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
+          label(card, '접기 ');
         }
       });
     });
@@ -267,6 +270,13 @@
         '<div class="detail-body">' + body + '</div>' +
         '<p class="detail-back"><a href="#" class="detail-back-link"><span aria-hidden="true">←</span> 목록으로</a></p>';
       doc.title = (post.title || '소식') + ' — 위키드스톰';
+      // 본문의 새 탭 링크(관리자 수기 작성)를 후처리: rel 보안 속성과 "(새 창)" 고지를
+      // 자동 주입해 매번 수기로 넣지 않아도 일관되게 한다.
+      [].forEach.call(detailView.querySelectorAll('.detail-body a[target="_blank"]'), function (a) {
+        a.setAttribute('rel', 'noopener noreferrer');
+        var lbl = (a.getAttribute('aria-label') || a.textContent || '').trim();
+        if (!/\(새 창\)/.test(lbl)) a.setAttribute('aria-label', lbl + ' (새 창)');
+      });
       var back = detailView.querySelector('.detail-back-link');
       if (back) back.addEventListener('click', function (e) {
         e.preventDefault();

@@ -582,10 +582,12 @@
    * ============================================================ */
   (function () {
     var cards = [].slice.call(doc.querySelectorAll('.ncard'));
+    function label(card, txt) { var m = card.querySelector('.nmore'); if (m && m.firstChild) m.firstChild.nodeValue = txt; }
     function close(card) {
       card.classList.remove('open');
       card.querySelector('.nhead').setAttribute('aria-expanded', 'false');
       card.querySelector('.npanel').style.height = '0px';
+      label(card, '자세히 보기 ');
     }
     cards.forEach(function (card) {
       var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
@@ -597,6 +599,7 @@
           card.classList.add('open');
           btn.setAttribute('aria-expanded', 'true');
           panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
+          label(card, '접기 ');
         }
       });
     });
