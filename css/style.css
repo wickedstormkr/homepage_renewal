@@ -184,7 +184,7 @@ header.scrolled{background:rgba(8,9,18,.96);border-bottom-color:var(--line)}
 header.hide{transform:translateY(-100%)}
 .hwrap{width:min(var(--wrap),100% - 48px);margin-inline:auto;display:flex;align-items:center;justify-content:space-between}
 .brand{display:flex;align-items:center;gap:12px}
-.brand img{height:21px}
+.brand img{height:21px;width:auto}
 nav.main{display:flex;gap:32px;align-items:center;font-family:var(--en);font-size:14px;font-weight:600}
 nav.main a{color:var(--muted);transition:color .18s}nav.main a:hover{color:#fff}
 nav.main .cta{padding:9px 20px;border-radius:999px;background:var(--grad);color:#fff;letter-spacing:-.01em}
@@ -525,7 +525,7 @@ nav.main .cta:hover{color:#fff}
 /* ---- 푸터 ---- */
 footer{background:#080a14;border-top:1px solid var(--line);padding:56px 0 40px;font-size:14px;color:var(--muted)}
 .foot-grid{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap}
-.foot-grid img{height:19px;margin-bottom:16px}
+.foot-grid img{height:19px;width:auto;margin-bottom:16px}
 .foot-grid p{margin-top:2px}
 .foot-nav{display:flex;gap:22px;font-family:var(--en);font-weight:600;flex-wrap:wrap}
 .foot-nav a{color:var(--muted);transition:color .18s}
