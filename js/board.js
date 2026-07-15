@@ -42,6 +42,16 @@
     }
   }
 
+  /* 썸네일 없는 글용 CSS 커버 — 신규 이미지 자산 없이 카테고리 그라디언트+워드마크로
+   * 4:3 영역을 확보해 그리드 한 행 카드 높이를 균일하게 맞춘다. 장식 요소이므로
+   * aria-hidden(카테고리는 .ntag 배지, 내용은 h3가 전달). */
+  function coverHtml(post) {
+    var cat = post.category || 'news';
+    var word = (CAT_LABEL[cat] || 'NEWS').toLowerCase();
+    return '<div class="nimg ncover" data-cover="' + esc(cat) + '" aria-hidden="true">' +
+      '<span class="cover-rail"></span><span class="cover-cat">' + esc(word) + '</span></div>';
+  }
+
   var uid = 0;
   function cardEl(post) {
     uid++;
@@ -49,7 +59,7 @@
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
       ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
-      : '';
+      : coverHtml(post);
     var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
 
     var extUrl = safeExternalUrl(post.externalUrl);
@@ -86,7 +96,7 @@
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
       ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
-      : '';
+      : coverHtml(post);
     var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
     var el = doc.createElement('a');
     el.className = 'ncard rv';
