@@ -258,16 +258,9 @@ nav.main .cta:hover{color:#fff}
 .cap-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;margin-bottom:10px}
 .cap-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--en);font-size:11.5px;font-weight:700;
   letter-spacing:.14em;text-transform:uppercase;color:#cfd3ee}
-.cap-actions{display:inline-flex;align-items:center;gap:9px;flex:none}
 .cap-live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--cyan);font-family:var(--en);font-weight:600}
 .cap-live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);
   box-shadow:0 0 10px var(--cyan);animation:blink 1.4s infinite}
-/* 티커 일시정지 토글(WCAG 2.2.2) — 다크 톤에 맞춘 pill 버튼 */
-.motion-toggle{min-height:44px;padding:0 10px;border:1px solid var(--line2);border-radius:999px;
-  font-family:var(--en);font-size:10.5px;font-weight:700;color:#cbd0e8;transition:border-color .2s,color .2s}
-.motion-toggle:hover,.motion-toggle:focus-visible{border-color:var(--cyan);color:#fff}
-.motion-toggle[aria-pressed="true"]{background:rgba(34,224,214,.1);color:var(--cyan)}
-.capture.motion-paused .cap-live::before,.capture.motion-paused .xrow .dot::after{animation-play-state:paused}
 @keyframes blink{50%{opacity:.35}}
 
 /* 스트림 뷰포트(고정 높이) + 트랙(FLIP 슬라이드 대상) */

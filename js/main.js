@@ -625,8 +625,6 @@
   (function () {
     var track = doc.getElementById('streamTrack');
     if (!track) return;
-    var toggle = doc.getElementById('streamToggle');
-    var capture = doc.getElementById('capture');
     var GAP = 9;
     var actors = ['학습자', '수강생', 'A반 학생', '튜티'];
     var events = [
@@ -713,25 +711,20 @@
     }
 
     drawSpark(spark);
-    if (REDUCE) {                                                   // 정적 5행 유지(타이머 미기동)
-      if (toggle) toggle.hidden = true;                             // 애니메이션이 없으니 토글도 숨김
-      if (capture) capture.classList.add('motion-paused');
-      return;
-    }
+    if (REDUCE) return;                                             // 정적 5행 유지(타이머 미기동)
 
     // JS 모션 모드: 정적 행 제거 → 1행씩 쌓아올리기 시작
     while (track.firstChild) track.removeChild(track.firstChild);
     track.appendChild(makeRow());
     setViewportH();                                                 // 5행 높이를 미리 예약(레이아웃 점프 방지)
 
-    var timer = null, visible = true, heroIn = true, userPaused = false;
-    function shouldRun() { return visible && heroIn && !userPaused; } // 사용자 일시정지도 정지 조건에 포함
+    var timer = null, visible = true, heroIn = true;
     // 필 단계(<5행): 700ms 간격 append / 정상 단계: 2400ms 슬라이드 — bounded setTimeout 체인
     function scheduleNext() {
       var delay = track.children.length < 5 ? 700 : 2400;
       timer = setTimeout(function () {
         timer = null;
-        if (shouldRun()) {
+        if (visible && heroIn) {
           if (track.children.length < 5) {                          // 필 단계: 슬라이드 없이 한 행 추가
             track.appendChild(makeRow());
             if (Math.random() < 0.55) swapInsight();
@@ -740,34 +733,18 @@
             pushRow();                                              // 정상 단계: 6행째부터 슬라이드
           }
         }
-        if (shouldRun()) scheduleNext();
+        if (visible && heroIn) scheduleNext();
       }, delay);
     }
-    function start() { if (!timer && shouldRun()) scheduleNext(); }
+    function start() { if (!timer) scheduleNext(); }
     function stop() { if (timer) { clearTimeout(timer); timer = null; } }
-    if (toggle) {
-      toggle.addEventListener('click', function () {
-        userPaused = !userPaused;
-        toggle.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
-        toggle.setAttribute('aria-label', userPaused ? '학습 데이터 수집 애니메이션 계속' : '학습 데이터 수집 애니메이션 일시정지');
-        toggle.textContent = userPaused ? '계속' : '일시정지';
-        if (capture) capture.classList.toggle('motion-paused', userPaused);
-        if (userPaused) {
-          stop();
-          if (sparkId != null) win.cancelAnimationFrame(sparkId);   // 스파크 rAF도 함께 정지
-        } else {
-          start();
-        }
-      });
-      toggle.setAttribute('aria-label', '학습 데이터 수집 애니메이션 일시정지');
-    }
     var hero = doc.getElementById('hero');
     if (IO && hero) {
       new IntersectionObserver(function (es) {
-        es.forEach(function (e) { heroIn = e.isIntersecting; if (shouldRun()) start(); else stop(); });
+        es.forEach(function (e) { heroIn = e.isIntersecting; if (heroIn && visible) start(); else stop(); });
       }, { threshold: 0 }).observe(hero);
     }
-    doc.addEventListener('visibilitychange', function () { visible = !doc.hidden; if (shouldRun()) start(); else stop(); });
+    doc.addEventListener('visibilitychange', function () { visible = !doc.hidden; if (visible && heroIn) start(); else stop(); });
     // 디바운스 resize: viewport 높이 재계산(상시 루프 아님)
     var vrt = null;
     win.addEventListener('resize', function () {
@@ -876,30 +853,20 @@
       return;
     }
     if (!IO) return;
-    var inView = new WeakMap(), userPaused = new WeakMap();
     function safePlay(v) {
-      if (userPaused.get(v)) return;                                // 사용자가 직접 정지한 영상은 재진입해도 재생 안 함
       var p = v.play();
       if (p && p.catch) p.catch(function () {});                    // play() reject 무시(콘솔 에러 0 원칙)
     }
+    var inView = new WeakMap();
     var io = new IntersectionObserver(function (ents) {
       ents.forEach(function (en) {
         var v = en.target;
-        var active = en.isIntersecting && en.intersectionRatio >= 0.25;
-        inView.set(v, active);
-        if (active) { if (!doc.hidden) safePlay(v); }
+        inView.set(v, en.isIntersecting);
+        if (en.isIntersecting) { if (!doc.hidden) safePlay(v); }
         else v.pause();
       });
     }, { threshold: 0.25 });
-    vids.forEach(function (v) {
-      userPaused.set(v, false);
-      // controls로 직접 정지한 경우만 userPaused=true (IO/탭 전환에 의한 pause는 제외)
-      v.addEventListener('pause', function () {
-        if (inView.get(v) && !doc.hidden) userPaused.set(v, true);
-      });
-      v.addEventListener('play', function () { userPaused.set(v, false); });
-      io.observe(v);
-    });
+    vids.forEach(function (v) { io.observe(v); });
     doc.addEventListener('visibilitychange', function () {          // 탭 hidden 시 일괄 정지
       if (doc.hidden) { vids.forEach(function (v) { v.pause(); }); }
       else { vids.forEach(function (v) { if (inView.get(v)) safePlay(v); }); }
