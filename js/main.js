@@ -123,8 +123,14 @@
     var c = doc.getElementById('field');
     if (!c) return null;
     var ctx = c.getContext('2d');
-    var COL = [[34, 224, 214], [124, 77, 255], [233, 48, 176]];
     var BLUE = [47, 124, 255], PURPLE = [124, 77, 255], MAGENTA = [233, 48, 176], CYAN = [34, 224, 214];
+    // 기록 슬롯 = 심볼 3색(파랑·보라·마젠타). 캡처 패널의 .chip.actor/.verb/.object와
+    // 같은 순서·같은 색이라 한 행이 곧 우리 심볼로 읽힌다.
+    // CYAN은 슬롯이 아니다 — 행 끝 점으로만 쓰는 '신호'(기록이 인사이트가 되는 지점).
+    // 파티클은 자기가 착지할 슬롯의 색을 가지므로, 정돈될수록 색이 컬럼별로 분류된다.
+    var SLOT = [BLUE, PURPLE, MAGENTA];
+    var COL = SLOT;
+    var NSLOT = SLOT.length;
     var sprites = COL.map(function (rgb) {
       var s = doc.createElement('canvas'); s.width = s.height = 40;
       var q = s.getContext('2d'); var g = q.createRadialGradient(20, 20, 0, 20, 20, 20);
@@ -134,7 +140,7 @@
       q.fillStyle = g; q.fillRect(0, 0, 40, 40); return s;
     });
     var W = 0, H = 0, DPR = 1, P = [], edges = [], rows = [], guides = [];
-    var guideTop = 0, guideBot = 0, introId = null;
+    var guideTop = 0, guideBot = 0, introId = null, headGrad = null;
     var MD = 170, ROWS = 6;
 
     function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
@@ -162,8 +168,8 @@
       var gw = W * 0.56, gh = H * 0.48, ox = (W - gw) / 2, oy = (H - gh) / 2;
       var rowGap = gh / ROWS, GAP = 9;
       var pillH = Math.max(7, Math.min(rowGap * 0.5, 13));
-      var PC = [PURPLE, MAGENTA, BLUE];                             // verb · object · (extra)
-      var px0 = ox + 22, px1 = ox + gw - 26;                        // 필 영역(오른쪽 끝은 체크 도트 여백)
+      var PC = SLOT;                                                // actor · verb · object
+      var px0 = ox + 22, px1 = ox + gw - 26;                        // 필 영역(오른쪽 끝은 신호 도트 여백)
       rows = [];
       for (var i = 0; i < ROWS; i++) {
         var rowY = oy + (i + 0.5) * rowGap;
@@ -180,9 +186,15 @@
         var s0 = 0.12 + i * 0.11, s1 = 0.42 + i * 0.11;
         rows.push({ y: rowY, actorX: ox + 7, pills: pills, checkX: ox + gw - 10, pillH: pillH, s0: s0, s1: s1 });
       }
-      // 3개의 희미한 세로 컬럼 가이드(표 구조 암시)
+      // 행머리 점: 패널 .xrow .dot과 같은 심볼 그라디언트(--grad, 92deg 마젠타→보라→파랑).
+      // 모든 행의 actorX가 같아 1회만 만들어 재사용한다(투명도는 globalAlpha로 준다).
+      headGrad = ctx.createLinearGradient(ox + 7 - 3.4, 0, ox + 7 + 3.4, 0);
+      headGrad.addColorStop(0, 'rgb(233,48,176)');
+      headGrad.addColorStop(.52, 'rgb(124,77,255)');
+      headGrad.addColorStop(1, 'rgb(47,124,255)');
+      // 희미한 세로 컬럼 가이드(표 구조 암시) — 슬롯 사이 경계에 NSLOT-1개
       guides = [];
-      for (var g = 0; g < 3; g++) guides.push(px0 + (px1 - px0) * (0.28 + g * 0.30));
+      for (var g = 1; g < NSLOT; g++) guides.push(px0 + (px1 - px0) * (g / NSLOT));
       guideTop = oy + rowGap * 0.12; guideBot = oy + gh - rowGap * 0.12;
 
       // 파티클: 상태 A(무질서) → 필 내부의 목표 좌표(상태 B)
@@ -191,10 +203,12 @@
       for (var k = 0; k < N; k++) {
         var ax = Math.random() * W, ay = Math.random() * H;        // 상태 A: 무질서
         var row = rows[k % ROWS];                                  // 6행에 고르게 분배
-        var pill = row.pills[Math.floor(k / ROWS) % 3];
+        var si = Math.floor(k / ROWS) % NSLOT;                     // 착지할 슬롯(actor·verb·object·extension)
+        var pill = row.pills[si];
         var bx = pill.x + (0.12 + Math.random() * 0.76) * pill.w;  // 상태 B: 필 내부 랜덤 좌표
         var by = row.y + (Math.random() - 0.5) * pillH * 0.7;
-        P.push({ ax: ax, ay: ay, bx: bx, by: by, x: ax, y: ay, r: Math.random() * 1.5 + .9, ci: k % 3, node: Math.random() < .3, s0: row.s0, s1: row.s1 });
+        // 색은 슬롯에서 온다 — 이전엔 ci를 k%3으로 따로 매겨 착지 슬롯과 색이 어긋났다.
+        P.push({ ax: ax, ay: ay, bx: bx, by: by, x: ax, y: ay, r: Math.random() * 1.5 + .9, ci: si, node: Math.random() < .3, s0: row.s0, s1: row.s1 });
       }
       // 연결선은 상태 A 근접쌍으로 1회 계산 → 스크럽마다 O(N²) 재계산 방지
       edges = [];
@@ -244,7 +258,7 @@
       for (var i = 0; i < rows.length; i++) {
         var row = rows[i], rp = clamp01((p - row.s0) / (row.s1 - row.s0));
         if (rp <= 0.001) continue;
-        var ph = row.pillH, py = row.y - ph / 2, last = row.pills[2];
+        var ph = row.pillH, py = row.y - ph / 2, last = row.pills[row.pills.length - 1];
         var gl = clamp01((rp - 0.72) / 0.28);                      // 완성 근처에서 램프인
         if (gl > 0.01) {                                           // 1회성 행 글로우
           ctx.save();
@@ -265,13 +279,16 @@
         }
       }
     }
-    // actor 도트 + 저장됨(check) 시안 도트 — 파티클 위에 얹는 액센트
+    // 행머리 actor 도트 + 행 끝 시안 '신호' 도트(기록이 인사이트가 되는 지점) — 파티클 위 액센트
     function drawAccents(p) {
       for (var i = 0; i < rows.length; i++) {
         var row = rows[i], rp = clamp01((p - row.s0) / (row.s1 - row.s0));
         if (rp <= 0.001) continue;
-        ctx.fillStyle = 'rgba(47,124,255,' + rp + ')';
+        ctx.save();
+        ctx.globalAlpha = rp;
+        ctx.fillStyle = headGrad;
         ctx.beginPath(); ctx.arc(row.actorX, row.y, 3.2, 0, 6.283); ctx.fill();
+        ctx.restore();
         var cA = clamp01((rp - 0.7) / 0.3);                        // 행 완성 시 등장
         if (cA > 0.01) {
           ctx.fillStyle = 'rgba(34,224,214,' + cA + ')';
