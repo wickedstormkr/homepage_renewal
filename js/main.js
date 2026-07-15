@@ -123,7 +123,7 @@
     var c = doc.getElementById('field');
     if (!c) return null;
     var ctx = c.getContext('2d');
-    var BLUE = [47, 124, 255], PURPLE = [124, 77, 255], MAGENTA = [233, 48, 176], CYAN = [34, 224, 214];
+    var BLUE = [47, 124, 255], PURPLE = [124, 77, 255], MAGENTA = [233, 48, 176];
     // 기록 슬롯 = 심볼 3색(파랑·보라·마젠타). 캡처 패널의 .chip.actor/.verb/.object와
     // 같은 순서·같은 색이라 한 행이 곧 우리 심볼로 읽힌다.
     // CYAN은 슬롯이 아니다 — 행 끝 점으로만 쓰는 '신호'(기록이 인사이트가 되는 지점).
@@ -730,7 +730,9 @@
     var sel = f.querySelector('select[name="userTraffic"]'), etc = f.querySelector('[data-etc]');
     var etcIn = etc.querySelector('input'), etcLab = etc.querySelector('[data-etc-label]');
     var NEED = ['direct', 'etc'];
-    var ENDPOINT = 'https://v6pa5eyigfdkbuzm2rskahdf6y0xfsre.lambda-url.ap-northeast-2.on.aws';
+    // 엔드포인트는 site-config.js의 WS_CONFIG.CONTACT_API로 외부화. 미설정 배포에서도
+    // 동작이 바뀌지 않도록 기존 URL을 폴백 기본값으로 유지한다.
+    var ENDPOINT = (win.WS_CONFIG && win.WS_CONFIG.CONTACT_API) || 'https://v6pa5eyigfdkbuzm2rskahdf6y0xfsre.lambda-url.ap-northeast-2.on.aws';
 
     sel.addEventListener('change', function () {
       var n = NEED.indexOf(sel.value) >= 0;

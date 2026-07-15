@@ -40,9 +40,10 @@ const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || DEFAULT_ALLOWED_ORIGIN;
 const POSTS_KEY = 'data/posts.json';
 const UPLOAD_PREFIX = 'img/uploads/';
 const MAX_BODY_BYTES = 1024 * 1024; // 1MB
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB — presigned POST content-length-range와 동일
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB — presigned POST content-length-range와 동일. js/admin.js MAX_UPLOAD_SIZE와 짝(둘 다 바꿀 것).
 const PRESIGN_EXPIRES_SECONDS = 300; // 5분
 const ALLOWED_CATEGORIES = new Set(['news', 'story', 'insight']);
+// js/admin.js IMG_TYPES와 동일 집합을 유지할 것 — 한쪽만 바꾸면 클라이언트 통과분이 서버 400으로 거부된다.
 const UPLOAD_CONTENT_TYPES = {
   'image/webp': 'webp',
   'image/jpeg': 'jpg',

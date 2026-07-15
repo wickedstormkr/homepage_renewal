@@ -298,7 +298,9 @@
     win.addEventListener('hashchange', route);
 
     function boot(posts, viaFallback, err) {
-      allPosts = posts.slice().sort(byDateDesc);
+      // null/undefined 항목 선필터: byDateDesc·findById가 p.date/p.id 접근 시 터지지 않도록
+      // (initIndexNews와 동일 수준의 방어). filter가 새 배열을 반환하므로 원본은 불변.
+      allPosts = posts.filter(function (p) { return p; }).sort(byDateDesc);
       loaded = true;
       renderGrid();
       route();

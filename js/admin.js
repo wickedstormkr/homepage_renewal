@@ -19,12 +19,14 @@
   var API = String(CFG.ADMIN_API || '').replace(/\/+$/, '');
   var TOKEN_KEY = 'ws_admin_token';
   var CATS = [['news', '뉴스'], ['story', '스토리'], ['insight', '인사이트']];
+  // 서버 UPLOAD_CONTENT_TYPES(lambda/admin-api/index.mjs)와 동일 집합을 유지할 것 — 한쪽만 바꾸면 업로드가 400으로 거부된다.
   var IMG_TYPES = ['image/webp', 'image/jpeg', 'image/png'];
-  var MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB — 서버(H)와 동일한 상한, 클라이언트 사전 체크용
+  var MAX_UPLOAD_SIZE = 5 * 1024 * 1024; // 5MB — 서버 MAX_UPLOAD_BYTES(index.mjs)와 짝, 클라이언트 사전 체크용
 
   var state = { version: 1, updated: '', posts: [] };
   var editing = null;        // 편집 중인 post (신규는 임시 객체)
   var editingIsNew = false;
+  var persisting = false;    // persist 진행 중 플래그(중복 클릭 방지)
 
   function $(id) { return doc.getElementById(id); }
   function esc(s) {
@@ -123,7 +125,11 @@
       renderList();
     }).catch(function (err) {
       setToken('');
-      setLoginStatus(err.status === 401 ? '토큰이 올바르지 않습니다.' : ('로그인 실패: ' + err.message), 'err');
+      // TypeError = fetch 자체 실패(네트워크 단절·CORS 차단·타임아웃) — 힌트 제공
+      var msg = err.status === 401 ? '토큰이 올바르지 않습니다.'
+        : (err instanceof TypeError) ? '네트워크 또는 CORS 설정을 확인하세요.'
+        : ('로그인 실패: ' + err.message);
+      setLoginStatus(msg, 'err');
     });
   }
 
@@ -244,6 +250,7 @@
   }
 
   function saveEditor() {
+    if (persisting) return;
     if (!apiConfigured()) { setEditorStatus('API가 배포되지 않아 저장할 수 없습니다.', 'err'); return; }
     var post = collectEditor();
     if (!post) return;
@@ -256,6 +263,7 @@
   }
 
   function deletePost(id) {
+    if (persisting) return;
     if (!apiConfigured()) { alert('API가 배포되지 않아 삭제할 수 없습니다.'); return; }
     var p = findPost(id);
     if (!p) return;
@@ -266,6 +274,7 @@
   }
 
   function togglePin(id) {
+    if (persisting) return;
     if (!apiConfigured()) { alert('API가 배포되지 않아 변경할 수 없습니다.'); return; }
     var p = findPost(id);
     if (!p) return;
@@ -277,12 +286,20 @@
   /* 낙관적 변경 전 state 스냅샷(깊은 복사) — persist 실패 시 롤백에 사용 */
   function snapshot() { return JSON.parse(JSON.stringify(state)); }
 
+  /* persist 진행 중 저장/삭제/핀 버튼 비활성(중복 클릭·중복 요청 방지) */
+  function setBusy(b) {
+    persisting = b;
+    var els = doc.querySelectorAll('#postList button[data-act], #editorForm button');
+    [].slice.call(els).forEach(function (x) { x.disabled = b; });
+  }
+
   /* PUT /posts 전체 저장.
    * prev: 낙관적 변경 직전의 state 스냅샷. 저장 실패 시 이 값으로 복원 후 재렌더해
    * 화면이 서버(확정되지 않은) 상태와 어긋난 채 남지 않도록 한다. */
   function persist(okMsg, done, prev) {
     state.updated = todayISO();
     setToolStatus('저장 중…', '');
+    setBusy(true);
     api('/posts', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -294,7 +311,7 @@
     }).catch(function (err) {
       if (prev) { state = prev; renderList(); }               // 낙관적 변경 롤백 + 화면 동기화
       setToolStatus('저장 실패: ' + err.message, 'err');
-    });
+    }).then(function () { setBusy(false); });                  // 성공·실패 모두 버튼 복구
   }
 
   /* ---------- 이미지 업로드 (S3 presigned POST) ----------
