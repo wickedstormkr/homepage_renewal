@@ -314,6 +314,7 @@ export function renderArticle(post, options = {}) {
 <link rel="stylesheet" href="../css/style.css">
 
 <!-- GA4 (기존 속성 유지) -->
+<link rel="preconnect" href="https://www.googletagmanager.com">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0Y5QD1HBGN"></script>
 <script>
 window.dataLayer=window.dataLayer||[];
