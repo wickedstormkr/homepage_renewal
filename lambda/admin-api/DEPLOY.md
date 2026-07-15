@@ -243,28 +243,85 @@ window.WS_CONFIG = {
 ## 6. 정적 사이트 반영 순서 (robots.txt / posts.json / site-config.js)
 
 관리자 페이지가 검색엔진에 노출되지 않도록, **`robots.txt`(Disallow: /admin.html)를
-`admin.html` 자체보다 먼저 또는 같이** 업로드한다. 권장 순서:
+`admin.html` 자체보다 먼저 또는 같이** 업로드한다.
+
+**이 절의 전제: 파일명에 해시가 없다.** 그래서 (a) CSS/JS는 캐시를 짧게 잡고 매 배포마다
+무효화해야 하고, (b) 4)의 무효화 목록에서 빠진 경로는 재배포해도 엣지가 예전 버전을 계속
+서빙한다. "새 HTML + 예전 CSS" 불일치가 여기서 나온다.
 
 ```bash
-# 1) robots.txt — admin.html 비공개 규칙을 가장 먼저 반영
-aws s3 cp robots.txt "s3://${BUCKET}/robots.txt" --cache-control "max-age=3600"
+# 배포에서 항상 제외 — 백엔드 소스·내부 문서·QA 산출물이 공개 버킷에 올라가지 않도록.
+# aws s3 sync는 .gitignore를 읽지 않으므로 여기에 명시해야 한다.
+EXCLUDES=(--exclude "lambda/*" --exclude ".git/*" --exclude "*.DS_Store"
+          --exclude ".playwright-cli/*" --exclude ".lighthouse/*"
+          --exclude "node_modules/*" --exclude ".gitignore"
+          --exclude "SPEC.md" --exclude "CHANGELOG.md"
+          --exclude "data/*")
 
-# 2) 시드 데이터 (Phase D에서 만든 data/posts.json)
+# 1) robots.txt — admin.html 비공개 규칙을 가장 먼저 반영
+aws s3 cp robots.txt "s3://${BUCKET}/robots.txt" --cache-control "max-age=86400"
+
+# 2) 시드 데이터 — 최초 1회만. 재배포 때는 이 단계를 건너뛴다.
+#    (관리자가 게시한 글을 로컬 파일로 덮어쓰게 된다. EXCLUDES에 data/*가 있는 이유)
 aws s3 cp data/posts.json "s3://${BUCKET}/data/posts.json" \
   --content-type "application/json; charset=utf-8" --cache-control "max-age=60"
 
-# 3) site-config.js (Function URL 반영본) 포함, 나머지 정적 파일 동기화
+# 3-1) 폰트·이미지·미디어 — 발행 후 불변. 교체 시 파일명을 바꾸는 것을 전제로 장기 캐시.
+#      같은 이름으로 교체했다면 4)의 무효화 목록에 그 경로를 반드시 추가할 것.
 aws s3 sync . "s3://${BUCKET}/" \
-  --exclude "lambda/*" --exclude ".git/*" --exclude "*.DS_Store"
+  --exclude "*" --include "fonts/*" --include "img/*" --include "media/*" \
+  --cache-control "max-age=2592000"
 
-# 4) CloudFront 캐시 무효화 (robots.txt, admin.html, site-config.js, posts.json)
+# 3-2) CSS·JS — 해시가 없으므로 짧게 잡고 매 배포마다 4)에서 무효화한다.
+aws s3 sync . "s3://${BUCKET}/" \
+  --exclude "*" --include "css/*" --include "js/*" \
+  --cache-control "max-age=3600"
+
+# 3-3) HTML·sitemap 등 나머지 — 배포 즉시 반영돼야 한다.
+#      site-config.js(Function URL 반영본)는 3-2에 포함된다.
+#      robots.txt는 1)에서 다른 헤더로 이미 올렸으므로 제외한다.
+aws s3 sync . "s3://${BUCKET}/" "${EXCLUDES[@]}" \
+  --exclude "fonts/*" --exclude "img/*" --exclude "media/*" \
+  --exclude "css/*" --exclude "js/*" --exclude "robots.txt" \
+  --cache-control "max-age=60, must-revalidate"
+
+# 4) CloudFront 캐시 무효화 — 여기서 빠진 경로는 예전 버전이 계속 나간다.
 aws cloudfront create-invalidation \
   --distribution-id "$DIST_ID" \
-  --paths "/robots.txt" "/admin.html" "/js/site-config.js" "/data/posts.json"
+  --paths "/" "/index.html" "/news.html" "/privacy.html" "/admin.html" \
+          "/css/*" "/js/*" "/robots.txt" "/sitemap.xml" "/data/posts.json"
 ```
+
+자산 유형별 Cache-Control 요약:
+
+| 자산 | Cache-Control | 근거 |
+|---|---|---|
+| HTML·sitemap.xml | `max-age=60, must-revalidate` | 배포 즉시 반영 (3-3) |
+| CSS·JS | `max-age=3600` + **매 배포 무효화** | 파일명 해시 없음 (3-2) |
+| 폰트·이미지·미디어 | `max-age=2592000` (30일) | 불변, 교체 시 파일명 변경 전제 (3-1) |
+| `data/posts.json` | `max-age=60` | 게시 시 Lambda가 자동 무효화 (2) |
+| robots.txt | `max-age=86400` | 거의 안 바뀜 (1) |
 
 이후 게시판 저장(`PUT /posts`)은 Lambda가 자체적으로
 `/data/posts.json`을 무효화하므로 수동 invalidation은 불필요하다.
+
+**장기 개선**: 파일명 해시(예: `style.a1b2c3.css`)를 도입하면 CSS/JS도
+`max-age=31536000, immutable`로 두고 무효화 자체가 불필요해진다. 빌드 스텝이 필요하므로
+별도 스코핑 대상.
+
+**배포 후 확인**(§7 스모크 테스트 전에):
+
+```bash
+# 자산 유형별 캐시 헤더가 의도대로 붙었는지
+for p in / css/style.css js/main.js fonts/PretendardVariable.woff2 data/posts.json; do
+  printf '%-38s ' "$p"; curl -sI "https://wickedstorm.kr/$p" | grep -i '^cache-control' || echo '(없음)'
+done
+
+# 내부 문서·QA 산출물이 공개되지 않았는지 — 모두 403/404여야 한다
+for p in SPEC.md CHANGELOG.md .gitignore .playwright-cli/ lambda/admin-api/index.mjs; do
+  printf '%-38s ' "$p"; curl -s -o /dev/null -w '%{http_code}\n' "https://wickedstorm.kr/$p"
+done
+```
 
 ---
 
