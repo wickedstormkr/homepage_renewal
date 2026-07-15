@@ -285,7 +285,10 @@
     function route() {
       if (!loaded) return; // 데이터 준비 전에는 렌더 후 재호출됨
       var m = /#p=([^&]+)/.exec(win.location.hash || '');
-      var id = m ? decodeURIComponent(m[1]) : null;
+      // decodeURIComponent는 `#p=100%`·`#p=%`처럼 깨진 시퀀스에서 URIError를 던진다.
+      // hashchange 경로도 이 함수를 타므로 여기서 가드해 실패 시 목록으로 폴백한다.
+      var id = null;
+      if (m) { try { id = decodeURIComponent(m[1]); } catch (e) { id = null; } }
       var post = id ? findById(id) : null;
       if (post && !safeExternalUrl(post.externalUrl)) showDetail(post);
       else showList();
@@ -301,9 +304,12 @@
       if (viaFallback) quiet('board fetch 실패 — 정적 스냅샷으로 렌더', err);
     }
 
+    // .then(onFulfilled, onRejected) 2인자 형태: onRejected는 fetch 거부만 잡는다.
+    // .catch였다면 onFulfilled 안의 boot()/route() 예외까지 fetch 실패로 오인해
+    // 정적 스냅샷으로 강등 + 거짓 로그를 남긴다. boot 예외는 여기서 삼키지 않는다.
     fetchPosts().then(function (data) {
       boot((data && data.posts) || [], false);
-    }).catch(function (err) {
+    }, function (err) {
       // fetch 실패(file:// 열람·오프라인 등): news.html 인라인 정적 스냅샷이 있으면 정상 렌더
       var fb = win.WS_POSTS_FALLBACK;
       if (fb && fb.posts && fb.posts.length) { boot(fb.posts, true, err); return; }
