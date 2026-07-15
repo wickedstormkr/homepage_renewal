@@ -78,7 +78,9 @@
     return el;
   }
 
-  /* news.html 게시판용 카드 — 아코디언 대신 상세 화면 링크(#p=<id>).
+  /* news.html 게시판용 카드 — 아코디언 대신 정적 아티클(./news/<id>.html)로 링크.
+   * 글마다 고유 URL을 부여해 검색 노출·공유가 되게 한다. 구 해시 딥링크
+   * (news.html#p=<id>)는 initBoardPage의 route()가 하위호환으로 계속 렌더한다.
    * externalUrl 글은 기존과 동일하게 새 탭 링크로 강등. */
   function boardCardEl(post) {
     var tag = CAT_LABEL[post.category] || 'NEWS';
@@ -97,7 +99,7 @@
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
         '<span class="nmore">바로가기 <i aria-hidden="true">↗</i></span></div>';
     } else {
-      el.href = '#p=' + encodeURIComponent(post.id || '');
+      el.href = './news/' + encodeURIComponent(post.id || '') + '.html';
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
         '<span class="nmore">자세히 보기 <i aria-hidden="true">→</i></span></div>';
     }
