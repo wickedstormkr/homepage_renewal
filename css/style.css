@@ -314,6 +314,7 @@ nav.main .cta:hover{color:#fff}
 
 /* ---- 파이프라인 ---- */
 .pipe-wrap{position:relative}
+.pipe-head{margin-bottom:clamp(28px,4vw,44px)}
 .pipe-rail{position:relative;height:2px;border-radius:2px;background:var(--line);margin-bottom:26px}
 .pipe-line{position:absolute;inset:0;border-radius:2px;background:var(--grad);
   transform:scaleX(0);transform-origin:0 50%;will-change:transform}
