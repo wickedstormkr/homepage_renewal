@@ -401,7 +401,7 @@
       if (doc.querySelector('.hero')) {
         var pinTl = gsap.timeline({
           scrollTrigger: {
-            trigger: '.hero', start: 'top top', end: '+=130%', scrub: .6, pin: true, anticipatePin: 1,
+            trigger: '.hero', start: 'top top', end: '+=80%', scrub: .6, pin: true, anticipatePin: 1,
             onUpdate: function (self) { if (canvas) canvas.scrub(self.progress); },
             // ScrollTrigger.refresh()는 .hero-copy/.capture를 "핀 생성 시점의 기준 상태"로
             // 되돌린다. 핀은 인트로(.capture는 0.45s에 진입)보다 먼저 만들어지므로 그 기준이
