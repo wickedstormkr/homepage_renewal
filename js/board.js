@@ -273,12 +273,14 @@
         ? '<div class="detail-thumb"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '"></div>'
         : '';
       var body = post.body || ('<p>' + esc(post.summary || '') + '</p>');
+      var backLink = '<a href="#" class="detail-back-link"><span aria-hidden="true">←</span> 목록으로</a>';
       detailView.innerHTML =
+        '<p class="detail-back detail-top">' + backLink + '</p>' +
         '<div class="detail-eyebrow"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>' +
         '<h2 tabindex="-1">' + esc(post.title) + '</h2>' +
         thumb +
         '<div class="detail-body">' + body + '</div>' +
-        '<p class="detail-back"><a href="#" class="detail-back-link"><span aria-hidden="true">←</span> 목록으로</a></p>';
+        '<p class="detail-back">' + backLink + '</p>';
       doc.title = (post.title || '소식') + ' — 위키드스톰';
       // 본문의 새 탭 링크(관리자 수기 작성)를 후처리: rel 보안 속성과 "(새 창)" 고지를
       // 자동 주입해 매번 수기로 넣지 않아도 일관되게 한다.
@@ -287,11 +289,24 @@
         var lbl = (a.getAttribute('aria-label') || a.textContent || '').trim();
         if (!/\(새 창\)/.test(lbl)) a.setAttribute('aria-label', lbl + ' (새 창)');
       });
-      var back = detailView.querySelector('.detail-back-link');
-      if (back) back.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (detailFromList) win.history.back();   // 목록에서 왔으면 히스토리 되감기(스크롤·탭 유지)
-        else win.location.hash = '';              // 딥링크/직접 진입이면 해시만 비워 목록 표시
+      // 상세 이미지(썸네일·본문)를 새 탭 원본 링크로 감싼다(정적 아티클 템플릿과 동일 동작).
+      [].forEach.call(detailView.querySelectorAll('.detail-thumb img, .detail-body img'), function (im) {
+        if (im.closest('a')) return;
+        var a = doc.createElement('a');
+        a.className = 'img-orig';
+        a.href = im.getAttribute('src') || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.setAttribute('aria-label', '원본 이미지 새 창에서 보기');
+        im.parentNode.insertBefore(a, im);
+        a.appendChild(im);
+      });
+      [].forEach.call(detailView.querySelectorAll('.detail-back-link'), function (back) {
+        back.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (detailFromList) win.history.back();   // 목록에서 왔으면 히스토리 되감기(스크롤·탭 유지)
+          else win.location.hash = '';              // 딥링크/직접 진입이면 해시만 비워 목록 표시
+        });
       });
       var h2 = detailView.querySelector('h2');
       if (h2) { try { h2.focus({ preventScroll: true }); } catch (_) { h2.focus(); } }

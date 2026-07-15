@@ -629,19 +629,26 @@ a.ncard:hover .nmore i{transform:translateX(3px)}
 .board-detail h2:focus{outline:none}
 .board-detail h2:focus-visible{outline:2px solid var(--violet);outline-offset:6px;border-radius:4px}
 .detail-thumb{border:1px solid var(--line2);border-radius:16px;overflow:hidden;
-  margin-bottom:30px;background:#0b0d1a}
-.detail-thumb img{width:100%;height:auto;display:block}
+  margin-bottom:30px;background:#0b0d1a;display:flex;justify-content:center;padding:16px}
+/* 세로형 스캔(특허증 900×1272 등)이 화면을 압도하지 않도록 60vh로 제한, 중앙 배치 */
+.detail-thumb .img-orig{display:inline-flex;max-width:100%}
+.detail-thumb img{max-height:60vh;width:auto;max-width:100%;height:auto;object-fit:contain;display:block;margin:auto}
+.img-orig{cursor:zoom-in}
 .detail-body{color:#c4c9e4;font-size:clamp(15px,1.55vw,17px);line-height:1.85}
 .detail-body p+p{margin-top:20px}
 .detail-body strong{color:#cbd0ee;font-weight:700}
 .detail-body a{color:var(--cyan);text-decoration:underline;text-underline-offset:3px;
   text-decoration-thickness:1px}
 .detail-body a:hover{color:#7ff0e8}
-/* 본문 삽입 이미지 — .frame 톤의 얇은 보더 + 상하 여백 */
-.detail-body img{max-width:100%;height:auto;display:block;border-radius:12px;
+/* 본문 삽입 이미지 — .frame 톤의 얇은 보더 + 상하 여백, 60vh 상한 */
+.detail-body img{max-width:100%;max-height:60vh;width:auto;height:auto;display:block;border-radius:12px;
   border:1px solid var(--line2);margin:26px auto}
-.detail-body p>img{margin-block:0}
+.detail-body .img-orig{display:block;width:fit-content;margin:26px auto}
+.detail-body .img-orig img{margin:0}
+.detail-body p>img,.detail-body p>.img-orig{margin-block:0}
 .detail-back{margin-top:44px;padding-top:26px;border-top:1px solid var(--line)}
+/* 상단 목록 복귀 링크 — 하단 back과 달리 구분선·상단 여백 없이 제목 위 */
+.detail-top{margin:0 0 22px;padding:0;border-top:0}
 .detail-back a{display:inline-flex;align-items:center;gap:8px;font-family:var(--en);
   font-size:14px;font-weight:600;color:var(--muted);transition:color .2s}
 .detail-back a:hover{color:var(--cyan)}

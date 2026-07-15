@@ -205,6 +205,17 @@ export function sanitizeArticleBody(html) {
   return output;
 }
 
+// 상세 이미지(썸네일·본문)를 새 탭 원본 링크로 감싼다. 화면에서는 60vh로 축소돼도
+// 클릭하면 원본 파일을 새 창에서 볼 수 있게 한다. rel/aria "(새 창)"은 board.js의
+// 외부 앵커 주입 패턴과 일관.
+function wrapImageLink(src, imgTag) {
+  return `<a class="img-orig" href="${escapeHtml(src)}" target="_blank" rel="noopener noreferrer" aria-label="원본 이미지 새 창에서 보기">${imgTag}</a>`;
+}
+
+function linkifyBodyImages(html) {
+  return String(html).replace(/<img\s+src="([^"]+)"[^>]*>/gi, (match, src) => wrapImageLink(src, match));
+}
+
 function safeJsonLd(value) {
   return JSON.stringify(value, null, 2)
     .replace(/</g, '\\u003c')
@@ -280,7 +291,7 @@ export function renderArticle(post, options = {}) {
   };
 
   const thumbnailMarkup = image.hasThumbnail
-    ? `\n      <figure class="detail-thumb">\n        <img src="${escapeHtml(image.articleSrc)}" alt="${escapeHtml(title)}">\n      </figure>`
+    ? `\n      <figure class="detail-thumb">\n        ${wrapImageLink(image.articleSrc, `<img src="${escapeHtml(image.articleSrc)}" alt="${escapeHtml(title)}">`)}\n      </figure>`
     : '';
 
   return `<!doctype html>
@@ -362,9 +373,10 @@ ${safeJsonLd(jsonLd)}
   <section class="band" id="article">
     <div class="wrap">
       <article class="board-detail" aria-labelledby="article-title">
+        <p class="detail-back detail-top"><a href="../news.html"><span aria-hidden="true">←</span> 소식 목록으로</a></p>
         <div class="detail-eyebrow"><span class="ntag">${escapeHtml(label)}</span> ${escapeHtml(post.date)}</div>
         <h1 class="h-lg" id="article-title" style="font-size:clamp(24px,3.4vw,40px);line-height:1.24;margin-bottom:26px">${escapeHtml(title)}</h1>${thumbnailMarkup}
-        <div class="detail-body">${sanitizeArticleBody(body) || `<p>${escapeHtml(description)}</p>`}</div>
+        <div class="detail-body">${linkifyBodyImages(sanitizeArticleBody(body)) || `<p>${escapeHtml(description)}</p>`}</div>
         <p class="detail-back"><a href="../news.html"><span aria-hidden="true">←</span> 소식 목록으로</a></p>
       </article>
     </div>
