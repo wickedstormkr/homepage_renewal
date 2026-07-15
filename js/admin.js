@@ -95,6 +95,8 @@
     var headers = opts.headers || {};
     headers['Authorization'] = 'Bearer ' + token();
     opts.headers = headers;
+    // 15초 타임아웃: 무응답 시 abort→reject되어 각 호출부 .catch로 넘어간다(pending 고착 방지).
+    if (opts.signal == null) opts.signal = AbortSignal.timeout(15000);
     return fetch(API + path, opts).then(function (r) {
       return r.text().then(function (txt) {
         var data = null;

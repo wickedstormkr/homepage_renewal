@@ -145,7 +145,8 @@
   }
 
   function fetchPosts() {
-    return fetch(POSTS_URL, { cache: 'no-cache' }).then(function (r) {
+    // 15초 타임아웃: 무응답 시 abort→reject되어 인라인 스냅샷 폴백 경로로 넘어간다.
+    return fetch(POSTS_URL, { cache: 'no-cache', signal: AbortSignal.timeout(15000) }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });

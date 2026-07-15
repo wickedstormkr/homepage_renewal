@@ -751,7 +751,8 @@
       };
       if (NEED.indexOf(f.userTraffic.value) >= 0 && f.userTrafficEtc.value.trim()) payload.userTrafficEtc = f.userTrafficEtc.value.trim();
       btn.disabled = true; set('전송 중입니다…');
-      fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+      // 15초 타임아웃: 서버 무응답 시 abort → catch 폴백으로 넘어가 버튼이 영구 비활성되지 않는다.
+      fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(15000) })
         .then(function (r) {
           if (!r.ok) throw new Error('bad');
           set('문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.', 'ok');
