@@ -357,7 +357,13 @@
           }
         });
         pinTl.to('.hero-copy', { opacity: 0, y: -40, ease: 'none', duration: .4 }, 0)
-          .to('.capture', { opacity: 0, y: -60, scale: .96, ease: 'none', duration: .6 }, .15)
+          // 카피와 같은 속도(.4)로 사라진다. 이전엔 .6 동안(=.75까지) 걸려 카피가 사라진
+          // 뒤에도 남고 오버레이 카피(.42~)와 겹쳐 잔상처럼 보였다.
+          // 위치를 0이 아닌 .02로 두는 이유: 위치 0이면 핀 셋업 때(인트로 전, 패널이 아직
+          // 숨김) 렌더되어 시작값을 0으로 기록해 "0 -> 0" 트윈이 된다. 시작 전인 트윈은
+          // 렌더되지 않으므로, 작은 오프셋이 시작값을 인트로 완료 후(=보임)에 잡히게 한다.
+          // 시각적으로는 카피와 동시에 사라진다(.02는 핀 구간의 3% 미만).
+          .to('.capture', { opacity: 0, y: -60, scale: .96, ease: 'none', duration: .4 }, .02)
           .fromTo('.hero-overlay', { opacity: 0 }, { opacity: 1, ease: 'none', duration: .3 }, .42);
       }
 
