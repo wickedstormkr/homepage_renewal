@@ -192,6 +192,7 @@
     var listScrollY = 0;        // 목록 → 상세 진입 시점의 스크롤 위치(복귀 시 복원)
     var navFromCard = false;     // 카드 클릭으로 상세에 진입했는지(뒤로가기 판단용)
     var detailFromList = false;  // 현재 상세가 목록에서 진입한 것인지
+    var baseTitle = doc.title;   // 목록 기본 <title> — 해시 상세 이탈 시 복원용
 
     reveal(doc.querySelectorAll('.sec-head.rv, .board-tabs.rv'));
 
@@ -230,8 +231,16 @@
       renderGrid();
     }
 
+    // 탭 클릭 → #c=<cat> 해시로 상태를 URL에 반영(#p= 상세 해시와 공존).
+    // route()가 hashchange로 필터를 적용하므로 여기서 setFilter를 직접 부르지 않는다
+    // (같은 해시라 hashchange가 안 뜨는 경우에만 직접 적용).
     tabs.forEach(function (t) {
-      t.addEventListener('click', function () { setFilter(t.getAttribute('data-cat')); });
+      t.addEventListener('click', function () {
+        var cat = t.getAttribute('data-cat');
+        var target = '#c=' + encodeURIComponent(cat);
+        if ((win.location.hash || '') === target) setFilter(cat);
+        else win.location.hash = target;
+      });
     });
 
     // 내부 카드(#p=…) 클릭을 뒤로가기 판단용으로 표시 — 해시 변경 자체는 <a> 기본 동작이 처리
@@ -257,6 +266,7 @@
         thumb +
         '<div class="detail-body">' + body + '</div>' +
         '<p class="detail-back"><a href="#" class="detail-back-link"><span aria-hidden="true">←</span> 목록으로</a></p>';
+      doc.title = (post.title || '소식') + ' — 위키드스톰';
       var back = detailView.querySelector('.detail-back-link');
       if (back) back.addEventListener('click', function (e) {
         e.preventDefault();
@@ -280,6 +290,7 @@
     function showList() {
       var wasDetail = (view === 'detail');
       view = 'list';
+      doc.title = baseTitle;                       // 상세 진입 때 바꾼 <title> 원복
       if (detailView) { detailView.hidden = true; detailView.innerHTML = ''; }
       if (listView) listView.hidden = false;
       if (wasDetail) win.scrollTo(0, listScrollY);
@@ -293,8 +304,16 @@
       var id = null;
       if (m) { try { id = decodeURIComponent(m[1]); } catch (e) { id = null; } }
       var post = id ? findById(id) : null;
-      if (post && !safeExternalUrl(post.externalUrl)) showDetail(post);
-      else showList();
+      if (post && !safeExternalUrl(post.externalUrl)) { showDetail(post); return; }
+      // 상세가 아니면 목록 — #c=<cat> 탭 상태를 복원한다.
+      // decodeURIComponent는 `#c=100%` 같은 깨진 시퀀스에서 URIError를 던지므로 가드.
+      var cm = /#c=([^&]+)/.exec(win.location.hash || '');
+      var cat = 'all';
+      if (cm) { try { var v = decodeURIComponent(cm[1]); if (v) cat = v; } catch (e) { cat = 'all'; } }
+      var valid = tabs.some(function (t) { return t.getAttribute('data-cat') === cat; });
+      if (!valid) cat = 'all';
+      if (cat !== filter) setFilter(cat);
+      showList();
     }
 
     win.addEventListener('hashchange', route);
