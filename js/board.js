@@ -62,7 +62,7 @@
       el.rel = 'noopener noreferrer';
       el.setAttribute('aria-label', post.title + ' (새 창)');
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">바로가기 <i>↗</i></span></div>';
+        '<span class="nmore">바로가기 <i aria-hidden="true">↗</i></span></div>';
     } else {
       el = doc.createElement('article');
       el.className = 'ncard rv';
@@ -70,7 +70,7 @@
       el.innerHTML =
         '<button class="nhead" aria-expanded="false" aria-controls="' + pid + '">' + img + meta +
         '<h3 id="' + hid + '">' + esc(post.title) + '</h3>' +
-        '<span class="nmore">자세히 보기 <i>+</i></span></div></button>' +
+        '<span class="nmore">자세히 보기 <i aria-hidden="true">+</i></span></div></button>' +
         '<div class="npanel" id="' + pid + '" role="region" aria-labelledby="' + hid + '"><div class="npanel-inner">' + body + '</div></div>';
     }
     el.setAttribute('data-cat', post.category || 'news');
@@ -95,11 +95,11 @@
       el.rel = 'noopener noreferrer';
       el.setAttribute('aria-label', post.title + ' (새 창)');
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">바로가기 <i>↗</i></span></div>';
+        '<span class="nmore">바로가기 <i aria-hidden="true">↗</i></span></div>';
     } else {
       el.href = '#p=' + encodeURIComponent(post.id || '');
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">자세히 보기 <i>→</i></span></div>';
+        '<span class="nmore">자세히 보기 <i aria-hidden="true">→</i></span></div>';
     }
     el.setAttribute('data-cat', post.category || 'news');
     el.setAttribute('data-id', post.id || '');
@@ -254,7 +254,7 @@
         '<h2 tabindex="-1">' + esc(post.title) + '</h2>' +
         thumb +
         '<div class="detail-body">' + body + '</div>' +
-        '<p class="detail-back"><a href="#" class="detail-back-link">← 목록으로</a></p>';
+        '<p class="detail-back"><a href="#" class="detail-back-link"><span aria-hidden="true">←</span> 목록으로</a></p>';
       var back = detailView.querySelector('.detail-back-link');
       if (back) back.addEventListener('click', function (e) {
         e.preventDefault();

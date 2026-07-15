@@ -141,7 +141,7 @@ gtag('config','G-0Y5QD1HBGN');
         <span class="cap-badge"><img class="sym" src="./img/symbol.png" alt=""> Lecognizer · xAPI Capture</span>
         <span class="cap-actions"><span class="cap-live">실시간 수집</span><button class="motion-toggle" id="streamToggle" type="button" aria-controls="streamTrack" aria-pressed="false">일시정지</button></span>
       </div>
-      <div class="stream-viewport">
+      <div class="stream-viewport" aria-hidden="true">
         <div class="stream-track" id="streamTrack">
           <!-- 무JS/reduced-motion/초기 상태에서도 보이도록 5행 사전 렌더 -->
           <div class="xrow"><span class="dot"></span><span class="chip actor">학습자</span><span class="arrow">→</span><span class="chip verb">완료함</span><span class="arrow">→</span><span class="chip object">도형 퀴즈</span><span class="chip result">정답률 85%</span></div>
@@ -151,7 +151,7 @@ gtag('config','G-0Y5QD1HBGN');
           <div class="xrow"><span class="dot"></span><span class="chip actor">수강생</span><span class="arrow">→</span><span class="chip verb">응답함</span><span class="arrow">→</span><span class="chip object">실시간 퀴즈</span><span class="chip result">정답</span></div>
         </div>
       </div>
-      <div class="cap-foot">
+      <div class="cap-foot" aria-hidden="true">
         <span class="ins-label">AI<br>Insight</span>
         <svg class="spark" viewBox="0 0 240 34" preserveAspectRatio="none" aria-hidden="true">
           <polyline id="sparkline" fill="none" stroke="url(#sg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" points=""></polyline>
@@ -170,8 +170,9 @@ gtag('config','G-0Y5QD1HBGN');
 </section>
 
 <!-- ② PIPELINE -->
-<section class="band" style="padding-top:clamp(56px,7vw,96px)">
+<section class="band" style="padding-top:clamp(56px,7vw,96px)" aria-labelledby="pipeline-title">
   <div class="wrap">
+    <h2 class="sr-only" id="pipeline-title">학습 데이터 처리 파이프라인</h2>
     <div class="pipe-wrap rv" id="pipeWrap">
       <div class="pipe-rail" aria-hidden="true">
         <span class="pipe-line" id="pipeLine"></span>
@@ -325,7 +326,7 @@ gtag('config','G-0Y5QD1HBGN');
         <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Feed · Update</p>
         <h2 class="h-lg" style="margin-top:16px">최근 소식</h2>
       </div>
-      <a class="sec-more" href="./news.html">전체 보기 →</a>
+      <a class="sec-more" href="./news.html">전체 보기 <span aria-hidden="true">→</span></a>
     </div>
     <div class="news-grid stag">
       <article class="ncard rv">
@@ -334,7 +335,7 @@ gtag('config','G-0Y5QD1HBGN');
           <div class="nbody">
             <div class="nmeta"><span class="ntag">NEWS</span> 2025.11.04</div>
             <h3 id="nh1">위키드스톰, xAPI 이상 학습 탐지 시스템 특허 등록</h3>
-            <span class="nmore">자세히 보기 <i>+</i></span>
+            <span class="nmore">자세히 보기 <i aria-hidden="true">+</i></span>
           </div>
         </button>
         <div class="npanel" id="np1" role="region" aria-labelledby="nh1">
@@ -351,7 +352,7 @@ gtag('config','G-0Y5QD1HBGN');
           <div class="nbody">
             <div class="nmeta"><span class="ntag">NEWS</span> 2025.02.20</div>
             <h3 id="nh2">위키드스톰, 학습자 프로파일링 방법 특허 등록</h3>
-            <span class="nmore">자세히 보기 <i>+</i></span>
+            <span class="nmore">자세히 보기 <i aria-hidden="true">+</i></span>
           </div>
         </button>
         <div class="npanel" id="np2" role="region" aria-labelledby="nh2">
@@ -368,7 +369,7 @@ gtag('config','G-0Y5QD1HBGN');
           <div class="nbody">
             <div class="nmeta"><span class="ntag">NEWS</span> 2024.07.22</div>
             <h3 id="nh3">학습 데이터 수집 솔루션 Lecognizer V1.0, 공공 조달 시장 진입 추진</h3>
-            <span class="nmore">자세히 보기 <i>+</i></span>
+            <span class="nmore">자세히 보기 <i aria-hidden="true">+</i></span>
           </div>
         </button>
         <div class="npanel" id="np3" role="region" aria-labelledby="nh3">

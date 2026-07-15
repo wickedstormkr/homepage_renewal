@@ -560,8 +560,17 @@
       })(performance.now());
     }
     if (REDUCE || !IO) { nums.forEach(function (n) { n.textContent = n.getAttribute('data-count'); }); return; }
-    // 마크업은 무JS 안전을 위해 실제 값을 담고 있으므로, 애니메이션 전에 0으로 초기화
-    nums.forEach(function (n) { n.textContent = '0'; });
+    // 마크업은 무JS 안전을 위해 실제 값을 담고 있으므로, 애니메이션 전에 0으로 초기화.
+    // 카운트업 중 중간값이 낭독되지 않도록 애니메이션 요소는 aria-hidden 처리하고,
+    // 최종값을 sr-only 텍스트로 병기해 스크린리더가 실제 수치를 읽게 한다.
+    nums.forEach(function (n) {
+      n.setAttribute('aria-hidden', 'true');
+      var sr = doc.createElement('span');
+      sr.className = 'sr-only';
+      sr.textContent = n.getAttribute('data-count');
+      n.parentNode.insertBefore(sr, n.nextSibling);
+      n.textContent = '0';
+    });
     var io = new IntersectionObserver(function (ents) {
       ents.forEach(function (en) { if (en.isIntersecting) { count(en.target); io.unobserve(en.target); } });
     }, { threshold: 0.6 });

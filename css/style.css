@@ -139,6 +139,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .skip-link{position:absolute;left:-9999px;top:0;z-index:100;padding:10px 18px;border-radius:0 0 10px 0;
   background:var(--violet);color:#fff;font-weight:700;font-size:14px}
 .skip-link:focus{left:0}
+/* 스크린리더 전용(시각 숨김) — 표준 클립 패턴 */
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 
 /* Lenis 사용 시 네이티브 smooth 비활성(중복 스크롤 방지) */
 html.lenis,html.lenis body{height:auto}
