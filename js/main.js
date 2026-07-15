@@ -346,7 +346,14 @@
         var pinTl = gsap.timeline({
           scrollTrigger: {
             trigger: '.hero', start: 'top top', end: '+=130%', scrub: .6, pin: true, anticipatePin: 1,
-            onUpdate: function (self) { if (canvas) canvas.scrub(self.progress); }
+            onUpdate: function (self) { if (canvas) canvas.scrub(self.progress); },
+            // ScrollTrigger.refresh()는 .hero-copy/.capture를 "핀 생성 시점의 기준 상태"로
+            // 되돌린다. 핀은 인트로(.capture는 0.45s에 진입)보다 먼저 만들어지므로 그 기준이
+            // '숨김'으로 박히고, 인트로는 1회성이라 되살려주지 않아 패널이 영구히 사라진다.
+            // (리사이즈·폰트 스왑이 refresh를 부른다.) 스크럽 시작점에서는 정지 상태를 복원한다.
+            onRefresh: function (self) {
+              if (self.progress < .001) gsap.set('.hero-copy, .capture', { clearProps: 'opacity,transform' });
+            }
           }
         });
         pinTl.to('.hero-copy', { opacity: 0, y: -40, ease: 'none', duration: .4 }, 0)
