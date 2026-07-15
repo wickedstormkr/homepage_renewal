@@ -67,7 +67,7 @@
   <a class="cta" href="./index.html#contact">도입 문의 →</a>
 </nav>
 
-<main id="top">
+<main id="top" tabindex="-1">
 <section class="band" style="padding-top:140px">
   <div class="wrap legal-doc">
     <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Privacy</p>
@@ -202,9 +202,8 @@
   </div>
 </footer>
 
-<script src="./js/vendor/gsap.min.js" defer></script>
-<script src="./js/vendor/ScrollTrigger.min.js" defer></script>
-<script src="./js/vendor/lenis.min.js" defer></script>
-<script src="./js/main.js" defer></script>
+<!-- privacy는 ScrollTrigger 대상 요소가 없어 GSAP/ScrollTrigger·Lenis를 로드하지 않는다.
+     헤더·드로어·프로그레스바는 board.js의 경량 initChrome()이 담당(news.html과 동일 패턴). -->
+<script src="./js/board.js" defer></script>
 </body>
 </html>

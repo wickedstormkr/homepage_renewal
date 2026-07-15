@@ -424,6 +424,10 @@
     initBoardPage(boardGrid);
   } else {
     var grid = doc.querySelector('#news .news-grid');
-    if (grid) initIndexNews(grid);
+    if (grid) {
+      initIndexNews(grid);      // index: 크롬은 main.js가 담당(중복 바인딩 금지)
+    } else {
+      initChrome();             // privacy 등 게시판 없이 크롬만 필요한 페이지
+    }
   }
 })();
