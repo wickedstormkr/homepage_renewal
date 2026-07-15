@@ -344,6 +344,10 @@
     var btn = doc.getElementById('menuBtn'), drawer = doc.getElementById('drawer');
     if (btn && drawer) {
       var open = false, hideTimer = null;
+      // 포커스 트랩 대상: 토글 버튼 + 드로어 내 링크/버튼.
+      var focusables = function () {
+        return [btn].concat([].slice.call(drawer.querySelectorAll('a[href],button:not([disabled])')));
+      };
       var set = function (next) {
         open = next;
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -351,13 +355,18 @@
         if (open) {
           clearTimeout(hideTimer);
           drawer.hidden = false;
-          win.requestAnimationFrame(function () { drawer.classList.add('open'); }); // 1회성
+          win.requestAnimationFrame(function () {
+            drawer.classList.add('open');
+            var firstLink = drawer.querySelector('a[href]');
+            if (firstLink) firstLink.focus();                        // 열면 첫 링크로 포커스 진입
+          }); // 1회성
           root.classList.add('nav-open');
           doc.body.style.overflow = 'hidden';
         } else {
           drawer.classList.remove('open');
           root.classList.remove('nav-open');
           doc.body.style.overflow = '';
+          btn.focus();                                               // 닫으면 토글 버튼으로 포커스 복귀
           hideTimer = setTimeout(function () { if (!open) drawer.hidden = true; }, 420);
         }
       };
@@ -365,7 +374,15 @@
       drawer.querySelectorAll('a').forEach(function (a) {
         a.addEventListener('click', function () { set(false); });
       });
-      win.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) set(false); });
+      win.addEventListener('keydown', function (e) {
+        if (!open) return;
+        if (e.key === 'Escape') { e.preventDefault(); set(false); return; }
+        if (e.key !== 'Tab') return;
+        var items = focusables(), first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && doc.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && doc.activeElement === last) { e.preventDefault(); first.focus(); }
+        else if (items.indexOf(doc.activeElement) < 0) { e.preventDefault(); first.focus(); }
+      });
     }
 
     var bar = doc.querySelector('.progress');
