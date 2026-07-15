@@ -50,7 +50,7 @@ npm install \
   @aws-sdk/client-cloudfront@^3 \
   @aws-sdk/s3-presigned-post@^3
 
-zip -r ../admin-api.zip index.mjs package.json node_modules -x '*.DS_Store'
+zip -r ../admin-api.zip index.mjs news-artifacts.mjs package.json node_modules -x '*.DS_Store'
 cd -
 ```
 
@@ -83,7 +83,7 @@ aws iam create-role \
   --assume-role-policy-document file:///tmp/admin-api-trust.json
 ```
 
-### 2-2. 권한 정책 (해당 버킷 `data/*`·`img/uploads/*`의 Get/PutObject + CloudFront invalidation만)
+### 2-2. 권한 정책 (게시물·정적 글·사이트맵·업로드만 제한 접근 + CloudFront invalidation)
 
 ```bash
 cat > /tmp/admin-api-policy.json <<EOF
@@ -91,13 +91,38 @@ cat > /tmp/admin-api-policy.json <<EOF
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "PostsAndUploadsObjectAccess",
+      "Sid": "ReadPosts",
       "Effect": "Allow",
-      "Action": ["s3:GetObject", "s3:PutObject"],
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::${BUCKET}/data/posts.json"
+    },
+    {
+      "Sid": "PublishSiteObjects",
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
       "Resource": [
-        "arn:aws:s3:::${BUCKET}/data/*",
+        "arn:aws:s3:::${BUCKET}/data/posts.json",
+        "arn:aws:s3:::${BUCKET}/sitemap.xml",
+        "arn:aws:s3:::${BUCKET}/news/*",
         "arn:aws:s3:::${BUCKET}/img/uploads/*"
       ]
+    },
+    {
+      "Sid": "DeleteGeneratedArticles",
+      "Effect": "Allow",
+      "Action": "s3:DeleteObject",
+      "Resource": "arn:aws:s3:::${BUCKET}/news/*"
+    },
+    {
+      "Sid": "ListGeneratedArticles",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::${BUCKET}",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["news/", "news/*"]
+        }
+      }
     },
     {
       "Sid": "CloudFrontInvalidation",
@@ -125,17 +150,17 @@ aws iam put-role-policy \
   --policy-document file:///tmp/admin-api-policy.json
 ```
 
-주의: 이 정책은 버킷 전체가 아니라 `data/*`·`img/uploads/*` 프리픽스에만, 그리고
-지정된 CloudFront 배포 하나에만 권한을 준다. 버킷 목록(`ListBucket`), 다른 오브젝트
-삭제 권한 등은 의도적으로 부여하지 않는다.
+주의: 이 정책은 버킷 전체 쓰기·삭제를 열지 않는다. `ListBucket`은 `news/`
+목록 조회에만, `DeleteObject`는 관리 API가 생성하는 `news/*.html` 정리에만
+사용한다. 코드도 같은 `news/{post-id}.html` 패턴을 다시 검사한 뒤 삭제한다.
+`PutObject`는 `data/posts.json`·`sitemap.xml`·`news/*`·`img/uploads/*`로 한정된다.
 
 **presigned POST와 IAM 권한**: `/upload-url`은 `createPresignedPost`로 S3
 presigned **POST**(폼 업로드) 자격 증명을 발급하지만, S3 쪽에서 실제로 수행되는
 API 액션은 여전히 `PutObject`다(HTTP 메서드/폼 방식만 다를 뿐, IAM 액션은 PUT
-presign과 동일하게 `s3:PutObject`). 즉 위 정책의 `PostsAndUploadsObjectAccess`
-Statement(`s3:GetObject`, `s3:PutObject` on `img/uploads/*`)로 충분하며, 이번
-변경으로 **IAM 정책을 추가로 수정할 필요는 없다**. ACL 지정 등 별도 조건을 쓰지
-않는 한 `s3:PutObjectAcl` 같은 추가 권한도 필요 없다.
+presign과 동일하게 `s3:PutObject`). 즉 위 정책의 `PublishSiteObjects`
+Statement(`s3:PutObject` on `img/uploads/*`)로 충분하다. ACL 지정 등 별도 조건을
+쓰지 않는 한 `s3:PutObjectAcl` 같은 추가 권한도 필요 없다.
 
 IAM은 전파에 수 초~수십 초 걸릴 수 있다. 다음 단계에서 `create-function`이
 `InvalidParameterValueException`(role not assumable)로 실패하면 몇 초 후 재시도.
@@ -257,10 +282,14 @@ window.WS_CONFIG = {
 
 ---
 
-## 6. 정적 사이트 반영 순서 (robots.txt / posts.json / site-config.js)
+## 6. 정적 사이트 반영 순서 (생성기 / robots.txt / posts.json / site-config.js)
 
 관리자 페이지가 검색엔진에 노출되지 않도록, **`robots.txt`(Disallow: /admin.html)를
 `admin.html` 자체보다 먼저 또는 같이** 업로드한다.
+
+정적 아티클(`news/*.html`)과 `sitemap.xml`은 `data/posts.json`에서 생성한다.
+sync 전에 **생성기를 돌려 산출물을 최신화·검증**한다(생성기 소스 `scripts/`는
+공개 버킷에 올리지 않는다 — 아래 EXCLUDES에 포함).
 
 **이 절의 전제: 파일명에 해시가 없다.** 그래서 (a) CSS/JS는 캐시를 짧게 잡고 매 배포마다
 무효화해야 하고, (b) 4)의 무효화 목록에서 빠진 경로는 재배포해도 엣지가 예전 버전을 계속
@@ -273,7 +302,12 @@ EXCLUDES=(--exclude "lambda/*" --exclude ".git/*" --exclude "*.DS_Store"
           --exclude ".playwright-cli/*" --exclude ".lighthouse/*"
           --exclude "node_modules/*" --exclude ".gitignore"
           --exclude "SPEC.md" --exclude "CHANGELOG.md"
-          --exclude "data/*")
+          --exclude "scripts/*" --exclude "data/*")
+
+# 0) posts.json을 기준으로 news/*.html·sitemap.xml을 재생성·검증한다.
+#    산출물(news/*.html·sitemap.xml)은 3-3에서 함께 sync된다.
+node scripts/generate-news.mjs
+node scripts/generate-news.mjs --check
 
 # 1) robots.txt — admin.html 비공개 규칙을 가장 먼저 반영
 aws s3 cp robots.txt "s3://${BUCKET}/robots.txt" --cache-control "max-age=86400"
@@ -294,7 +328,7 @@ aws s3 sync . "s3://${BUCKET}/" \
   --exclude "*" --include "css/*" --include "js/*" \
   --cache-control "max-age=3600"
 
-# 3-3) HTML·sitemap 등 나머지 — 배포 즉시 반영돼야 한다.
+# 3-3) HTML·sitemap·정적 아티클(news/*.html) 등 나머지 — 배포 즉시 반영돼야 한다.
 #      site-config.js(Function URL 반영본)는 3-2에 포함된다.
 #      robots.txt는 1)에서 다른 헤더로 이미 올렸으므로 제외한다.
 aws s3 sync . "s3://${BUCKET}/" "${EXCLUDES[@]}" \
@@ -306,8 +340,13 @@ aws s3 sync . "s3://${BUCKET}/" "${EXCLUDES[@]}" \
 aws cloudfront create-invalidation \
   --distribution-id "$DIST_ID" \
   --paths "/" "/index.html" "/news.html" "/privacy.html" "/admin.html" \
-          "/css/*" "/js/*" "/robots.txt" "/sitemap.xml" "/data/posts.json"
+          "/css/*" "/js/*" "/robots.txt" "/sitemap.xml" "/news/*" "/data/posts.json"
 ```
+
+이후 게시판 저장(`PUT /posts`)은 Lambda가 `news/*.html`·`sitemap.xml`을 재생성해
+S3에 올리고 `/data/posts.json`·`/sitemap.xml`·`/news/*`를 자체 무효화하므로,
+게시마다 위 수동 절차를 다시 돌릴 필요는 없다. 위 절차는 최초 배포·프론트/CSS/JS
+변경 배포 때만 수행한다(`data/posts.json`은 2)에서 최초 1회만 시드).
 
 자산 유형별 Cache-Control 요약:
 
@@ -474,7 +513,7 @@ eval curl -i -X POST "\"$UPLOAD_URL\"" $FIELD_ARGS -F "file=@thumb.webp;type=ima
 ```bash
 cd "lambda/admin-api"
 rm -f ../admin-api.zip
-zip -r ../admin-api.zip index.mjs package.json node_modules -x '*.DS_Store'
+zip -r ../admin-api.zip index.mjs news-artifacts.mjs package.json node_modules -x '*.DS_Store'
 cd -
 
 aws lambda update-function-code \
