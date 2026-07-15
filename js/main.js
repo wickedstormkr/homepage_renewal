@@ -320,6 +320,11 @@
         })(performance.now());
       },
       scrub: function (p) {                                         // 스크롤 중에만 호출(순수 draw)
+        // 인트로 rAF는 매 프레임 clearRect 후 상태 A를 다시 그린다. 로드 2.2초 안에
+        // 스크롤하면 스크럽이 그린 레저를 그대로 덮어써 심볼이 아예 안 보였다.
+        // 스크럽이 시작되면 캔버스 소유권을 넘겨받는다. 임계값이 필요하다 — 스크롤이 0이어도
+        // 핀 progress가 8e-7 같은 부동소수점 잔여값으로 들어와, p>0으로 두면 로드 즉시 인트로가 죽는다.
+        if (p > .001 && introId) { win.cancelAnimationFrame(introId); introId = null; }
         setPos(p);
         ctx.clearRect(0, 0, W, H);
         drawGuides(p);
