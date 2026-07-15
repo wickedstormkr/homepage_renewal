@@ -142,6 +142,7 @@
     var W = 0, H = 0, DPR = 1, P = [], edges = [], rows = [], guides = [];
     var guideTop = 0, guideBot = 0, introId = null, headGrad = null;
     var MD = 170, ROWS = 6;
+    var HEAD_R = 4.5;                                               // 패널 .xrow .dot의 9px와 동일
 
     function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
@@ -186,9 +187,10 @@
         var s0 = 0.12 + i * 0.11, s1 = 0.42 + i * 0.11;
         rows.push({ y: rowY, actorX: ox + 7, pills: pills, checkX: ox + gw - 10, pillH: pillH, s0: s0, s1: s1 });
       }
-      // 행머리 점: 패널 .xrow .dot과 같은 심볼 그라디언트(--grad, 92deg 마젠타→보라→파랑).
+      // 행머리 점: 패널 .xrow .dot과 동일하게 맞춘다 — 9px(r=4.5) + 심볼 그라디언트
+      // (--grad, 92deg 마젠타→보라→파랑) + 마젠타 글로우(box-shadow 0 0 12px).
       // 모든 행의 actorX가 같아 1회만 만들어 재사용한다(투명도는 globalAlpha로 준다).
-      headGrad = ctx.createLinearGradient(ox + 7 - 3.4, 0, ox + 7 + 3.4, 0);
+      headGrad = ctx.createLinearGradient(ox + 7 - HEAD_R, 0, ox + 7 + HEAD_R, 0);
       headGrad.addColorStop(0, 'rgb(233,48,176)');
       headGrad.addColorStop(.52, 'rgb(124,77,255)');
       headGrad.addColorStop(1, 'rgb(47,124,255)');
@@ -286,8 +288,18 @@
         if (rp <= 0.001) continue;
         ctx.save();
         ctx.globalAlpha = rp;
+        // 글로우: 패널 .dot의 box-shadow 0 0 12px rgba(233,48,176,.8)에 대응.
+        // canvas shadowBlur은 같은 수치를 줘도 CSS만큼 퍼지지 않아 방사형으로 직접 그린다
+        // (파티클 스프라이트와 같은 방식).
+        var hg = ctx.createRadialGradient(row.actorX, row.y, HEAD_R * .6, row.actorX, row.y, HEAD_R + 12);
+        hg.addColorStop(0, 'rgba(233,48,176,.8)');
+        hg.addColorStop(.34, 'rgba(233,48,176,.4)');
+        hg.addColorStop(1, 'rgba(233,48,176,0)');
+        ctx.fillStyle = hg;
+        ctx.beginPath(); ctx.arc(row.actorX, row.y, HEAD_R + 12, 0, 6.283); ctx.fill();
+        // 점 본체: 심볼 그라디언트
         ctx.fillStyle = headGrad;
-        ctx.beginPath(); ctx.arc(row.actorX, row.y, 3.2, 0, 6.283); ctx.fill();
+        ctx.beginPath(); ctx.arc(row.actorX, row.y, HEAD_R, 0, 6.283); ctx.fill();
         ctx.restore();
         var cA = clamp01((rp - 0.7) / 0.3);                        // 행 완성 시 등장
         if (cA > 0.01) {
