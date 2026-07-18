@@ -1,6 +1,6 @@
 /* WICKED STORM 리뉴얼 — main.js
  * 성능 헌법(SPEC §0): 상시 rAF 루프는 Lenis 하나뿐.
- * 그 외 rAF는 전부 bounded(시간 제한: 인트로 2.6s / 스파크 300ms / 카운트업 1.2s).
+ * 그 외 rAF는 전부 bounded(시간 제한: 인트로 2.4s / 스파크 300ms / 카운트업 1.2s).
  * 캔버스는 인트로 1회 + 핀-스크럽 onUpdate + 디바운스 resize 에서만 그린다.
  */
 (function () {
@@ -599,7 +599,7 @@
     return {
       build: build,
       staticA: function () { setPos(0); ctx.clearRect(0, 0, W, H); drawLines(1); drawParticles(0); },
-      intro: function () {                                          // bounded ≤ 2.6s, 1회
+      intro: function () {                                          // bounded ≤ 2.4s(SPEC §0-2 ≤2.5s), 1회
         win.cancelAnimationFrame(introId);
         var pts = P, off = [], dl = [];                             // 이 인트로가 애니메이트할 파티클 배열 스냅샷
         for (var i = 0; i < pts.length; i++) {
@@ -611,7 +611,7 @@
           off.push([q.ax + Math.cos(ang) * dist, q.ay + Math.sin(ang) * dist]);
           dl.push(q.z * 0.22 + Math.random() * 0.12);
         }
-        var t0 = performance.now(), DUR = 2600;
+        var t0 = performance.now(), DUR = 2400;
         (function step(now) {
           if (P !== pts) return;                                    // 인트로 도중 build()로 P가 교체되면(리사이즈 등) 중단
           var t = Math.min(1, (now - t0) / DUR);
