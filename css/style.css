@@ -249,6 +249,18 @@ nav.main .cta:hover{color:#fff}
 /* 히어로가 뷰포트 밖이면 오브 정지(SPEC §0-4) */
 .orbs.paused span{animation-play-state:paused}
 
+/* 앰비언트 드리프트: 더스트를 그린 정적 캔버스 2장(main.js buildDrift가 생성)을
+   컴포지터 키프레임으로 흘려 정지 화면에도 성운이 미세하게 살아 있게 한다.
+   성능 헌법 준수: JS 루프 0 — .orbs와 같은 규약(히어로 이탈 시 정지, reduced-motion 시
+   전역 animation:none이 정지). 스크럽 중에는 핀 타임라인이 opacity를 걷어낸다.
+   ±6% 오버사이즈라 드리프트(±1.6%) 중에도 가장자리가 드러나지 않는다. */
+.drift{position:absolute;left:-6%;top:-6%;width:112%;height:112%;z-index:0;pointer-events:none;will-change:transform}
+.drift-a{opacity:.5;animation:driftA 70s ease-in-out infinite alternate}
+.drift-b{opacity:.4;animation:driftB 110s ease-in-out infinite alternate}
+@keyframes driftA{from{transform:translate3d(-1.4%,-1%,0)}to{transform:translate3d(1.4%,1.2%,0)}}
+@keyframes driftB{from{transform:translate3d(1.6%,1.1%,0)}to{transform:translate3d(-1.2%,-1.6%,0)}}
+.hero.out .drift{animation-play-state:paused}
+
 /* ---- xAPI 캡처 뷰 ---- */
 .capture{position:relative;border-radius:22px;background:linear-gradient(180deg,#141628,#0b0c18);
   border:1px solid var(--line2);box-shadow:0 40px 100px rgba(0,0,0,.55),0 0 90px rgba(124,77,255,.12);

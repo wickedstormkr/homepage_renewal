@@ -332,6 +332,45 @@
       }
       edges.sort(function (u, v) { return v[2] - u[2]; });
       if (edges.length > 130) edges.length = 130;
+
+      buildDrift();
+    }
+
+    // ── 앰비언트 드리프트 레이어(캔버스 2장, 정적 드로잉 1회) — 모션은 CSS 키프레임
+    // (.drift-a/.drift-b, 컴포지터 전용)이 담당한다. JS 애니메이션 루프는 없다.
+    // 스크럽이 핀 타임라인로 opacity를 걷어내므로 구조가 형성될 땐 무대에서 사라진다.
+    var drift = [];
+    function buildDrift() {
+      if (!c.parentNode) return;
+      var dw = Math.round(W * 1.12), dh = Math.round(H * 1.12);
+      for (var L = 0; L < 2; L++) {
+        var el = drift[L];
+        if (!el) {
+          el = doc.createElement('canvas');
+          el.className = 'drift ' + (L ? 'drift-b' : 'drift-a');
+          el.setAttribute('aria-hidden', 'true');
+          c.parentNode.insertBefore(el, c);                        // #field 아래, .orbs 위
+          drift[L] = el;
+        }
+        el.width = dw; el.height = dh;                             // DPR 1 — 원경 잔광이라 충분
+        var q = el.getContext('2d');
+        q.globalCompositeOperation = 'lighter';
+        var n = Math.min(80, Math.round(dw * dh / 16000));
+        for (var i = 0; i < n; i++) {
+          var x = Math.random() * dw, y = Math.random() * dh, z = Math.pow(Math.random(), 1.3);
+          var ci = Math.random() < .7 ? 4 : (Math.random() < .6 ? 0 : 1);
+          var d = 2 + z * 4;
+          // 카피 존은 절반 감광(캔버스 zoneMul과 같은 원칙), 뒤 레이어는 전체적으로 옅게
+          q.globalAlpha = (.18 + z * .3) * ((x < dw * .5 && y > dh * .2 && y < dh * .62) ? .5 : 1) * (L ? .8 : 1);
+          q.drawImage(SPR[ci].s, x - d / 2, y - d / 2, d, d);
+        }
+        for (var bk = 0; bk < 3; bk++) {
+          var bx2 = Math.random() * dw, by2 = Math.random() * dh, bd = 10 + Math.random() * 14;
+          q.globalAlpha = .06 + Math.random() * .05;
+          q.drawImage(SPR[(bk % 2) ? 1 : 4].l, bx2 - bd / 2, by2 - bd / 2, bd, bd);
+        }
+        q.globalAlpha = 1; q.globalCompositeOperation = 'source-over';
+      }
     }
 
     // 착지 이징: smootherstep(6t⁵-15t⁴+10t³) — 양끝이 더 평평해 감속감이 큰 5차 곡선.
@@ -669,6 +708,9 @@
           // 시각적으로는 카피와 동시에 사라진다(.02는 핀 구간의 3% 미만).
           .to('.capture', { opacity: 0, y: -60, scale: .96, ease: 'none', duration: .4 }, .02)
           .fromTo('.hero-overlay', { opacity: 0 }, { opacity: 1, ease: 'none', duration: .3 }, .42);
+        // 드리프트 레이어는 구조 형성 전에 무대에서 물러난다(캔버스 dust 후퇴와 동조).
+        // 요소는 main.js(buildDrift)가 만들므로 존재 확인 후에만 트윈(무대상 GSAP 경고 방지).
+        if (doc.querySelector('.drift')) pinTl.to('.drift', { opacity: 0, ease: 'none', duration: .5 }, .08);
       }
 
       /* 씬3 — 파이프라인 점화 + 주행 도트 */
@@ -722,6 +764,7 @@
         if (dot) dot.style.transform = '';
         steps.forEach(function (s) { s.classList.remove('lit'); });
         gsap.set('.hero-copy, .capture, .hero-overlay', { clearProps: 'all' });
+        if (doc.querySelector('.drift')) gsap.set('.drift', { clearProps: 'opacity' });
         if (gm) gsap.set(gm, { clearProps: 'all' });
       };
     });
