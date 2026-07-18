@@ -179,7 +179,7 @@
       return { s: makeSprite(rgb, 16, .9, .78), m: makeSprite(rgb, 36, .85, .62), l: makeBokeh(rgb, 72) };
     });
     var W = 0, H = 0, DPR = 1, P = [], edges = [], rows = [], guides = [];
-    var guideTop = 0, guideBot = 0, introId = null, headGrad = null;
+    var guideTop = 0, guideBot = 0, ledgerX0 = 0, ledgerX1 = 0, introId = null, headGrad = null;
     var MD = 150, ROWS = 6;
     var HEAD_R = 4.5;                                               // 패널 .xrow .dot의 9px와 동일
 
@@ -225,8 +225,9 @@
         // 필 수용량: 폭 비례(좁은 필 4 ~ 넓은 필 14). 파티클이 '잉크'가 되어 필 안에
         // 정렬-착지하므로, 완성 필이 빈 외곽선이 아니라 밀도 있는 데이터 바로 읽힌다.
         for (var pj = 0; pj < pills.length; pj++) pills[pj].cap = Math.max(4, Math.min(14, Math.round(pills[pj].w / 18)));
-        // 행 스태거: 행 i는 p ∈ [0.12+i*0.11, 0.42+i*0.11]에서 조립
-        var s0 = 0.12 + i * 0.11, s1 = 0.42 + i * 0.11;
+        // 행 스태거: 구조 스트로크는 p 0.34부터 — 카피(~0.4)·캡처 패널(~0.42)이 물러난
+        // 뒤에야 필·가이드가 그려져, 사라지는 DOM 위로 구조가 겹치는 머드를 없앤다.
+        var s0 = 0.34 + i * 0.08, s1 = s0 + 0.24;
         rows.push({ y: rowY, actorX: ox + 7, pills: pills, checkX: ox + gw - 10, pillH: pillH, s0: s0, s1: s1 });
       }
       // 행머리 점: 패널 .xrow .dot과 동일하게 맞춘다 — 9px(r=4.5) + 심볼 그라디언트
@@ -240,6 +241,7 @@
       guides = [];
       for (var g = 1; g < NSLOT; g++) guides.push(px0 + (px1 - px0) * (g / NSLOT));
       guideTop = oy + rowGap * 0.12; guideBot = oy + gh - rowGap * 0.12;
+      ledgerX0 = ox; ledgerX1 = ox + gw;                            // 커밋 플래시의 x 경계
 
       // ── 파티클 생성. 역할 3종:
       //  role 0 dust — 구조에 참여하지 않는 원경 성운. 스크럽 동안 바깥으로 살짝 물러나며
@@ -298,7 +300,9 @@
                    a: .5 + fz * .4, z: fz, zm: zoneMul(fp[0], fp[1]),
                    ax: fp[0], ay: fp[1], bx: fbx, by: fby,
                    cpx: (fp[0] + fbx) / 2 + nx * mag * sgn, cpy: (fp[1] + fby) / 2 + ny * mag * sgn,
-                   ry: row.y, s0: row.s0 + si * .02, s1: Math.min(.99, row.s1 + si * .02), node: isNode });
+                   // 비행은 행 구조보다 0.20 먼저 출발(수집 단계) — 구조가 그려지기 전
+                   // 입자들이 먼저 흘러들기 시작해, 스크럽 초반이 죽은 구간이 되지 않는다.
+                   ry: row.y, s0: Math.max(.06, row.s0 - .20 + si * .02), s1: Math.min(.99, row.s1 + si * .02), node: isNode });
             fc++;
           }
         }
@@ -371,10 +375,11 @@
         if (lt <= 0.08 || lt >= 0.92) continue;
         var rgb = COL[q.ci];
         var a0 = posAt(q, lt), a1 = posAt(q, lt - 0.05), a2 = posAt(q, lt - 0.10);
-        ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.22)';
+        var tz = .55 + .45 * q.z;                                  // 원경 궤적일수록 옅게(심도 유지)
+        ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (0.22 * tz) + ')';
         ctx.lineWidth = Math.max(0.6, q.d * 0.12);
         ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
-        ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.10)';
+        ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (0.10 * tz) + ')';
         ctx.lineWidth = Math.max(0.4, q.d * 0.08);
         ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
       }
@@ -388,7 +393,12 @@
       ctx.globalCompositeOperation = 'lighter';
       for (var i = 0; i < P.length; i++) {
         var q = P[i], e = ease(q.lt), a = q.a * q.ka;
-        if (q.role === 0) a *= 1 - 0.55 * p;
+        if (q.role === 0) {
+          // 원경 후퇴: 구조가 형성되는 p .15~.85 동안만 부드럽게 감광(1→0.5) —
+          // 초반은 성운이 온전하고, 완성 화면에도 절반의 깊이가 남는다.
+          var rf = clamp01((p - .15) / .7); rf = rf * rf * (3 - 2 * rf);
+          a *= 1 - 0.5 * rf;
+        }
         else if (q.role === 1) a *= 0.7 + 0.3 * e;
         else a *= Math.max(0.12, e);
         a *= q.zm + (1 - q.zm) * e;
@@ -414,12 +424,17 @@
       ctx.lineWidth = 1;
       // 완성 후(p>0.9) 가이드·헤어라인을 절반으로 감쇠 → 완성된 레저가 주인공이 되게 한다.
       var fade = 1 - 0.5 * clamp01((p - 0.9) / 0.1);
-      // 세로 컬럼 가이드: 표 구조를 살짝 일찍(p*1.5) 암시.
-      var gA = Math.min(1, p * 1.5) * 0.13 * fade;
+      // 세로 컬럼 가이드: 첫 행 조립(p .34)에 살짝 앞서 p .30부터 페이드인 —
+      // 카피가 사라지기 전(p<.3)에는 아무 구조 스트로크도 화면에 없다.
+      var gA = clamp01((p - .30) / .20) * 0.13 * fade;
       if (gA > 0.004) {
         ctx.strokeStyle = 'rgba(150,164,255,' + gA + ')';
+        ctx.fillStyle = 'rgba(150,164,255,' + Math.min(1, gA * 1.6) + ')';
         for (var g = 0; g < guides.length; g++) {
           ctx.beginPath(); ctx.moveTo(guides[g], guideTop); ctx.lineTo(guides[g], guideBot); ctx.stroke();
+          // 컬럼 캡: 가이드 양끝 6px 세리프 — 선이 아니라 표의 해부학으로 읽히게 한다
+          ctx.fillRect(guides[g] - 3, guideTop - 1.5, 6, 1);
+          ctx.fillRect(guides[g] - 3, guideBot + 0.5, 6, 1);
         }
       }
       // 행 헤어라인(레저 밑줄): 그 행 조립 시작 직전(s0-0.06)부터 페이드인, 알파≤0.08.
@@ -444,7 +459,7 @@
         var gl = clamp01((rp - 0.72) / 0.28);                      // 완성 근처에서 램프인
         if (gl > 0.01) {                                           // 1회성 행 글로우
           ctx.save();
-          ctx.globalAlpha = gl * 0.16;
+          ctx.globalAlpha = gl * 0.2;
           ctx.fillStyle = 'rgba(124,120,255,1)';
           rr(fillStart - 6, py - 4, fillEnd - fillStart + 12, ph + 8, (ph + 8) / 2);
           ctx.fill();
@@ -452,34 +467,61 @@
         }
         for (var j = 0; j < row.pills.length; j++) {
           var pl = row.pills[j], col = SLOT[pl.ci];
-          // 외곽선: 조립 진행 램프(현행 유지)
+          // 외곽선: 행 시작부터 옅게 자리잡고(0.25) 조립되며 선명해진다(→0.85)
           rr(pl.x, py, pl.w, ph, ph / 2);
           ctx.lineWidth = 1;
-          ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (rp * 0.6) + ')';
+          ctx.strokeStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + (0.25 + rp * 0.6) + ')';
           ctx.stroke();
-          // 채움: 스윕 헤드 뒤로 좌→우로만 채워진다("기록이 써진다"). 최종 채움 알파 0.2(절제).
+          // 채움: 스윕 헤드 뒤로 좌→우로만 채워진다("기록이 써진다"). 채움 위 바이트 틱
+          // (14px 간격 1px 세로선)이 빈 유리가 아니라 데이터 텍스처로 읽히게 한다.
           var fw = clamp01((sweepX - pl.x) / pl.w) * pl.w;
           if (fw > 0.5) {
             ctx.save();
             rr(pl.x, py, pl.w, ph, ph / 2); ctx.clip();
-            ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.2)';
+            ctx.fillStyle = 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',0.3)';
             ctx.fillRect(pl.x, py, fw, ph);
+            ctx.fillStyle = 'rgba(255,255,255,0.09)';
+            for (var tx = pl.x + 7; tx < pl.x + fw - 3; tx += 14) ctx.fillRect(tx, py + 2.5, 1, ph - 5);
             ctx.restore();
           }
         }
-        // 기록 헤드 스윕: 얇은 수직 라인이 행을 좌→우로 지난다. 가이드색 세로 그라디언트(흰빛 아님),
-        // 알파≤0.35, rp 0.1~0.9 구간에서만(양끝 페이드).
+        // 기록 헤드 스윕: 수직 코어 라인 + 넓은 글로우 + 중심선 헤드 도트 — '지금 쓰는 중'의
+        // 초점. 가이드색 세로 그라디언트, rp 0.1~0.9 구간에서만(양끝 페이드).
         var swWin = Math.min(1, (rp - 0.1) / 0.15, (0.9 - rp) / 0.15);
         if (swWin > 0.01) {
-          var sy0 = py - 4, sy1 = py + ph + 4;
+          var sy0 = py - 5, sy1 = py + ph + 5;
           var lg = ctx.createLinearGradient(0, sy0, 0, sy1);
-          lg.addColorStop(0, 'rgba(150,164,255,0)');
-          lg.addColorStop(0.5, 'rgba(150,164,255,' + (0.35 * swWin) + ')');
-          lg.addColorStop(1, 'rgba(150,164,255,0)');
+          lg.addColorStop(0, 'rgba(170,185,255,0)');
+          lg.addColorStop(0.5, 'rgba(170,185,255,' + (0.5 * swWin) + ')');
+          lg.addColorStop(1, 'rgba(170,185,255,0)');
           ctx.fillStyle = lg;
-          ctx.fillRect(sweepX - 0.75, sy0, 1.5, sy1 - sy0);
+          ctx.fillRect(sweepX - 1, sy0, 2, sy1 - sy0);
+          var wg = ctx.createLinearGradient(0, sy0, 0, sy1);
+          wg.addColorStop(0, 'rgba(170,185,255,0)');
+          wg.addColorStop(0.5, 'rgba(170,185,255,' + (0.12 * swWin) + ')');
+          wg.addColorStop(1, 'rgba(170,185,255,0)');
+          ctx.fillStyle = wg;
+          ctx.fillRect(sweepX - 4, sy0, 8, sy1 - sy0);
+          ctx.fillStyle = 'rgba(220,228,255,' + (0.65 * swWin) + ')';
+          ctx.beginPath(); ctx.arc(sweepX, row.y, 2, 0, 6.283); ctx.fill();
         }
       }
+    }
+    // 커밋 플래시: p 0.90→1.0에서 옅은 수평 광 밴드가 레저를 위→아래로 1회 훑는다 —
+    // 정돈(settle)·체크 점등과 겹치는 "저장 완료"의 결정적 순간. p의 결정론 함수라
+    // 역방향 스크럽에서도 자연스럽게 되감긴다. 구간 밖에서는 아무것도 그리지 않는다.
+    function drawFlash(p) {
+      var cf = clamp01((p - 0.9) / 0.1);
+      if (cf <= 0.001 || cf >= 0.999) return;
+      var e = cf * cf * (3 - 2 * cf);
+      var y = (guideTop - 70) + (guideBot + 140 - guideTop) * e;
+      var pk = Math.sin(cf * Math.PI);                             // 양끝 페이드
+      var g2 = ctx.createLinearGradient(0, y - 55, 0, y + 55);
+      g2.addColorStop(0, 'rgba(165,180,255,0)');
+      g2.addColorStop(.5, 'rgba(165,180,255,' + (0.055 * pk) + ')');
+      g2.addColorStop(1, 'rgba(165,180,255,0)');
+      ctx.fillStyle = g2;
+      ctx.fillRect(ledgerX0 - 30, y - 55, ledgerX1 - ledgerX0 + 60, 110);
     }
     // 행머리 actor 도트 + 행 끝 시안 '신호' 도트(기록이 인사이트가 되는 지점) — 파티클 위 액센트
     function drawAccents(p) {
@@ -559,11 +601,12 @@
         setPos(p);
         ctx.clearRect(0, 0, W, H);
         drawGuides(p);
-        drawLines(Math.max(0, 1 - p * 1.5));                       // 무질서 연결선 페이드아웃
+        drawLines(Math.max(0, 1 - p / .55));                       // 무질서 연결선: 구조 시작 전(~.55)까지 잔류
         drawPills(p);                                              // 필 배경(스윕 좌→우 채움) + 완성 글로우
         drawTrails();                                              // 비행 궤적(필 위, 파티클 아래)
         drawParticles(p);                                          // 파티클이 필 안으로 착지 + 착지 리플
         drawAccents(p);                                            // actor · check 도트
+        drawFlash(p);                                              // 커밋 플래시(p .9~1)
       }
     };
   })();
@@ -610,7 +653,14 @@
             }
           }
         });
-        pinTl.to('.hero-copy', { opacity: 0, y: -40, ease: 'none', duration: .4 }, 0)
+        // 스페이서(무동작 트윈): 타임라인 총길이를 1로 고정한다. ScrollTrigger 스크럽은
+        // 핀 progress를 "타임라인 총길이"에 재매핑하므로, 스페이서가 없으면 총길이가
+        // 0.72(최장 트윈 끝)가 되어 아래 duration/position 값들이 핀 비율 그대로가 아니라
+        // ÷0.72로 늘어져 재생된다(카피가 p .40이 아닌 .56까지 남고, 오버레이는 p 1.0에야
+        // 완전 등장). 캔버스 scrub(p)는 raw progress를 쓰므로 이 어긋남은 캔버스-DOM
+        // 시퀀싱을 깨뜨린다. 스페이서로 1:1 매핑을 보장한다.
+        pinTl.to({}, { duration: 1 }, 0)
+          .to('.hero-copy', { opacity: 0, y: -40, ease: 'none', duration: .4 }, 0)
           // 카피와 같은 속도(.4)로 사라진다. 이전엔 .6 동안(=.75까지) 걸려 카피가 사라진
           // 뒤에도 남고 오버레이 카피(.42~)와 겹쳐 잔상처럼 보였다.
           // 위치를 0이 아닌 .02로 두는 이유: 위치 0이면 핀 셋업 때(인트로 전, 패널이 아직
