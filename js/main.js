@@ -1,6 +1,6 @@
 /* WICKED STORM 리뉴얼 — main.js
  * 성능 헌법(SPEC §0): 상시 rAF 루프는 Lenis 하나뿐.
- * 그 외 rAF는 전부 bounded(시간 제한: 인트로 2.2s / 스파크 300ms / 카운트업 1.2s).
+ * 그 외 rAF는 전부 bounded(시간 제한: 인트로 2.6s / 스파크 300ms / 카운트업 1.2s).
  * 캔버스는 인트로 1회 + 핀-스크럽 onUpdate + 디바운스 resize 에서만 그린다.
  */
 (function () {
@@ -137,8 +137,8 @@
   })();
 
   /* ============================================================
-   *  히어로 캔버스: 상태 A(무질서 별자리) → 상태 B(구조화된 기록 레저)
-   *  흩어진 파티클이 "정돈된 기록 행(record row)"으로 저장되는 그림.
+   *  히어로 캔버스: 상태 A(데이터 성운 — 원경 더스트 + 근경 기록) → 상태 B(구조화된 기록 레저)
+   *  흩어진 기록 입자가 "정돈된 기록 행(record row)"의 잉크로 저장되는 그림.
    *  지오메트리는 build()에서 사전 계산, scrub(p)는 순수 draw(rAF 없음).
    * ============================================================ */
   var canvas = (function () {
@@ -148,22 +148,39 @@
     var BLUE = [47, 124, 255], PURPLE = [124, 77, 255], MAGENTA = [233, 48, 176];
     // 기록 슬롯 = 심볼 3색(파랑·보라·마젠타). 캡처 패널의 .chip.actor/.verb/.object와
     // 같은 순서·같은 색이라 한 행이 곧 우리 심볼로 읽힌다.
-    // CYAN은 슬롯이 아니다 — 행 끝 점으로만 쓰는 '신호'(기록이 인사이트가 되는 지점).
-    // 파티클은 자기가 착지할 슬롯의 색을 가지므로, 정돈될수록 색이 컬럼별로 분류된다.
+    // CYAN은 슬롯이 아니다 — 행 끝 '신호'(기록이 인사이트가 되는 지점) 전용.
+    // DUST는 구조에 참여하지 않는 원경 성운의 잔광색(채도 낮은 인디고).
+    var CYAN = [34, 224, 214], DUST = [126, 146, 228];
     var SLOT = [BLUE, PURPLE, MAGENTA];
-    var COL = SLOT;
     var NSLOT = SLOT.length;
-    var sprites = COL.map(function (rgb) {
-      var s = doc.createElement('canvas'); s.width = s.height = 40;
-      var q = s.getContext('2d'); var g = q.createRadialGradient(20, 20, 0, 20, 20, 20);
-      g.addColorStop(0, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.95)');
-      g.addColorStop(.4, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.45)');
+    var COL = [BLUE, PURPLE, MAGENTA, CYAN, DUST];                 // 파티클 ci 0..4
+    // 스프라이트 아틀라스: 색 × 3급(s 코어 / m 글로우 / l 보케). arc+fill 대신 drawImage 1회 —
+    // 파티클 10배 증량(46→~460)에도 draw 비용이 선형·예측 가능해 스크럽 예산을 지킨다.
+    // 코어를 백색으로 두는 이유: 'lighter' 합성에서 겹칠수록 중심 발광이 누적돼
+    // 평면 점이 아니라 광원으로 읽힌다(고밀도 필드 톤의 핵심).
+    function makeSprite(rgb, size, coreA, midA) {
+      var s = doc.createElement('canvas'); s.width = s.height = size;
+      var q = s.getContext('2d'), h = size / 2, g = q.createRadialGradient(h, h, 0, h, h, h);
+      g.addColorStop(0, 'rgba(255,255,255,' + coreA + ')');
+      g.addColorStop(.22, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + midA + ')');
+      g.addColorStop(.58, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (midA * .32) + ')');
       g.addColorStop(1, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0)');
-      q.fillStyle = g; q.fillRect(0, 0, 40, 40); return s;
+      q.fillStyle = g; q.fillRect(0, 0, size, size); return s;
+    }
+    function makeBokeh(rgb, size) {                                // 최원경 보케: 백색 코어 없는 소프트 디스크
+      var s = doc.createElement('canvas'); s.width = s.height = size;
+      var q = s.getContext('2d'), h = size / 2, g = q.createRadialGradient(h, h, 0, h, h, h);
+      g.addColorStop(0, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.4)');
+      g.addColorStop(.7, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.22)');
+      g.addColorStop(1, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0)');
+      q.fillStyle = g; q.fillRect(0, 0, size, size); return s;
+    }
+    var SPR = COL.map(function (rgb) {
+      return { s: makeSprite(rgb, 16, .9, .78), m: makeSprite(rgb, 36, .85, .62), l: makeBokeh(rgb, 72) };
     });
     var W = 0, H = 0, DPR = 1, P = [], edges = [], rows = [], guides = [];
     var guideTop = 0, guideBot = 0, introId = null, headGrad = null;
-    var MD = 170, ROWS = 6;
+    var MD = 150, ROWS = 6;
     var HEAD_R = 4.5;                                               // 패널 .xrow .dot의 9px와 동일
 
     function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
@@ -187,11 +204,10 @@
       c.width = Math.round(W * DPR); c.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-      // 기록 레저 영역: 가로 ~56%, 세로 ~48% 중앙 정렬
-      var gw = W * 0.56, gh = H * 0.48, ox = (W - gw) / 2, oy = (H - gh) / 2;
+      // 기록 레저 영역: 가로 ~60%, 세로 ~44% 중앙 정렬
+      var gw = W * 0.60, gh = H * 0.44, ox = (W - gw) / 2, oy = (H - gh) / 2;
       var rowGap = gh / ROWS, GAP = 9;
       var pillH = Math.max(7, Math.min(rowGap * 0.5, 13));
-      var PC = SLOT;                                                // actor · verb · object
       var px0 = ox + 22, px1 = ox + gw - 26;                        // 필 영역(오른쪽 끝은 신호 도트 여백)
       rows = [];
       for (var i = 0; i < ROWS; i++) {
@@ -200,11 +216,15 @@
         var f0 = 0.18 + Math.random() * 0.10, f1 = 0.30 + Math.random() * 0.14; // 행마다 결정론적 폭
         var w0 = avail * f0, w1 = avail * f1, w2 = avail - w0 - w1;
         var x1p = px0 + w0 + GAP, x2p = x1p + w1 + GAP;
+        // pill.ci는 SLOT 인덱스(0..2) — 파티클 ci와 같은 색 공간을 쓴다.
         var pills = [
-          { x: px0, w: w0, ci: PC[0] },
-          { x: x1p, w: w1, ci: PC[1] },
-          { x: x2p, w: w2, ci: PC[2] }
+          { x: px0, w: w0, ci: 0 },
+          { x: x1p, w: w1, ci: 1 },
+          { x: x2p, w: w2, ci: 2 }
         ];
+        // 필 수용량: 폭 비례(좁은 필 4 ~ 넓은 필 14). 파티클이 '잉크'가 되어 필 안에
+        // 정렬-착지하므로, 완성 필이 빈 외곽선이 아니라 밀도 있는 데이터 바로 읽힌다.
+        for (var pj = 0; pj < pills.length; pj++) pills[pj].cap = Math.max(4, Math.min(14, Math.round(pills[pj].w / 18)));
         // 행 스태거: 행 i는 p ∈ [0.12+i*0.11, 0.42+i*0.11]에서 조립
         var s0 = 0.12 + i * 0.11, s1 = 0.42 + i * 0.11;
         rows.push({ y: rowY, actorX: ox + 7, pills: pills, checkX: ox + gw - 10, pillH: pillH, s0: s0, s1: s1 });
@@ -221,32 +241,93 @@
       for (var g = 1; g < NSLOT; g++) guides.push(px0 + (px1 - px0) * (g / NSLOT));
       guideTop = oy + rowGap * 0.12; guideBot = oy + gh - rowGap * 0.12;
 
-      // 파티클: 상태 A(무질서) → 필 내부의 목표 좌표(상태 B)
-      var N = Math.min(46, Math.round(W * H / 24000));
+      // ── 파티클 생성. 역할 3종:
+      //  role 0 dust — 구조에 참여하지 않는 원경 성운. 스크럽 동안 바깥으로 살짝 물러나며
+      //                감광해, 완성 화면이 빈 검정이 아니라 깊이 있는 필드로 남는다.
+      //  role 1 flyer — 자기 슬롯 필 안의 '지정 좌석'으로 비행하는 기록. 데이터가 곧 잉크.
+      //  role 2 spark — 행 끝 체크 도트 주변으로 모이는 시안 신호. 대기 중엔 숨죽인다.
+      // 무질서 좌표는 균일 50% + 성운 클러스터 50% — 완전 균일 랜덤은 벽지처럼 읽힌다.
+      // 좌측 카피 존에 놓인 파티클은 zm(0.4)으로 감광해 글자 사이 얼룩을 막는다.
       P = [];
-      for (var k = 0; k < N; k++) {
-        var ax = Math.random() * W, ay = Math.random() * H;        // 상태 A: 무질서
-        var row = rows[k % ROWS];                                  // 6행에 고르게 분배
-        var si = Math.floor(k / ROWS) % NSLOT;                     // 착지할 슬롯(actor·verb·object·extension)
-        var pill = row.pills[si];
-        var bx = pill.x + (0.12 + Math.random() * 0.76) * pill.w;  // 상태 B: 필 내부 랜덤 좌표
-        var by = row.y + (Math.random() - 0.5) * pillH * 0.7;
-        // 곡선 비행 제어점: 시작-도착 중점에서 법선 방향으로 결정론적 오프셋(2차 베지어).
-        // 크기 = 비행거리의 0.15~0.30, 부호는 인덱스 기반 교대 → 궤적이 한쪽으로 쏠리지 않고
-        // 서로 엇갈려 "흘러들어가 정돈되는" 결을 만든다. Math.random은 build에서만 쓴다.
-        var dxk = bx - ax, dyk = by - ay, dk = Math.hypot(dxk, dyk) || 1;
-        var nx = -dyk / dk, ny = dxk / dk, sgn = (k % 2 ? -1 : 1);
-        var mag = dk * (0.15 + Math.random() * 0.15);
-        var cpx = (ax + bx) / 2 + nx * mag * sgn, cpy = (ay + by) / 2 + ny * mag * sgn;
-        // 색은 슬롯에서 온다 — 이전엔 ci를 k%3으로 따로 매겨 착지 슬롯과 색이 어긋났다.
-        P.push({ ax: ax, ay: ay, bx: bx, by: by, cpx: cpx, cpy: cpy, ry: row.y, x: ax, y: ay, lt: 0, r: Math.random() * 1.5 + .9, ci: si, node: Math.random() < .3, s0: row.s0, s1: row.s1 });
+      var cx = W / 2, cy = H / 2;
+      var CC = [[.24, .30], [.78, .26], [.60, .78]];
+      function gauss() { return (Math.random() + Math.random() + Math.random() - 1.5) / 1.5; }
+      function chaosPt() {
+        if (Math.random() < .5) return [Math.random() * W, Math.random() * H];
+        var cc = CC[(Math.random() * CC.length) | 0];
+        return [cc[0] * W + gauss() * W * .20, cc[1] * H + gauss() * H * .26];
       }
-      // 연결선은 상태 A 근접쌍으로 1회 계산 → 스크럽마다 O(N²) 재계산 방지
+      function zoneMul(x, y) { return (x < W * .56 && y > H * .16 && y < H * .68) ? 0.4 : 1; }
+      function push(o) { o.x = o.ax; o.y = o.ay; o.lt = 0; o.ka = 1; P.push(o); }
+
+      // 최원경 보케 8개 — 심도(depth of field)의 가장 뒤 층
+      for (var b = 0; b < 8; b++) {
+        var bp = chaosPt();
+        push({ role: 0, ci: (b % 3 === 0) ? 1 : 4, spr: 'l', d: 24 + Math.random() * 34,
+               a: .07 + Math.random() * .07, z: 0, zm: 1,
+               ax: bp[0], ay: bp[1], bx: bp[0] + (bp[0] - cx) * .06, by: bp[1] + (bp[1] - cy) * .06,
+               cpx: bp[0], cpy: bp[1], ry: bp[1], s0: 0, s1: 1, node: false });
+      }
+      // 원경 더스트 성운
+      var nDust = Math.min(300, Math.round(W * H / 4300));
+      for (var k = 0; k < nDust; k++) {
+        var dp = chaosPt(), dz = Math.pow(Math.random(), 1.35);
+        var dbx = dp[0] + (dp[0] - cx) * .09, dby = dp[1] + (dp[1] - cy) * .09;
+        push({ role: 0, ci: Math.random() < .68 ? 4 : (Math.random() < .7 ? 0 : 1), spr: 's',
+               d: 2.5 + dz * 5.5, a: .2 + dz * .45, z: dz, zm: zoneMul(dp[0], dp[1]),
+               ax: dp[0], ay: dp[1], bx: dbx, by: dby,
+               cpx: (dp[0] + dbx) / 2, cpy: (dp[1] + dby) / 2, ry: dby, s0: 0, s1: 1, node: false });
+      }
+      // 기록(flyer): 필 수용량만큼, 필 내부 등간격 좌석으로. 곡선 비행 제어점은
+      // 시작-도착 중점에서 법선 방향 결정론적 오프셋(2차 베지어), 부호 교대로 결이 엇갈린다.
+      var fc = 0;
+      for (i = 0; i < ROWS; i++) {
+        var row = rows[i];
+        for (var si = 0; si < NSLOT; si++) {
+          var pill = row.pills[si];
+          for (var t = 0; t < pill.cap; t++) {
+            var fp = chaosPt(), fz = .45 + Math.random() * .55;
+            var fbx = pill.x + pill.w * (.05 + .90 * ((t + .5) / pill.cap)) + (Math.random() - .5) * 4;
+            var fby = row.y + (Math.random() - .5) * pillH * .56;
+            var dxk = fbx - fp[0], dyk = fby - fp[1], dk = Math.hypot(dxk, dyk) || 1;
+            var nx = -dyk / dk, ny = dxk / dk, sgn = (fc % 2 ? -1 : 1);
+            var mag = dk * (0.15 + Math.random() * 0.15);
+            var isNode = fz > .88;
+            push({ role: 1, ci: si, spr: isNode ? 'm' : 's',
+                   d: isNode ? 13 + (fz - .88) * 46 : 5.5 + fz * 5,
+                   a: .5 + fz * .4, z: fz, zm: zoneMul(fp[0], fp[1]),
+                   ax: fp[0], ay: fp[1], bx: fbx, by: fby,
+                   cpx: (fp[0] + fbx) / 2 + nx * mag * sgn, cpy: (fp[1] + fby) / 2 + ny * mag * sgn,
+                   ry: row.y, s0: row.s0 + si * .02, s1: Math.min(.99, row.s1 + si * .02), node: isNode });
+            fc++;
+          }
+        }
+        // 신호 스파크: 행 완성 무렵 체크 도트 주변에 점화되는 시안 입자 3개
+        for (var sp = 0; sp < 3; sp++) {
+          var sq = chaosPt(), sz2 = .6 + Math.random() * .4;
+          var sbx = row.checkX + 5 + Math.random() * 15, sby = row.y + (Math.random() - .5) * 12;
+          var sdx = sbx - sq[0], sdy = sby - sq[1], sdk = Math.hypot(sdx, sdy) || 1;
+          var smag = sdk * (0.15 + Math.random() * 0.15), ssgn = (sp % 2 ? -1 : 1);
+          push({ role: 2, ci: 3, spr: 'm', d: 8 + sz2 * 6, a: .5 + sz2 * .35, z: sz2, zm: 1,
+                 ax: sq[0], ay: sq[1], bx: sbx, by: sby,
+                 cpx: (sq[0] + sbx) / 2 + (-sdy / sdk) * smag * ssgn,
+                 cpy: (sq[1] + sby) / 2 + (sdx / sdk) * smag * ssgn,
+                 ry: sby, s0: Math.min(.9, row.s0 + .18), s1: Math.min(.99, row.s1 + .08), node: false });
+        }
+      }
+      // 연결선: 밝은 입자(z≥.55, 기록·신호)끼리 근접쌍 1회 계산 → 스크럽마다 O(N²) 방지.
+      // 상위 130개만 남긴다 — 전량 잇는 순간 거미줄(구식 파티클 배경)로 되돌아간다.
       edges = [];
-      for (var a = 0; a < P.length; a++) for (var b = a + 1; b < P.length; b++) {
-        var d = Math.hypot(P[a].ax - P[b].ax, P[a].ay - P[b].ay);
-        if (d < MD) edges.push([a, b, 1 - d / MD]);
+      var bright = [];
+      for (var e1 = 0; e1 < P.length; e1++) if (P[e1].role > 0 && P[e1].z >= .55) bright.push(e1);
+      for (var a = 0; a < bright.length; a++) for (var b2 = a + 1; b2 < bright.length; b2++) {
+        var d = Math.hypot(P[bright[a]].ax - P[bright[b2]].ax, P[bright[a]].ay - P[bright[b2]].ay);
+        // 카피 존에 걸친 선은 0.35로 감쇠 — 점은 zm으로 감광되는데 선만 남으면
+        // 글자 위에 선 무늬만 뜬 거미줄이 된다(점·선 위계 일치).
+        if (d < MD) edges.push([bright[a], bright[b2], (1 - d / MD) * ((P[bright[a]].zm < 1 || P[bright[b2]].zm < 1) ? .35 : 1)]);
       }
+      edges.sort(function (u, v) { return v[2] - u[2]; });
+      if (edges.length > 130) edges.length = 130;
     }
 
     // 착지 이징: smootherstep(6t⁵-15t⁴+10t³) — 양끝이 더 평평해 감속감이 큰 5차 곡선.
@@ -264,56 +345,70 @@
         var lt = clamp01((p - q.s0) / (q.s1 - q.s0));
         q.lt = lt;
         var pt = posAt(q, lt);
-        // settle: 착지한 파티클 y를 자기 행 중심선으로 50% 추가 수렴(x는 유지) → 완성 기하가
-        // 더 칼같이 정렬. ease(lt)를 곱해 아직 비행 중인 파티클은 왜곡하지 않는다.
-        q.x = pt.x; q.y = pt.y + (q.ry - pt.y) * 0.5 * st * ease(lt);
+        // settle: 기록(flyer)만 — 착지한 y를 자기 행 중심선으로 50% 추가 수렴(x는 유지)해
+        // 완성 기하가 칼같이 정렬. ease(lt)를 곱해 아직 비행 중인 파티클은 왜곡하지 않는다.
+        q.x = pt.x;
+        q.y = (q.role === 1) ? pt.y + (q.ry - pt.y) * 0.5 * st * ease(lt) : pt.y;
       }
     }
 
     function drawLines(alpha) {
       if (alpha <= 0.01) return;
-      ctx.lineWidth = .7;
+      ctx.lineWidth = .6;
       for (var e = 0; e < edges.length; e++) {
         var a = P[edges[e][0]], b = P[edges[e][1]];
-        ctx.strokeStyle = 'rgba(148,164,255,' + (edges[e][2] * 0.22 * alpha) + ')';
+        ctx.strokeStyle = 'rgba(148,164,255,' + (edges[e][2] * 0.16 * alpha) + ')';
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
     }
     // 비행 궤적: 비행 중(0.08<lt<0.92)에만 현재·lt-0.05·lt-0.10 시점 위치를 잇는 테이퍼 선분 2개.
-    // 파티클 색, 알파≤0.22, 뒤로 갈수록 얇게. 착지 후·시작 전엔 없음(절제). lt는 setPos가 채운다.
+    // 기록(flyer) 중 근경(z≥.5)만 — 전 입자에 궤적을 주면 유성우가 아니라 소음이 된다.
     function drawTrails() {
       ctx.lineCap = 'round';
       for (var i = 0; i < P.length; i++) {
         var q = P[i], lt = q.lt;
+        if (q.role !== 1 || q.z < .5) continue;
         if (lt <= 0.08 || lt >= 0.92) continue;
         var rgb = COL[q.ci];
         var a0 = posAt(q, lt), a1 = posAt(q, lt - 0.05), a2 = posAt(q, lt - 0.10);
         ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.22)';
-        ctx.lineWidth = Math.max(0.6, q.r * 0.8);
+        ctx.lineWidth = Math.max(0.6, q.d * 0.12);
         ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(a1.x, a1.y); ctx.stroke();
         ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.10)';
-        ctx.lineWidth = Math.max(0.4, q.r * 0.5);
+        ctx.lineWidth = Math.max(0.4, q.d * 0.08);
         ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y); ctx.stroke();
       }
       ctx.lineCap = 'butt';
     }
-    function drawDots() {
+    // 파티클 본체 — 'lighter' 합성: 겹치는 광원이 발광을 누적한다(스프라이트 주석 참조).
+    // 역할별 알파 드라마: dust는 스크럽에 따라 물러나며 감광(1→0.45, 원경은 남긴다),
+    // flyer는 착지할수록 점등(0.7→1.0), spark는 대기 중 0.12로 숨죽였다 착지하며 점화.
+    // zm(카피 존 감광)은 비행이 진행되면 해제된다 — 존을 떠나는 입자가 다시 밝아진다.
+    function drawParticles(p) {
+      ctx.globalCompositeOperation = 'lighter';
       for (var i = 0; i < P.length; i++) {
-        var p = P[i], rgb = COL[p.ci];
-        if (p.node) {
-          ctx.drawImage(sprites[p.ci], p.x - 9, p.y - 9, 18, 18);
+        var q = P[i], e = ease(q.lt), a = q.a * q.ka;
+        if (q.role === 0) a *= 1 - 0.55 * p;
+        else if (q.role === 1) a *= 0.7 + 0.3 * e;
+        else a *= Math.max(0.12, e);
+        a *= q.zm + (1 - q.zm) * e;
+        if (a <= 0.008) continue;
+        ctx.globalAlpha = a > 1 ? 1 : a;
+        ctx.drawImage(SPR[q.ci][q.spr], q.x - q.d / 2, q.y - q.d / 2, q.d, q.d);
+        if (q.node) {
           // 착지 리플: node 파티클 착지 구간 lt 0.88→1.0에서 반지름 2→7px, 알파 0.3→0 링 1개.
-          // p의 결정론적 함수라 스크럽 역방향에서도 자연스럽게 재생된다(글로우 없음).
-          var rl = (p.lt - 0.88) / 0.12;
+          // p의 결정론적 함수라 스크럽 역방향에서도 자연스럽게 재생된다.
+          var rl = (q.lt - 0.88) / 0.12;
           if (rl > 0 && rl < 1) {
+            var rgb = COL[q.ci];
+            ctx.globalAlpha = 1;
             ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (0.3 * (1 - rl)) + ')';
             ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.arc(p.x, p.y, 2 + rl * 5, 0, 6.283); ctx.stroke();
+            ctx.beginPath(); ctx.arc(q.x, q.y, 2 + rl * 5, 0, 6.283); ctx.stroke();
           }
-        } else {
-          ctx.fillStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',.6)'; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
         }
       }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
     }
     function drawGuides(p) {
       ctx.lineWidth = 1;
@@ -356,7 +451,7 @@
           ctx.restore();
         }
         for (var j = 0; j < row.pills.length; j++) {
-          var pl = row.pills[j], col = pl.ci;
+          var pl = row.pills[j], col = SLOT[pl.ci];
           // 외곽선: 조립 진행 램프(현행 유지)
           rr(pl.x, py, pl.w, ph, ph / 2);
           ctx.lineWidth = 1;
@@ -422,36 +517,52 @@
 
     return {
       build: build,
-      staticA: function () { setPos(0); ctx.clearRect(0, 0, W, H); drawLines(1); drawDots(); },
-      intro: function () {                                          // bounded ≤ 2.2s, 1회
+      staticA: function () { setPos(0); ctx.clearRect(0, 0, W, H); drawLines(1); drawParticles(0); },
+      intro: function () {                                          // bounded ≤ 2.6s, 1회
         win.cancelAnimationFrame(introId);
-        var pts = P, off = [];                                      // 이 인트로가 애니메이트할 파티클 배열 스냅샷
+        var pts = P, off = [], dl = [];                             // 이 인트로가 애니메이트할 파티클 배열 스냅샷
         for (var i = 0; i < pts.length; i++) {
-          var ang = Math.random() * 6.283, dist = Math.max(W, H) * (.4 + Math.random() * .45);
-          off.push([pts[i].ax + Math.cos(ang) * dist, pts[i].ay + Math.sin(ang) * dist]);
+          var q = pts[i], ang = Math.random() * 6.283;
+          // dust는 제자리 근처에서 응결(멀리서 날아오면 성운이 아니라 곤충떼가 된다),
+          // 기록·신호는 화면 밖 링에서 쓸려 들어온다. 등장 지연은 원경(z 낮음)부터 —
+          // 배경이 먼저 자리잡고 밝은 기록이 그 위로 늦게 휩쓸려 들어오는 층위.
+          var dist = q.role === 0 ? Math.max(W, H) * .06 * (.4 + Math.random()) : Math.max(W, H) * (.4 + Math.random() * .45);
+          off.push([q.ax + Math.cos(ang) * dist, q.ay + Math.sin(ang) * dist]);
+          dl.push(q.z * 0.22 + Math.random() * 0.12);
         }
-        var t0 = performance.now(), DUR = 2200;
+        var t0 = performance.now(), DUR = 2600;
         (function step(now) {
           if (P !== pts) return;                                    // 인트로 도중 build()로 P가 교체되면(리사이즈 등) 중단
-          var t = Math.min(1, (now - t0) / DUR), e = 1 - Math.pow(1 - t, 3);
-          for (var j = 0; j < pts.length; j++) { pts[j].x = off[j][0] + (pts[j].ax - off[j][0]) * e; pts[j].y = off[j][1] + (pts[j].ay - off[j][1]) * e; }
-          ctx.clearRect(0, 0, W, H); drawLines(e); drawDots();
+          var t = Math.min(1, (now - t0) / DUR);
+          for (var j = 0; j < pts.length; j++) {
+            var q = pts[j], tt = clamp01((t - dl[j]) / (1 - dl[j]));
+            var e = 1 - Math.pow(1 - tt, 3);
+            q.x = off[j][0] + (q.ax - off[j][0]) * e;
+            q.y = off[j][1] + (q.ay - off[j][1]) * e;
+            q.ka = tt;                                              // 등장 페이드(스크럽 인계 시 1로 복원)
+          }
+          ctx.clearRect(0, 0, W, H);
+          drawLines(1 - Math.pow(1 - t, 3));
+          drawParticles(0);
           if (t < 1) introId = win.requestAnimationFrame(step);
         })(performance.now());
       },
       scrub: function (p) {                                         // 스크롤 중에만 호출(순수 draw)
-        // 인트로 rAF는 매 프레임 clearRect 후 상태 A를 다시 그린다. 로드 2.2초 안에
-        // 스크롤하면 스크럽이 그린 레저를 그대로 덮어써 심볼이 아예 안 보였다.
-        // 스크럽이 시작되면 캔버스 소유권을 넘겨받는다. 임계값이 필요하다 — 스크롤이 0이어도
-        // 핀 progress가 8e-7 같은 부동소수점 잔여값으로 들어와, p>0으로 두면 로드 즉시 인트로가 죽는다.
-        if (p > .001 && introId) { win.cancelAnimationFrame(introId); introId = null; }
+        // 인트로 rAF는 매 프레임 clearRect 후 상태 A를 다시 그린다. 로드 직후 스크롤하면
+        // 스크럽이 그린 레저를 그대로 덮어써 심볼이 안 보이므로, 스크럽이 시작되면 캔버스
+        // 소유권을 넘겨받는다. 임계값이 필요하다 — 스크롤이 0이어도 핀 progress가 8e-7 같은
+        // 부동소수점 잔여값으로 들어와, p>0으로 두면 로드 즉시 인트로가 죽는다.
+        if (p > .001 && introId) {
+          win.cancelAnimationFrame(introId); introId = null;
+          for (var i = 0; i < P.length; i++) P[i].ka = 1;           // 인트로 등장 페이드 잔여값 제거
+        }
         setPos(p);
         ctx.clearRect(0, 0, W, H);
         drawGuides(p);
         drawLines(Math.max(0, 1 - p * 1.5));                       // 무질서 연결선 페이드아웃
         drawPills(p);                                              // 필 배경(스윕 좌→우 채움) + 완성 글로우
         drawTrails();                                              // 비행 궤적(필 위, 파티클 아래)
-        drawDots();                                                // 파티클이 필 안으로 착지 + 착지 리플
+        drawParticles(p);                                          // 파티클이 필 안으로 착지 + 착지 리플
         drawAccents(p);                                            // actor · check 도트
       }
     };
