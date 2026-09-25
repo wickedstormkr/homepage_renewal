@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>document.documentElement.className="js";</script>
 <title>WICKED STORM · 위키드스톰 | 학습의 모든 순간을 성장의 데이터로</title>
-<meta name="description" content="위키드스톰은 학습 활동을 국제 표준 학습데이터로 수집·저장하고 AI로 분석해 교육의 다음 행동으로 잇습니다. Lecognizer · LearnHubble AI · 1EdTech Korea 설립 이사회 참여사.">
+<meta name="description" content="위키드스톰은 학습 활동을 국제 표준 학습데이터로 수집·저장하고 AI로 분석해 교육의 다음 행동으로 잇습니다. Lecognizer · LearnHubble AI · 1EdTech Korea 설립 이사회.">
 <link rel="canonical" href="https://wickedstorm.kr/">
 <meta name="theme-color" content="#06070e">
 
@@ -135,13 +135,14 @@ gtag('config','G-0Y5QD1HBGN');
         <a class="btn s" href="#product">제품 보기</a>
       </div>
       <div class="hero-trust">
-        <span><b>1EdTech Korea</b>&nbsp;설립 이사회 참여사</span>
+        <span><b>1EdTech Korea</b>&nbsp;설립 이사회</span>
         <span>GS 인증 1등급 · AI 특허 2건 등록</span>
-        <span>똑똑! 수학탐험대 누적 사용자 240만 명</span>
       </div>
     </div>
 
-    <!-- 국제 표준 실시간 수집 뷰 -->
+    <!-- 국제 표준 실시간 수집 뷰. 인트로 등장은 .cap-wrap, 스크롤 퇴장은 .capture가 맡는다
+         (같은 요소를 두 타임라인이 건드리면 스크롤 중 새로고침 시 인트로가 패널을 되살려 겹친다) -->
+    <div class="cap-wrap">
     <div class="capture" id="capture">
       <div class="cap-top">
         <span class="cap-badge"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16"> Lecognizer · 국제 표준 수집</span>
@@ -166,6 +167,7 @@ gtag('config','G-0Y5QD1HBGN');
         <span class="ins-chip" id="insChip">신호 · 반복 재생 구간</span>
       </div>
     </div>
+    </div>
   </div>
 
   <!-- 핀-스크럽 오버레이 캡션 (초기 숨김, scrub 후반 페이드인) -->
@@ -178,21 +180,21 @@ gtag('config','G-0Y5QD1HBGN');
 <!-- ② PIPELINE -->
 <section class="band" style="padding-top:clamp(56px,7vw,96px)" aria-labelledby="pipeline-title">
   <div class="wrap">
-    <div class="pipe-wrap rv" id="pipeWrap">
-      <div class="sec-head pipe-head">
+    <div class="pipe-wrap" id="pipeWrap">
+      <div class="sec-head pipe-head rv">
         <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Pipeline</p>
         <h2 class="h-lg" id="pipeline-title" style="margin-top:16px">국제 표준으로 수집하고,<br>쌓고, <span class="g">분석합니다</span></h2>
-        <p class="sec-lead">학습데이터는 처음부터 국제 표준에 맞춰 들어옵니다.<br class="br-d">따로 옮기고 고칠 필요 없이, 수집된 그대로 쌓고 분석해<br class="br-d">교육 현장의 판단으로 이어집니다.</p>
+        <p class="sec-lead">학습데이터는 처음부터 국제 표준으로 들어와,<br class="br-d">수집된 그대로 쌓이고 분석됩니다.</p>
       </div>
       <div class="pipe-rail" aria-hidden="true">
         <span class="pipe-line" id="pipeLine"></span>
         <span class="pipe-dot" id="pipeDot"></span>
       </div>
       <div class="pipe">
-        <div class="step"><span class="n"><em>01</em> · Collect</span><h3>표준 수집</h3><p>국제 표준으로 실시간 수집</p><p class="step-detail"><span>교수·학습·운영의 모든 활동에서 생기는 학습데이터를<br class="br-d">xAPI 등 국제 표준에 맞춰 실시간으로 수집합니다.<br class="br-d">시스템이 달라도 같은 기준으로 모입니다.</span></p></div>
-        <div class="step"><span class="n"><em>02</em> · Store</span><h3>저장</h3><p>교육과정 맥락과 함께 축적</p><p class="step-detail"><span>1EdTech CASE 기반 교육과정 체계에 맞춰,<br class="br-d">학습 활동이 어느 교육과정 항목에서<br class="br-d">일어났는지까지 함께 Lecognizer에 쌓습니다.</span></p></div>
-        <div class="step"><span class="n"><em>03</em> · Analyze</span><h3>AI 분석</h3><p>평소와 다른 신호를 찾아 알림</p><p class="step-detail"><span>Lecognizer AI가 쌓인 학습데이터를 분석해<br class="br-d">이상 신호와 많은 학습자가 어려워한 구간을<br class="br-d">우선순위로 알립니다.</span></p></div>
-        <div class="step"><span class="n"><em>04</em> · Act</span><h3>인사이트</h3><p>사람이 판단하고 실행</p><p class="step-detail"><span>LearnHubble AI에서 운영자·교수자·학습자가<br class="br-d">알림과 원본 데이터를 보고 판단합니다.<br class="br-d">그 결과는 다시 학습데이터로 쌓입니다.</span></p></div>
+        <div class="step"><span class="n"><em>01</em> · Collect</span><h3>표준 수집</h3><p>국제 표준으로 실시간 수집</p><p class="step-detail"><span>모든 학습 활동을 같은 기준으로 모읍니다.</span></p></div>
+        <div class="step"><span class="n"><em>02</em> · Store</span><h3>저장</h3><p>교육과정 맥락과 함께 축적</p><p class="step-detail"><span>어느 교육과정 항목의 활동인지 함께 쌓습니다.</span></p></div>
+        <div class="step"><span class="n"><em>03</em> · Analyze</span><h3>AI 분석</h3><p>평소와 다른 신호를 찾아 알림</p><p class="step-detail"><span>어려워한 구간을 우선순위로 알립니다.</span></p></div>
+        <div class="step"><span class="n"><em>04</em> · Act</span><h3>인사이트</h3><p>사람이 판단하고 실행</p><p class="step-detail"><span>결과는 다시 학습데이터로 쌓입니다.</span></p></div>
       </div>
     </div>
     <figure class="frame media-frame rv"><video width="1280" height="720" muted loop playsinline preload="none" poster="./media/pipeline-poster.webp" aria-label="Lecognizer 수집, 저장, 분석 화면이 차례로 강조되는 반복 영상"><source src="./media/pipeline-loop.mp4" type="video/mp4"></video><figcaption class="note">Lecognizer에서 수집·저장·분석이 한 흐름으로 이어집니다</figcaption></figure>
@@ -322,10 +324,10 @@ gtag('config','G-0Y5QD1HBGN');
       <div class="rv">
         <p class="eyebrow"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> Standards Leadership</p>
         <h2 class="h-lg" style="margin-top:16px">표준을 쓰는 것을 넘어,<br><span class="gc">표준을 함께 만듭니다</span></h2>
-        <p class="sec-lead">위키드스톰은 국제 교육기술 표준 컨소시엄 1EdTech의 한국 조직<br class="br-d"><b style="color:#dfe3f7">(사)1EdTech Korea</b>의 설립 이사회 참여사이자 <span class="nw">1EdTech Contributing Member</span>입니다.<br class="br-d">학습데이터 수집 표준 xAPI와 교육과정·역량 표준 1EdTech CASE를<br class="br-d">제품과 사업에 적용해 왔고,<br class="br-d">Open Badges 3.0·CLR 2.0 등 성취 증거 표준은 적용을 준비하고 있습니다.</p>
+        <p class="sec-lead">위키드스톰은 국제 교육기술 표준 컨소시엄 1EdTech의 한국 조직<br class="br-d"><b style="color:#dfe3f7">(사)1EdTech Korea</b> 설립 이사회로 참여하고 있으며, <span class="nw">1EdTech Contributing Member</span>입니다.<br class="br-d">학습데이터 수집 표준 xAPI와 교육과정·역량 표준 1EdTech CASE를<br class="br-d">제품과 사업에 적용해 왔고,<br class="br-d">Open Badges 3.0·CLR 2.0 등 성취 증거 표준은 적용을 준비하고 있습니다.</p>
       </div>
       <div class="rv x" style="text-align:right">
-        <span class="powered"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> 1EdTech Korea 설립 이사회 참여사 · <b>Contributing&nbsp;Member</b></span>
+        <span class="powered"><img class="sym" src="./img/symbol.png" alt="" width="16" height="16" loading="lazy"> 1EdTech Korea 설립 이사회 · <b>Contributing&nbsp;Member</b></span>
       </div>
     </div>
     <div class="std-grid stag">

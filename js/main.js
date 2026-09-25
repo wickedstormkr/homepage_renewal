@@ -667,7 +667,7 @@
       .from('.hero-lead', { y: 18, opacity: 0, duration: .7 }, '-=.52')
       .from('.hero-cta', { y: 18, opacity: 0, duration: .7 }, '-=.55')
       .from('.hero-trust', { y: 18, opacity: 0, duration: .7 }, '-=.55')
-      .from('.capture', { y: 40, opacity: 0, duration: .9 }, .45); // 캡처 패널 진입(SPEC 씬1)
+      .from('.cap-wrap', { y: 40, opacity: 0, duration: .9 }, .45); // 캡처 패널 진입(SPEC 씬1). 래퍼를 움직여 스크럽의 .capture 퇴장과 충돌하지 않게 한다
   }
 
   /* ============================================================
