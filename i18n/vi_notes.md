@@ -115,3 +115,10 @@
 | KERIS · 똑똑! 수학탐험대… | `KERIS · Toc Toc! Math&nbsp;Expedition` | `<span class="nw">KERIS&nbsp;·</span> <span class="nw">Toc Toc! Math Expedition</span>` | 같은 이유(.nw로 단위 묶음) |
 | 인사혁신처 · 인재개발… | `Bộ Quản&nbsp;lý Nhân&nbsp;sự Hàn&nbsp;Quốc · Phát&nbsp;triển nhân&nbsp;lực` | `<span class="nw">Bộ Quản lý Nhân sự Hàn Quốc&nbsp;·</span> <span class="nw">Phát triển nhân lực</span>` | 같은 이유. EN은 360·390·768px에서 "HRD"가 끝줄에 혼자 남는다(용어 HRD 유지, 판단 필요) |
 | 서울시 · 교육플랫폼… | `Chính&nbsp;quyền Thành&nbsp;phố Seoul · Nền&nbsp;tảng giáo&nbsp;dục` | `<span class="nw">Chính quyền Thành phố Seoul&nbsp;·</span> <span class="nw">Nền tảng giáo dục</span>` | 같은 이유("Seoul Metropolitan / Government ·"가 없어짐) |
+
+### 추가 3: 남은 판단 항목 정리 (같은 PR, 2026-09-25)
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| GS 인증 1등급 · AI 특허 2건 등록… | `Chứng&nbsp;nhận GS hạng 1 · 2 bằng&nbsp;sáng&nbsp;chế AI được&nbsp;cấp` | `Chứng&nbsp;nhận&nbsp;GS&nbsp;hạng&nbsp;1&nbsp;· 2&nbsp;bằng&nbsp;sáng&nbsp;chế&nbsp;AI&nbsp;được&nbsp;cấp` | 360px에서 "2 bằng sáng chế AI / được cấp"로 쪼개짐 → 가운뎃점 뒤에서만 끊기게 |
+| Lecognizer · 국제 표준 수집… | `Lecognizer · Thu&nbsp;thập chuẩn quốc&nbsp;tế` | `Lecognizer&nbsp;· Thu&nbsp;thập&nbsp;chuẩn&nbsp;quốc&nbsp;tế` | 폰에서 배지가 낱말 가운데(GLOBAL-/STANDARD) 또는 가운뎃점 앞에서 끊김 → 가운뎃점 뒤에서만 끊기게(영어는 줄바꿈 없는 하이픈) |

@@ -82,8 +82,8 @@ function measure(lang) {
     if (!vis(el) || /^(svg|path|img|video|canvas|select|input|textarea|option)$/i.test(el.tagName)) continue;
     if (!hasText(el) && !el.matches('.btn,.pill,.feat-badge,.cta,.lang-switch,nav.main,.powered,.st,.ntag,.rtags span,.cap-badge,.ins-chip,.chip')) continue;
     const cs = getComputedStyle(el);
-    // .hist-year는 ::after 점이 레일 위로 나가도록 만든 것이라 제외
-    if (el.scrollWidth > el.clientWidth + 1 && !el.matches('.hist-year') && cs.display !== 'inline' && !/auto|scroll/.test(cs.overflowX))
+    // .hist-year는 ::after 점이 레일 위로 나가도록 만든 것이라, 말줄임표(text-overflow:ellipsis)는 의도한 자르기라 제외
+    if (el.scrollWidth > el.clientWidth + 1 && !el.matches('.hist-year') && cs.textOverflow !== 'ellipsis' && cs.display !== 'inline' && !/auto|scroll/.test(cs.overflowX))
       out.push(`[칸넘침] ${name(el)} ${el.scrollWidth}>${el.clientWidth}${cs.whiteSpace === 'nowrap' ? ' nowrap' : ''} "${txt(el)}"`);
     const r = el.getBoundingClientRect();
     if ((r.right > W + 1 || r.left < -1) && !clipped(el) && !el.closest('.hero .orbs,.stream-viewport'))

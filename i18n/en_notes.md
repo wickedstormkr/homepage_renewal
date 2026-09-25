@@ -111,3 +111,11 @@
 | KERIS · 똑똑! 수학탐험대… | `KERIS · Toc Toc! Math&nbsp;Expedition` | `<span class="nw">KERIS&nbsp;·</span> <span class="nw">Toc Toc! Math Expedition</span>` | 같은 이유(.nw로 단위 묶음) |
 | 인사혁신처 · 인재개발… | `Ministry of Personnel Management&nbsp;·&nbsp;HRD` | `<span class="nw">Ministry of Personnel Management&nbsp;·</span> HRD` | 같은 이유. EN은 360·390·768px에서 "HRD"가 끝줄에 혼자 남는다(용어 HRD 유지, 판단 필요) |
 | 서울시 · 교육플랫폼… | `Seoul Metropolitan Government · Education platform` | `<span class="nw">Seoul Metropolitan Government&nbsp;·</span> <span class="nw">Education platform</span>` | 같은 이유("Seoul Metropolitan / Government ·"가 없어짐) |
+
+### 추가 3: 남은 판단 항목 정리 (같은 PR, 2026-09-25)
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| Lecognizer · 국제 표준 수집… | `Lecognizer · Global-standard collection` | `Lecognizer&nbsp;· Global‑standard collection` | 폰에서 배지가 낱말 가운데(GLOBAL-/STANDARD) 또는 가운뎃점 앞에서 끊김 → 가운뎃점 뒤에서만 끊기게(영어는 줄바꿈 없는 하이픈) |
+| 표준 수집… | `<span class="nw">Standards-based</span> collection` | `<span class="nw">Standards-based</span> data&nbsp;collection` | 두 단어 제목이라 좁은 칸에서 "collection"이 혼자 남음 → "Standards-based / data collection"(끝줄 두 단어) |
+| 인사혁신처 · 인재개발… | `<span class="nw">Ministry of Personnel Management&nbsp;·</span> HRD` | `<span class="nw">Ministry of Personnel Management&nbsp;·</span> <span class="nw">Human resource development</span>` | 기관명을 한 줄에 두면 "HRD"가 혼자 남음 → 풀어 씀(Human resource development) |

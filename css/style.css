@@ -980,9 +980,20 @@ html:is(:lang(en),:lang(vi)) .cap-live{white-space:nowrap}
   html:not(:lang(ko)) .hero-grid{grid-template-columns:1fr 1fr;gap:28px}
 }
 @media (min-width:961px) and (max-width:1099px){
-  html:is(:lang(en),:lang(vi)) .xrow{gap:5px;padding:10px 9px}
-  html:is(:lang(en),:lang(vi)) .xrow .chip{font-size:11.5px;padding:4px 7px}
+  html:is(:lang(en),:lang(vi)) .xrow{gap:4px;padding:10px 8px}
+  html:is(:lang(en),:lang(vi)) .xrow .chip{font-size:11.5px;padding:4px 6px;letter-spacing:-.03em}
   html:is(:lang(en),:lang(vi)) .xrow .dot{width:8px;height:8px}
+  html:is(:lang(en),:lang(vi)) .xrow .arrow{font-size:11px}
+}
+@media (min-width:1100px) and (max-width:1279px){
+  html:lang(vi) .xrow{gap:4px;padding:10px 8px}
+  html:lang(vi) .xrow .chip{font-size:11.5px;padding:4px 6px;letter-spacing:-.03em}
+}
+/* 그래도 가장 긴 조합(긴 행위자 + 'Concept lecture 04'/'Bài giảng khái niệm 04' + 긴 결과)은 칸을 넘는다.
+   장식용 스트림(aria-hidden)이라 행 높이가 들쭉날쭉한 것보다 한 줄을 지키고, 그 경우에만 대상 칩을 말줄임한다 */
+@media (min-width:961px) and (max-width:1279px){
+  html:is(:lang(en),:lang(vi)) .xrow{flex-wrap:nowrap}
+  html:is(:lang(en),:lang(vi)) .xrow .chip.object{min-width:0;overflow:hidden;text-overflow:ellipsis}
 }
 /* 히어로 AI 신호 알약: main.js가 문구를 바꿔 가며 보여 준다. 영·베 문구는 길어 폰에서 두 줄이 되고 알약 길이에 따라 줄 수가 바뀐다
    → 폰에서는 알약을 늘 아랫줄에 두고(높이 고정) 한 줄로 */
@@ -1050,3 +1061,24 @@ html:not(:lang(ko)) .sec-head .h-lg{max-width:19em}
   html:lang(en) .ref-card .rorg{font-size:11.5px}
 }
 @media (max-width:380px){html:lang(en) .ref-card .rorg{font-size:11px}}
+
+/* ---- 네 언어 공통 보정(국문 포함). 번역만의 문제가 아니라 국문에도 있던 것이라 공통 규칙으로 고친다 ---- */
+/* 11px 미만 글자: 캡처 'AI SIGNAL'·소식 태그 10.5px, 1024px 파이프라인 무대 'ONE PIPELINE' 10px·단계 번호 10.5px */
+.ins-label{font-size:11px}
+.ncard .ntag,.detail-eyebrow .ntag{font-size:11px}
+@media (min-width:1024px){
+  .pl-idx{font-size:max(11px,.95cqw)}
+  .pl-lab i{font-size:max(11px,1.05cqw)}
+}
+/* 파이프라인 창 주소줄(연출용 가짜 주소): 좁은 창에서 글자가 칸 끝에서 잘려 보였다 → 말줄임표 */
+.pl-bar em{text-overflow:ellipsis}
+/* 헤더(961~1023px, 국문): 메뉴 간격 32px면 961px에서 로고와 메뉴가 붙는다(간격 0). 번역은 위 961~1279px 규칙이 맡는다 */
+@media (min-width:961px) and (max-width:1023px){html:lang(ko) nav.main{gap:20px}}
+/* 히어로 캡처 행(961~1023px, 국문): 두 열 히어로가 가장 좁은 폭이라 칩 조합 45개 중 10개가 둘째 줄로 밀린다 */
+@media (min-width:961px) and (max-width:1023px){
+  html:lang(ko) .xrow{gap:7px;padding:12px 11px}
+  html:lang(ko) .xrow .chip{padding:5px 9px}
+}
+/* 히어로 캡처 배지(폰, 네 언어 공통): 자간 .14em이면 국문도 360px에서 두 줄이 되고, 영어는 'GLOBAL-/STANDARD'처럼 낱말 가운데서 끊겼다.
+   자간을 줄이고, 두 줄이 될 때는 balance로 '· ' 뒤에서 나뉘게 한다(영어는 번역문에서 줄바꿈 없는 하이픈) */
+@media (max-width:430px){.cap-badge{letter-spacing:.06em;text-wrap:balance}}
