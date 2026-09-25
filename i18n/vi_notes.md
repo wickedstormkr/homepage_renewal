@@ -91,3 +91,14 @@
 | 신호 · 반복 재생 구간… | `Dấu hiệu · Phần được xem lại nhiều lần` | `Dấu hiệu · Phần xem lại` | 정적 HTML 문구가 main.js 문구(Dấu hiệu · Phần xem lại)와 달라 첫 화면만 길었음 |
 | <b>학과 교육과정 운영자</b><span class="pill lxp"… | `<b>Quản trị viên chương trình đào tạo</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Quản trị viên xem xét cảnh báo AI và dữ liệu gốc. Họ cải tiến các khung <span class="nw">năng lực học thuật và nghề nghiệp</span> dựa trên 1EdTech CASE.</span>` | `<b>Quản trị viên chương trình đào tạo</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Xem xét cảnh báo AI và dữ liệu gốc, cải tiến khung <span class="nw">năng lực học thuật và nghề nghiệp</span> dựa trên 1EdTech&nbsp;CASE.</span>` | 선순환 그림 라벨이 그림 밖으로 나감: 주어(Quản trị viên) 생략, 한 문장으로. 카탈로그 p.7 문장을 줄인 것 |
 | 에 동의합니다.… | `để xử lý yêu cầu liên hệ.` | ` để xử lý yêu cầu liên hệ.` | 링크 뒤 띄어쓰기 누락 |
+
+### 추가: 제목·캡션 줄바꿈 (같은 PR, 2026-09-25)
+
+그라디언트 강조 구절은 한 줄에, 끝줄 한 단어 없이, 화면 끝까지 늘어지는 한 줄 없이. 위 표와 겹치는 키는 이 값이 최종이다.
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| <span class="line"><span class="line-inn… | `<span class="line"><span class="line-inner">Biến mỗi khoảnh khắc</span></span> <span class="line"><span class="line-inner">học tập thành <span class="g">dữ liệu</span></span></span> <span class="line"><span class="line-inner"><span class="g">cho sự phát triển</span></span></span>` | `<span class="line"><span class="line-inner">Biến mỗi khoảnh khắc</span></span> <span class="line"><span class="line-inner">học tập thành</span></span> <span class="line"><span class="line-inner"><span class="g">dữ&nbsp;liệu cho sự phát&nbsp;triển</span></span></span>` | 히어로 제목: 강조 구절이 줄바꿈으로 쪼개지거나 끝줄 한 단어 |
+| 학습의 모든 순간이 <span class="g">국제 표준 데이터</sp… | `Mỗi khoảnh&nbsp;khắc học&nbsp;tập đều được tích&nbsp;lũy thành <span class="g">dữ&nbsp;liệu theo chuẩn quốc&nbsp;tế</span>` | `Mỗi khoảnh&nbsp;khắc học&nbsp;tập đều được&nbsp;tích&nbsp;lũy thành&nbsp;<span class="g">dữ liệu theo chuẩn quốc tế</span>` | 히어로 스크롤 캡션: 화면 끝까지 한 줄로 늘어지고 강조 구절이 쪼개짐. 의미 단위 두 줄로 끊도록 &nbsp;/.nw |
+| 표준을 쓰는 것을 넘어,<br><span class="gc">표준을 함께… | `Không chỉ áp&nbsp;dụng chuẩn,<br><span class="gc">mà còn cùng xây&nbsp;dựng&nbsp;chuẩn</span>` | `Không chỉ áp&nbsp;dụng chuẩn,<br>mà còn <span class="gc">cùng&nbsp;xây&nbsp;dựng&nbsp;chuẩn</span>` | 폰에서 강조 구절이 두 줄로 쪼개짐: 강조를 "cùng xây dựng chuẩn"으로 좁혀 한 줄 |
+| 학습데이터와 AI로<br>학습의 새로운 시대를 여는<br><span cl… | `Với dữ&nbsp;liệu học&nbsp;tập và&nbsp;AI<br><span class="gc">Công&nbsp;ty EdTech toàn&nbsp;cầu</span><br>mở ra kỷ&nbsp;nguyên học&nbsp;tập&nbsp;mới` | `Với dữ&nbsp;liệu học&nbsp;tập và&nbsp;AI<br><span class="gc">Công&nbsp;ty&nbsp;EdTech&nbsp;toàn&nbsp;cầu</span><br>mở ra kỷ&nbsp;nguyên học&nbsp;tập&nbsp;mới` | 폰에서 강조 구절이 쪼개지고 첫 줄에 한 단어(A). EN은 줄바꿈을 1280px 이상에서만(br-d) |

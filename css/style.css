@@ -1015,3 +1015,26 @@ html:not(:lang(ko)) .cform .check .field-err{display:block;margin-top:6px}
 @media (max-width:560px){
   html:lang(vi) .std-meta .st{font-size:11.5px;letter-spacing:-.02em;white-space:nowrap}
 }
+
+/* 제목·캡션 줄바꿈(영·베·일): 그라디언트 강조 구절은 한 줄에, 끝줄 한 단어 없이, 의미 단위로.
+   강조 구절 폭(em, 실측): EN 'Every Learning Moment,' 10.8 · 'global EdTech company' 10.6, VI 'dữ liệu cho sự phát triển' 10.8 ·
+   'Công ty EdTech toàn cầu' 11.0, JA 'グローバルエドテック企業' 11.0. 360px 칸(312px)에는 30px로 넘쳐 이 폭에서만 28px로 */
+@media (max-width:380px){
+  html:not(:lang(ko)) .hero h1,html:not(:lang(ko)) .h-lg{font-size:28px}
+}
+/* 히어로 스크롤 캡션(961px 이상 핀 구간에서만 보인다): 번역문은 화면 폭 끝까지 한 줄로 늘어지거나 강조 구절이 쪼개졌다.
+   폭을 두 줄 분량으로 제한하고 balance, 강조 구절은 한 줄. 끊는 자리는 번역문의 &nbsp;로 의미 단위에 맞춘다 */
+@media (min-width:961px){
+  html:not(:lang(ko)) .hero-overlay .ho-main{text-wrap:balance}
+  html:not(:lang(ko)) .hero-overlay .ho-main .g{white-space:nowrap}
+  html:lang(en) .hero-overlay .ho-main{max-width:16em}
+  html:lang(vi) .hero-overlay .ho-main{max-width:19.5em}
+  html:lang(ja) .hero-overlay .ho-main{max-width:16.5em}
+}
+/* 캡션의 .nw 묶음은 데스크톱 두 줄용. 캡션이 숨는 960px 이하에서도 넘치지 않게 푼다 */
+@media (max-width:960px){html:lang(ja) .hero-overlay .ho-main .nw{white-space:normal}}
+/* 파이프라인 단계 제목(폰 2열): 'Standards-based'가 하이픈에서 쪼개지지 않게 묶었고, 좁은 칸에 들어가게 조금 줄인다 */
+@media (max-width:430px){html:lang(en) .pipe .step h3{font-size:15.5px}}
+@media (max-width:380px){html:lang(en) .pipe .step h3{font-size:14.5px}}
+/* 회사 제목(영어, 폰): 'A global EdTech company'(11.1em)를 한 줄에 두려면 390px 칸(342px)에서 30px는 넘친다 */
+@media (max-width:430px){html:lang(en) #company .h-lg{font-size:27px}}

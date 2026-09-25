@@ -87,3 +87,15 @@
 | <b>학과 교육과정 운영자</b><span class="pill lxp"… | `<b>Curriculum Administrator</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Administrators review AI alerts and raw data. They refine CASE-based <span class="nw">academic and job-related</span> competency frameworks.</span>` | `<b>Curriculum Administrator</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Review AI alerts and raw data, then refine CASE-based <span class="nw">academic and job-related</span> competency&nbsp;frameworks.</span>` | 선순환 그림 라벨이 4줄로 그림 아래 끝에 닿음: 주어(Administrators) 생략, 두 문장을 한 문장으로. 카탈로그 p.7 문장을 줄인 것 |
 | 학습데이터·표준·AI 도입을<br>함께 <span class="g">검토… | `Adopting learning data, standards, or AI?<br>Let’s <span class="g">review</span> it together` | `Adopting learning data, standards, or AI?<br>Let’s <span class="g">review</span> it&nbsp;together` | 끝줄 한 단어 |
 | 에 동의합니다.… | `for handling my inquiry.` | ` for handling my inquiry.` | 링크 뒤 띄어쓰기 누락(국문에는 공백이 없어 번역에도 없었음) |
+
+### 추가: 제목·캡션 줄바꿈 (같은 PR, 2026-09-25)
+
+그라디언트 강조 구절은 한 줄에, 끝줄 한 단어 없이, 화면 끝까지 늘어지는 한 줄 없이. 위 표와 겹치는 키는 이 값이 최종이다.
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| <span class="line"><span class="line-inn… | `<span class="line"><span class="line-inner">Every Learning Moment,</span></span> <span class="line"><span class="line-inner">Designed for <span class="g">Growth.</span></span></span>` | `<span class="line"><span class="line-inner">Every Learning Moment,</span></span> <span class="line"><span class="line-inner">Designed&nbsp;for&nbsp;<span class="g">Growth.</span></span></span>` | 히어로 제목: 강조 구절이 줄바꿈으로 쪼개지거나 끝줄 한 단어 |
+| 학습의 모든 순간이 <span class="g">국제 표준 데이터</sp… | `Every learning moment is recorded as <span class="g">data built on global standards</span>` | `Every learning moment is recorded as&nbsp;<span class="g">data built on global standards</span>` | 히어로 스크롤 캡션: 화면 끝까지 한 줄로 늘어지고 강조 구절이 쪼개짐. 의미 단위 두 줄로 끊도록 &nbsp;/.nw |
+| 국제 표준으로 수집하고, 쌓고, <span class="g">분석합니다<… | `Collect and store using global standards, then <span class="g">analyze</span>` | `Collect and store using global standards, then&nbsp;<span class="g">analyze</span>` | 폰에서 끝줄 한 단어(analyze) |
+| 표준 수집… | `Standards-based collection` | `<span class="nw">Standards-based</span> collection` | 하이픈에서 쪼개져 세 줄(Standards- / based / collection) |
+| 학습데이터와 AI로<br>학습의 새로운 시대를 여는<br><span cl… | `A <span class="gc">global EdTech company</span><br>shaping a new era of learning<br>through data and AI.` | `A&nbsp;<span class="gc">global&nbsp;EdTech&nbsp;company</span><br class="br-d"> shaping a&nbsp;new&nbsp;era of learning<br class="br-d"> through data and&nbsp;AI.` | 폰에서 강조 구절이 쪼개지고 첫 줄에 한 단어(A). EN은 줄바꿈을 1280px 이상에서만(br-d) |
