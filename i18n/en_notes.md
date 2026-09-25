@@ -99,3 +99,15 @@
 | 국제 표준으로 수집하고, 쌓고, <span class="g">분석합니다<… | `Collect and store using global standards, then <span class="g">analyze</span>` | `Collect and store using global standards, then&nbsp;<span class="g">analyze</span>` | 폰에서 끝줄 한 단어(analyze) |
 | 표준 수집… | `Standards-based collection` | `<span class="nw">Standards-based</span> collection` | 하이픈에서 쪼개져 세 줄(Standards- / based / collection) |
 | 학습데이터와 AI로<br>학습의 새로운 시대를 여는<br><span cl… | `A <span class="gc">global EdTech company</span><br>shaping a new era of learning<br>through data and AI.` | `A&nbsp;<span class="gc">global&nbsp;EdTech&nbsp;company</span><br class="br-d"> shaping a&nbsp;new&nbsp;era of learning<br class="br-d"> through data and&nbsp;AI.` | 폰에서 강조 구절이 쪼개지고 첫 줄에 한 단어(A). EN은 줄바꿈을 1280px 이상에서만(br-d) |
+
+### 추가 2: 섹션 제목 폭·레퍼런스 기관명·강조 구절 (같은 PR, 2026-09-25)
+
+섹션 제목은 CSS(`max-width:19em`)로 두 줄이 되고, 아래는 번역문에서 끊는 자리만 바꾼 것이다. 보이는 글자는 그대로다.
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| 국제 표준으로 수집하고, 쌓고, <span class="g">분석합니다<… | `Collect and store using global standards, then&nbsp;<span class="g">analyze</span>` | `Collect and store using global&nbsp;standards, then&nbsp;<span class="g">analyze</span>` | "global / standards"가 줄바꿈으로 쪼개짐(768px 이상, 폰): global&nbsp;standards로 묶음 |
+| 교육부 · 국가 수준… | `Ministry of Education · National level` | `<span class="nw">Ministry of Education&nbsp;·</span> <span class="nw">National level</span>` | 기관명(그라디언트 라벨)이 이름 한가운데서 끊김: "기관 ·"과 "분야"를 .nw로 묶어 가운뎃점 뒤에서만 끊음 |
+| KERIS · 똑똑! 수학탐험대… | `KERIS · Toc Toc! Math&nbsp;Expedition` | `<span class="nw">KERIS&nbsp;·</span> <span class="nw">Toc Toc! Math Expedition</span>` | 같은 이유(.nw로 단위 묶음) |
+| 인사혁신처 · 인재개발… | `Ministry of Personnel Management&nbsp;·&nbsp;HRD` | `<span class="nw">Ministry of Personnel Management&nbsp;·</span> HRD` | 같은 이유. EN은 360·390·768px에서 "HRD"가 끝줄에 혼자 남는다(용어 HRD 유지, 판단 필요) |
+| 서울시 · 교육플랫폼… | `Seoul Metropolitan Government · Education platform` | `<span class="nw">Seoul Metropolitan Government&nbsp;·</span> <span class="nw">Education platform</span>` | 같은 이유("Seoul Metropolitan / Government ·"가 없어짐) |

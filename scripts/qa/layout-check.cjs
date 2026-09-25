@@ -153,10 +153,8 @@ function measure(lang) {
     }
   }
 
-  // 5. 제목·리드 마지막 줄 한 단어
-  const spaced = lang === 'en' || lang === 'vi';
-  for (const el of document.querySelectorAll('h1,h2,h3,.sec-lead,.hero-lead,.ho-main,.ho-sub,.pl-title,.pl-sub,.lhub-principle,.co-slogan,.hist-title,.ch-title,.note,.loop-notes .ln-desc,.feat-copy>p,.lhub-points span,.ref-card p,.std-card p')) {
-    if (!vis(el)) continue;
+  // 글자 사각형으로 줄을 복원한다: [{top, l, r, s}] (s는 그 줄 글자, 공백은 원문 기준으로 복원)
+  const charLines = el => {
     const lines = [];
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     const range = document.createRange();
@@ -170,30 +168,77 @@ function measure(lang) {
         const r = range.getClientRects()[0];
         if (!r || !r.width) continue;
         let line = lines.find(L => Math.abs(L.top - r.top) < r.height * .5);
-        if (!line) { line = { top: r.top, s: '' }; lines.push(line); }
+        if (!line) { line = { top: r.top, l: r.left, r: r.right, s: '' }; lines.push(line); }
+        line.l = Math.min(line.l, r.left); line.r = Math.max(line.r, r.right);
         if (line.s && line.last && t[i - 1] && /\s/.test(t[i - 1])) line.s += ' ';
         line.s += t[i]; line.last = true;
       }
       lines.forEach(L => (L.last = false));
     }
-    // 줄 안 공백 복원이 불완전해서 단어 수는 원문 기준으로 센다
+    return lines.sort((a, b) => a.top - b.top);
+  };
+  // 히어로 스크롤 캡션은 961px 이상 핀 구간에서만 보인다(그 아래는 숨은 채라 재지 않는다)
+  const shown = el => vis(el) && !(el.closest('.hero-overlay') && innerWidth < 961);
+  const spaced = lang === 'en' || lang === 'vi';
+  const words = s => s.trim().split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w));
+
+  // 5. 제목·리드 마지막 줄 한 단어
+  for (const el of document.querySelectorAll('h1,h2,h3,.sec-lead,.hero-lead,.ho-main,.ho-sub,.pl-title,.pl-sub,.lhub-principle,.co-slogan,.hist-title,.ch-title,.note,.loop-notes .ln-desc,.feat-copy>p,.lhub-points span,.ref-card p,.std-card p')) {
+    if (!shown(el)) continue;
+    const lines = charLines(el);
     if (lines.length < 2) continue;
-    lines.sort((a, b) => a.top - b.top);
     const last = lines[lines.length - 1].s;
     const full = txt(el);
     let lone = false;
     if (spaced) {
-      // 원문에서 마지막 줄 글자 수만큼 뒤를 잘라 단어 수를 센다
+      // 줄 안 공백 복원이 불완전해서 단어 수는 원문 기준으로 센다: 원문에서 마지막 줄 글자 수만큼 뒤를 잘라 센다
       const flat = el.textContent.replace(/\s+/g, ' ').trim();
       const nosp = last.replace(/\s/g, '');
       let k = flat.length, cnt = 0;
       while (k > 0 && cnt < nosp.length) { k--; if (!/\s/.test(flat[k])) cnt++; }
-      const words = flat.slice(k).trim().split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w));
-      lone = words.length === 1;
+      lone = words(flat.slice(k)).length === 1;
     } else {
       lone = last.replace(/[\s.,。、．·:：!?）)」』]/g, '').length <= 3;
     }
     if (lone) out.push(`[고아] ${name(el)} 끝줄 "${last}" ← "${full}"`);
+  }
+
+  // 8. 제목·캡션: 본문 폭 끝까지 늘어진 한 줄, 가운데·첫 줄에 한 단어만 있는 줄, 그라디언트 강조 구절(.g/.gc)이 줄바꿈으로 쪼개짐
+  for (const el of document.querySelectorAll('.hero h1,.sec-head h2,.hist-title,.ho-main,.ho-sub,.pl-title')) {
+    if (!shown(el)) continue;
+    const lines = charLines(el);
+    if (!lines.length) continue;
+    const area = (el.closest('.hero-overlay,.hero-grid,.wrap') || document.body).getBoundingClientRect().width;
+    const widest = Math.max(...lines.map(L => L.r - L.l));
+    if (area >= 600 && widest >= area * .88) out.push(`[긴줄] ${name(el)} ${Math.round(widest)}/${Math.round(area)}px "${txt(el)}"`);
+    if (lines.length > 1) lines.slice(0, -1).forEach(L => {
+      if (spaced ? words(L.s).length === 1 && L.s.replace(/[^\p{L}\p{N}]/gu, '').length <= 12 : L.s.replace(/[\s.,。、．·:：!?）)」』]/g, '').length <= 2)
+        out.push(`[한단어줄] ${name(el)} "${L.s}" ← "${txt(el)}"`);
+    });
+  }
+  // 강조 구절: 제목 안에서 공백만 사이에 두고 이어지는 .g/.gc 글자를 한 구절로 묶어 센다
+  // (예: <span class="gc">Nền tảng giảng dạy</span> <span class="gc">và học tập</span>, 히어로 제목의 줄별 .g)
+  for (const el of document.querySelectorAll('h1,h2,h3,.ho-main,.ho-sub,.pl-title,.hist-title,.lhub-name,.co-slogan')) {
+    if (!shown(el)) continue;
+    const groups = []; let cur = null;
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = walker.nextNode())) {
+      const g = n.parentElement.closest('.g,.gc');
+      const inG = g && el.contains(g) && getComputedStyle(g).display === 'inline';
+      if (!n.textContent.trim()) continue;          // 공백만 있는 글자는 구절을 끊지 않는다
+      if (inG) { if (!cur) { cur = []; groups.push(cur); } cur.push(n); } else cur = null;
+    }
+    for (const grp of groups) {
+      const range = document.createRange(); range.setStart(grp[0], 0); range.setEnd(grp[grp.length - 1], grp[grp.length - 1].length);
+      const L = [];
+      for (const r of range.getClientRects()) {
+        if (r.width < 2 || r.height < 2) continue;
+        const c = (r.top + r.bottom) / 2;
+        if (!L.some(l => Math.abs(l - c) < Math.min(r.height, 24) * .6)) L.push(c);
+      }
+      if (L.length > 1) out.push(`[강조쪼개짐] ${name(el)} "${range.toString().replace(/\s+/g, ' ').trim()}" ${L.length}줄 ← "${txt(el)}"`);
+    }
   }
 
   // 6. 카드 높이: 같은 줄 카드 중 가장 높은 카드(= 그 줄 높이를 정한 카드)를 기록해 KO와 비교한다

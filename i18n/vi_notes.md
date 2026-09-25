@@ -102,3 +102,16 @@
 | 학습의 모든 순간이 <span class="g">국제 표준 데이터</sp… | `Mỗi khoảnh&nbsp;khắc học&nbsp;tập đều được tích&nbsp;lũy thành <span class="g">dữ&nbsp;liệu theo chuẩn quốc&nbsp;tế</span>` | `Mỗi khoảnh&nbsp;khắc học&nbsp;tập đều được&nbsp;tích&nbsp;lũy thành&nbsp;<span class="g">dữ liệu theo chuẩn quốc tế</span>` | 히어로 스크롤 캡션: 화면 끝까지 한 줄로 늘어지고 강조 구절이 쪼개짐. 의미 단위 두 줄로 끊도록 &nbsp;/.nw |
 | 표준을 쓰는 것을 넘어,<br><span class="gc">표준을 함께… | `Không chỉ áp&nbsp;dụng chuẩn,<br><span class="gc">mà còn cùng xây&nbsp;dựng&nbsp;chuẩn</span>` | `Không chỉ áp&nbsp;dụng chuẩn,<br>mà còn <span class="gc">cùng&nbsp;xây&nbsp;dựng&nbsp;chuẩn</span>` | 폰에서 강조 구절이 두 줄로 쪼개짐: 강조를 "cùng xây dựng chuẩn"으로 좁혀 한 줄 |
 | 학습데이터와 AI로<br>학습의 새로운 시대를 여는<br><span cl… | `Với dữ&nbsp;liệu học&nbsp;tập và&nbsp;AI<br><span class="gc">Công&nbsp;ty EdTech toàn&nbsp;cầu</span><br>mở ra kỷ&nbsp;nguyên học&nbsp;tập&nbsp;mới` | `Với dữ&nbsp;liệu học&nbsp;tập và&nbsp;AI<br><span class="gc">Công&nbsp;ty&nbsp;EdTech&nbsp;toàn&nbsp;cầu</span><br>mở ra kỷ&nbsp;nguyên học&nbsp;tập&nbsp;mới` | 폰에서 강조 구절이 쪼개지고 첫 줄에 한 단어(A). EN은 줄바꿈을 1280px 이상에서만(br-d) |
+
+### 추가 2: 섹션 제목 폭·레퍼런스 기관명·강조 구절 (같은 PR, 2026-09-25)
+
+섹션 제목은 CSS(`max-width:19em`)로 두 줄이 되고, 아래는 번역문에서 끊는 자리만 바꾼 것이다. 보이는 글자는 그대로다.
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| 국제 표준으로 수집하고, 쌓고, <span class="g">분석합니다<… | `Thu&nbsp;thập theo chuẩn quốc&nbsp;tế, lưu&nbsp;trữ và <span class="g">phân&nbsp;tích</span>` | `Thu&nbsp;thập theo chuẩn&nbsp;quốc&nbsp;tế, lưu&nbsp;trữ và <span class="g">phân&nbsp;tích</span>` | 1024px 이상에서 본문 폭 끝까지 한 줄(22em). 제목 폭 제한 뒤 "chuẩn / quốc tế"로 끊겨 chuẩn&nbsp;quốc&nbsp;tế로 묶음(쉼표 뒤에서 끊김) |
+| AI와 상호작용하는 맞춤형 <span class="gc nw">교수·학습… | `<span class="gc nw">Nền&nbsp;tảng giảng&nbsp;dạy</span> <span class="gc nw">và học&nbsp;tập</span> cá&nbsp;nhân&nbsp;hóa, tương&nbsp;tác với AI` | `<span class="nw">Nền&nbsp;tảng</span> <span class="gc nw">giảng&nbsp;dạy và học&nbsp;tập</span> cá&nbsp;nhân&nbsp;hóa, tương&nbsp;tác với&nbsp;AI` | 그라디언트 강조가 두 조각(Nền tảng giảng dạy / và học tập)이라 폰·데스크톱에서 강조 구절이 두 줄로 쪼개짐. 강조를 "giảng dạy và học tập" 한 조각으로 좁힘(글자는 그대로, 강조 범위 확인 필요) |
+| 교육부 · 국가 수준… | `Bộ Giáo&nbsp;dục Hàn&nbsp;Quốc · Cấp&nbsp;quốc&nbsp;gia` | `<span class="nw">Bộ Giáo dục Hàn Quốc&nbsp;·</span> <span class="nw">Cấp quốc gia</span>` | 기관명(그라디언트 라벨)이 이름 한가운데서 끊김: "기관 ·"과 "분야"를 .nw로 묶어 가운뎃점 뒤에서만 끊음 |
+| KERIS · 똑똑! 수학탐험대… | `KERIS · Toc Toc! Math&nbsp;Expedition` | `<span class="nw">KERIS&nbsp;·</span> <span class="nw">Toc Toc! Math Expedition</span>` | 같은 이유(.nw로 단위 묶음) |
+| 인사혁신처 · 인재개발… | `Bộ Quản&nbsp;lý Nhân&nbsp;sự Hàn&nbsp;Quốc · Phát&nbsp;triển nhân&nbsp;lực` | `<span class="nw">Bộ Quản lý Nhân sự Hàn Quốc&nbsp;·</span> <span class="nw">Phát triển nhân lực</span>` | 같은 이유. EN은 360·390·768px에서 "HRD"가 끝줄에 혼자 남는다(용어 HRD 유지, 판단 필요) |
+| 서울시 · 교육플랫폼… | `Chính&nbsp;quyền Thành&nbsp;phố Seoul · Nền&nbsp;tảng giáo&nbsp;dục` | `<span class="nw">Chính quyền Thành phố Seoul&nbsp;·</span> <span class="nw">Nền tảng giáo dục</span>` | 같은 이유("Seoul Metropolitan / Government ·"가 없어짐) |
