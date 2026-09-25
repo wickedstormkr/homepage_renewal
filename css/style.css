@@ -124,8 +124,9 @@
   /* AA 대비용 파생 그라디언트: 흰 텍스트가 얹히는 .ntag 전용, 양 끝 스톱을 4.6:1+로 낮춤 */
   --grad-tag:linear-gradient(92deg,#cf2b9d,#7c4dff 52%,#2a70e6);
   /* 제품 색은 새 색을 만들지 않고 브랜드 그라디언트를 둘로 나눠 쓴다.
-     파랑 쪽 = Lecognizer·Lecognizer AI(LRS 계열), 마젠타 쪽 = LearnHubble AI. 가운데 보라에서 만난다 */
-  --grad-lec:linear-gradient(92deg,#6a5cff,#2f7cff);
+     마젠타 쪽 0~39% = LearnHubble AI, 파랑 쪽 61~100% = Lecognizer·Lecognizer AI(LRS 계열).
+     두 조각은 가운데 보라를 기준으로 대칭이라, 브랜드 그라디언트와 벌어지는 정도가 같다(사용자 기준: '교수·학습 플랫폼' 정도) */
+  --grad-lec:linear-gradient(92deg,#6d56ff,#2f7cff);
   --grad-lhb:linear-gradient(92deg,#e930b0,#9a4bf0);
   --font:"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif;
   --en:"Sora",var(--font);
@@ -375,8 +376,8 @@ nav.main .cta:hover{color:#fff}
 .pl-title{margin-top:.7cqw;font-size:2.4cqw;font-weight:800;letter-spacing:-.02em;color:#fff}
 .pl-sub{margin-top:.7cqw;font-size:1.28cqw;font-weight:500;color:#9aa3ad}
 .pl-steps{list-style:none;position:absolute;left:0;right:0;top:29.5%;display:grid;grid-template-columns:repeat(3,26%);column-gap:4.2%;justify-content:center}
-.pl-step{--c:#8a5cff;--d:0s}
-.pl-step.s2{--c:#5c6cff;--d:-8s}
+.pl-step{--c:#6d56ff;--d:0s}
+.pl-step.s2{--c:#4f68ff;--d:-8s}
 .pl-step.s3{--c:#2f7cff;--d:-4s}
 .pl-lab{text-align:center;font-size:1.95cqw;font-weight:800;color:#fff;animation:pl-lab 12s linear infinite var(--d)}
 .pl-lab i{font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:1.05cqw;font-weight:600;color:var(--c);margin-right:.6cqw}
@@ -441,7 +442,7 @@ nav.main .cta:hover{color:#fff}
 .feature .feat-copy h3.pname{width:fit-content;font-family:var(--en);letter-spacing:-.02em;
   background:var(--grad-lec);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .feature.p-lec .feat-copy li::before{background:var(--grad-lec)}
-.feature.p-lec .feat-badge{background:rgba(80,104,255,.14);color:#a9b6ff}
+.feature.p-lec .feat-badge{background:rgba(79,104,255,.14);color:#a9b6ff}
 
 /* ---- 브라우저 프레임 목업 ---- */
 .frame{position:relative;border-radius:16px;overflow:hidden;background:#0b0d1a;border:1px solid var(--line2);
@@ -454,7 +455,7 @@ nav.main .cta:hover{color:#fff}
 /* feature 프레임은 GSAP가 transform(패럴랙스)을 점유 → hover 피드백은 box-shadow로만 */
 .feature .frame{will-change:transform}
 .feature .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(124,77,255,.2)}
-.feature.p-lec .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(80,104,255,.24)}
+.feature.p-lec .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(79,104,255,.24)}
 /* 영상 루프 프레임 (파이프라인 / 컴퍼니) */
 .media-frame{margin-top:clamp(28px,4vw,48px)}
 .media-frame video{width:100%;height:auto;display:block;background:#0b0d1a}
@@ -550,8 +551,8 @@ nav.main .cta:hover{color:#fff}
 /* 솔루션 알약은 세 개 모두 같은 크기. 색은 브랜드 그라디언트 두 조각: Lecognizer·Lecognizer AI = 파랑 쪽, LearnHubble AI = 마젠타 쪽 */
 .loop-notes .pill{display:inline-block;padding:.3cqw .85cqw;border-radius:999px;color:#fff;
   font-family:var(--en);font-size:clamp(10px,1.08cqw,15px);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.loop-notes .pill.lrs{background:var(--grad-lec);box-shadow:0 0 1.6cqw rgba(70,100,255,.5)}
-.loop-notes .pill.lxp{background:var(--grad-lhb);box-shadow:0 0 1.6cqw rgba(200,60,200,.42)}
+.loop-notes .pill.lrs{background:var(--grad-lec);box-shadow:0 0 1.6cqw rgba(79,104,255,.46)}
+.loop-notes .pill.lxp{background:var(--grad-lhb);box-shadow:0 0 1.6cqw rgba(192,59,205,.42)}
 .loop-notes .ln-role b{font-size:clamp(12px,1.3cqw,18px);font-weight:800;color:#d7c6ff;letter-spacing:-.02em;white-space:nowrap}
 .loop-notes .ln-desc{font-size:clamp(10px,.92cqw,13px);line-height:1.5;color:#c4bde4;text-wrap:balance;text-shadow:0 1px 8px rgba(6,4,24,.9)}
 .loop-figure>figcaption{margin-top:12px}
