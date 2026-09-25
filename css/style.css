@@ -168,7 +168,8 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.12;font-weight:800}
 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 /* .gc는 예전 보라→청록 그라디언트. 글자 그라디언트를 브랜드 그라디언트 하나로 통일해 .g와 같다(번역 키 때문에 클래스 이름은 유지) */
 .gc{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.sec-lead{margin-top:20px;max-width:44em;text-wrap:balance;color:#b3b8d4;font-size:clamp(15px,1.5vw,18px);font-weight:500}
+/* 리드는 본문 폭을 다 쓴다(44em 제한 + balance가 긴 리드를 580px짜리 세 줄로 만들던 문제). 여러 줄이면 balance로 줄 길이만 고르게 */
+.sec-lead{margin-top:20px;max-width:none;text-wrap:balance;color:#b3b8d4;font-size:clamp(15px,1.5vw,18px);font-weight:500}
 /* 줄바꿈: 단어 단위(body keep-all) + 데스크톱에서는 의미 단위로 끊는 <br class="br-d">.
    1280px 미만에서는 br-d를 숨기고 자연 줄바꿈에 맡긴다. .nw는 끊으면 뜻이 흐려지는 구. 끝줄 한 단어 고아는 pretty로 줄인다. */
 p,li,figcaption,dd{text-wrap:pretty}
@@ -849,6 +850,8 @@ a.ncard:hover .nmore i{transform:translateX(3px)}
 
 /* 한 줄 도입문(데스크톱) */
 .sec-lead.lead-1{max-width:none;text-wrap:wrap}
+/* 한 줄 리드도 좁은 화면에서 줄이 나뉘면 고르게(한 줄이 꽉 차고 둘째 줄이 짧게 남지 않게) */
+@media (max-width:1023px){.sec-lead.lead-1{text-wrap:balance}}
 /* 일본어: 한글용 keep-all 대신 구 단위 줄바꿈 */
 html:lang(ja) body{word-break:auto-phrase;line-break:strict}
 html:lang(ja) .lhub .h-lg{font-size:clamp(26px,4.4vw,56px)}
