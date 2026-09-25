@@ -322,7 +322,7 @@ export function renderArticle(post, options = {}) {
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="../img/favicon.png">
 
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=20260925">
 
 <!-- GA4 (기존 속성 유지) -->
 <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -401,9 +401,9 @@ ${safeJsonLd(jsonLd)}
   </div>
 </footer>
 
-<script src="../js/site-config.js" defer></script>
-<script src="../js/social.js" defer></script>
-<script src="../js/main.js" defer></script>
+<script src="../js/site-config.js?v=20260925" defer></script>
+<script src="../js/social.js?v=20260925" defer></script>
+<script src="../js/main.js?v=20260925" defer></script>
 </body>
 </html>
 `;

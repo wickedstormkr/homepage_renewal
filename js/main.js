@@ -1140,13 +1140,14 @@
     var vids = [].slice.call(doc.querySelectorAll('.media-frame:not(.film) video'));
     if (!vids.length) return;
     if (REDUCE) {                                                   // reduced-motion: 자동재생 안 함, 수동 재생만
-      vids.forEach(function (v) { v.setAttribute('controls', ''); });
+      vids.forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); v.setAttribute('controls', ''); });
       return;
     }
     if (!IO) return;
     function safePlay(v) {
       var p = v.play();
-      if (p && p.catch) p.catch(function () {});                    // play() reject 무시(콘솔 에러 0 원칙)
+      // 저전력 모드 등으로 자동재생이 막히면 조용히 넘기지 않고 재생 버튼을 보여 준다
+      if (p && p.catch) p.catch(function () { v.setAttribute('controls', ''); });
     }
     var inView = new WeakMap();
     var io = new IntersectionObserver(function (ents) {
