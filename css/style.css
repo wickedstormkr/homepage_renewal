@@ -258,10 +258,10 @@ nav.main .cta:hover{color:#fff}
 .hero-copy{position:relative;z-index:2}
 
 /* 히어로 카피/캡처를 개별 제어하기 위한 래퍼 */
-/* 핀-스크럽 장면 배치: 캔버스의 기록 막대는 화면 높이 20~54%(main.js build), 캡션은 막대 바로 아래 일정한 간격(7vh)에서 시작한다.
-   막대와 캡션이 한 덩어리로 화면 가운데보다 조금 위에 놓이고, 두 줄 캡션·낮은 창에서도 막대에 닿지 않는다.
-   캡션 글자는 폭(3.1vw)과 높이(5.6vh) 중 작은 쪽을 따라 막대 폭(화면 폭 60%)보다 넓어지지 않는다 */
-.hero-overlay{position:absolute;inset:calc(54% + clamp(40px,7vh,80px)) 0 0;z-index:5;display:flex;flex-direction:column;
+/* 핀-스크럽 장면 배치: 기록 막대(캔버스)와 캡션을 한 덩어리로 보고, 남는 여백을 위 40 : 아래 60으로 나눈다.
+   캡션 높이는 언어마다 달라 main.js(placeLedger)가 재서 캡션 위치를 --cap-top으로 준다(막대 아래 7vh 간격).
+   JS가 없을 때의 값은 막대 20~54% 기준. 캡션 글자는 폭(3.1vw)과 높이(5.6vh) 중 작은 쪽을 따라 막대 폭(화면 폭 60%)보다 넓어지지 않는다 */
+.hero-overlay{position:absolute;inset:var(--cap-top,calc(54% + clamp(40px,7vh,80px))) 0 0;z-index:5;display:flex;flex-direction:column;
   align-items:center;justify-content:flex-start;text-align:center;padding:0 24px;opacity:0;pointer-events:none}
 .hero-overlay .ho-main{font-size:clamp(26px,min(3.1vw,5.6vh),46px);font-weight:800;letter-spacing:-.04em;line-height:1.16}
 .hero-overlay .ho-sub{margin-top:16px;color:#b3b8d4;font-size:clamp(15px,1.7vw,19px);font-weight:500}
