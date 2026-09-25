@@ -742,8 +742,8 @@
         }));
       });
 
-      /* 씬7 — GROWA 메인 틸트 정착 + 이미지 패럴랙스 */
-      var gm = doc.querySelector('.growa-main'), gEnter = null, gPar = null;
+      /* 씬7 — LearnHubble AI 메인 틸트 정착 + 이미지 패럴랙스 */
+      var gm = doc.querySelector('.lhub-main'), gEnter = null, gPar = null;
       if (gm) {
         gEnter = gsap.from(gm, {
           rotateX: 5, y: 48, opacity: 0, transformPerspective: 900, transformOrigin: 'center top',
@@ -751,7 +751,7 @@
         });
         var gimg = gm.querySelector('img');
         if (gimg) gPar = gsap.fromTo(gimg, { y: 22 }, {
-          y: -22, ease: 'none', scrollTrigger: { trigger: '.growa', start: 'top bottom', end: 'bottom top', scrub: true }
+          y: -22, ease: 'none', scrollTrigger: { trigger: '.lhub', start: 'top bottom', end: 'bottom top', scrub: true }
         });
       }
 
@@ -869,34 +869,6 @@
   })();
 
   /* ============================================================
-   *  뉴스 아코디언 (1개만 열림, aria-expanded, height 트랜지션)
-   * ============================================================ */
-  (function () {
-    var cards = [].slice.call(doc.querySelectorAll('.ncard'));
-    function label(card, txt) { var m = card.querySelector('.nmore'); if (m && m.firstChild) m.firstChild.nodeValue = txt; }
-    function close(card) {
-      card.classList.remove('open');
-      card.querySelector('.nhead').setAttribute('aria-expanded', 'false');
-      card.querySelector('.npanel').style.height = '0px';
-      label(card, '자세히 보기 ');
-    }
-    cards.forEach(function (card) {
-      var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
-      btn.addEventListener('click', function () {
-        var isOpen = card.classList.contains('open');
-        cards.forEach(function (c) { if (c !== card) close(c); });
-        if (isOpen) { close(card); }
-        else {
-          card.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-          panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
-          label(card, '접기 ');
-        }
-      });
-    });
-  })();
-
-  /* ============================================================
    *  히어로 오브: 뷰포트 밖이면 애니메이션 정지 (SPEC §0-4)
    * ============================================================ */
   (function () {
@@ -917,15 +889,17 @@
     var track = doc.getElementById('streamTrack');
     if (!track) return;
     var GAP = 9;
-    var actors = ['학습자', '수강생', 'A반 학생', '튜티'];
+    // 표본 문장: 주체는 운영자·교수자·학습자 표기(2026-08 제품 문구 기준)
+    var actors = ['학습자', '학습자', '학습자', '교수자'];
     var events = [
-      { v: '완료함', o: ['도형 퀴즈', '단원평가', '확인 학습'], r: ['92점', '정답률 85%', '정답률 78%'] },
+      { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '2회 반복', '구간 멈춤'] },
+      { v: '응답함', o: ['확인 퀴즈', '실시간 퀴즈', '수업 설문'], r: ['정답', '참여', '재시도'] },
       { v: '제출함', o: ['서술형 과제', '프로젝트 보고서', '실습 과제'], r: ['제출 완료', '기한 내', '1회 수정'] },
-      { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '3분 12초', '2회 시청'] },
-      { v: '풀이함', o: ['오답 노트', '연습 문제', '도형 퀴즈'], r: ['8 / 10', '정답', '정답률 78%'] },
-      { v: '응답함', o: ['토론 활동', '실시간 퀴즈', '수업 설문'], r: ['참여', '답변 3', '정답'] }
+      { v: '질문함', o: ['강의 Q&A', '과제 Q&A', '토론 활동'], r: ['답변 3', '해결', '공감 5'] },
+      { v: '열람함', o: ['AI 힌트', '보충 자료', '역량맵'], r: ['힌트 1', '열람', '확인'] }
     ];
-    var insights = ['진단 · 도형 취약', '추천 · 유사 문항', '패턴 · 야간 학습', '개입 · 미제출 알림'];
+    // AI는 찾고 제안까지. 판단·적용은 사람(제품 원칙)
+    var insights = ['신호 · 반복 재생 구간', '신호 · 과제 작성 멈춤', '알림 · 어려워한 구간', '제안 · 보충 자료 초안'];
     var rnd = function (a) { return a[Math.floor(Math.random() * a.length)]; };
     var chip = doc.getElementById('insChip'), sl = doc.getElementById('sparkline');
     var spark = [8, 10, 9, 12, 14, 13, 17, 16, 20, 19, 24];
@@ -1088,11 +1062,36 @@
       el.removeAttribute('aria-describedby');
     }
 
-    sel.addEventListener('change', function () {
-      var n = NEED.indexOf(sel.value) >= 0;
+    // data-auto 항목(인스타그램·블로그·박람회)은 서버에는 'etc'로 보내고 내용을 자동으로 채운다.
+    // 서버측 유입 경로 값 목록을 늘리지 않기 위한 방식이라, 입력칸은 보이지 않는다.
+    function autoOf() { var o = sel.options[sel.selectedIndex]; return o ? o.getAttribute('data-auto') : null; }
+    function syncTraffic(focus) {
+      var auto = autoOf(), n = NEED.indexOf(sel.value) >= 0 && !auto;
       etc.hidden = !n; etcIn.required = n;
-      if (n) { etcLab.textContent = sel.value === 'direct' ? '유입 경로 직접 입력 *' : '기타 내용 *'; etcIn.focus(); }
+      if (auto) { etcIn.value = auto; clearErr(etcIn); }
+      else if (n) { etcIn.value = ''; etcLab.textContent = sel.value === 'direct' ? '유입 경로 직접 입력 *' : '기타 내용 *'; if (focus) etcIn.focus(); }
       else { etcIn.value = ''; clearErr(etcIn); }                   // 숨김 전환 시 잔여 오류 정리
+    }
+    sel.addEventListener('change', function () { syncTraffic(true); });
+
+    // ?utm_source=instagram|blog|fair 로 들어오면 유입 경로를 미리 골라 둔다(바꿀 수 있음).
+    (function () {
+      var src = '';
+      try { src = (new URLSearchParams(win.location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
+      var MAP = { instagram: '인스타그램', ig: '인스타그램', blog: '블로그', naver_blog: '블로그', fair: '박람회·행사', event: '박람회·행사' };
+      var want = MAP[src];
+      if (!want) return;
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].getAttribute('data-auto') === want) { sel.selectedIndex = i; syncTraffic(false); break; }
+      }
+    })();
+
+    // data-topic 버튼(예: LearnHubble AI 시연 요청)으로 들어오면 문의사항 첫 줄을 채워 둔다.
+    [].forEach.call(doc.querySelectorAll('a[data-topic]'), function (a) {
+      a.addEventListener('click', function () {
+        var memo = f.userMemo, t = a.getAttribute('data-topic');
+        if (memo && !memo.value.trim()) memo.value = t + '\n';
+      });
     });
     function set(m, t) { status.textContent = m; status.className = 'status ' + (t || ''); }
 
@@ -1137,7 +1136,8 @@
    *  상시 rAF 없음: 재생 여부는 전부 IntersectionObserver/이벤트로 결정.
    * ============================================================ */
   (function () {
-    var vids = [].slice.call(doc.querySelectorAll('.media-frame video'));
+    // 소리 있는 기업 영상(.film)은 자동재생하지 않는다(사용자가 재생). 나머지는 무음 루프.
+    var vids = [].slice.call(doc.querySelectorAll('.media-frame:not(.film) video'));
     if (!vids.length) return;
     if (REDUCE) {                                                   // reduced-motion: 자동재생 안 함, 수동 재생만
       vids.forEach(function (v) { v.setAttribute('controls', ''); });

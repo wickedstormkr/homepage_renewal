@@ -67,6 +67,16 @@ test('article bodies keep allowlisted markup, harden links, and rewrite local im
   assert.doesNotMatch(body, /onerror=/);
 });
 
+test('article bodies keep figure captions but drop their attributes', () => {
+  const body = sanitizeArticleBody(
+    '<figure><img src="./img/news/a.webp" alt="현장"><figcaption>부스 현장</figcaption></figure>' +
+    '<figure class="x" onclick="bad()">속성 있는 figure</figure>'
+  );
+
+  assert.match(body, /<figure><img src="\.\.\/img\/news\/a\.webp" alt="현장" loading="lazy"><figcaption>부스 현장<\/figcaption><\/figure>/);
+  assert.match(body, /&lt;figure class=/);
+});
+
 test('renderArticle emits canonical SEO metadata, JSON-LD, H1, GA4, and nested relative assets', () => {
   const post = samplePost({ title: '표준 <기술> & 인사이트' });
   const html = renderArticle(post, { updated: '2026-07-14' });
@@ -81,7 +91,7 @@ test('renderArticle emits canonical SEO metadata, JSON-LD, H1, GA4, and nested r
   assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-0Y5QD1HBGN/);
   assert.match(html, /gtag\('config','G-0Y5QD1HBGN'\)/);
   assert.match(html, /<img src="\.\.\/img\/feed-img01\.webp"/);
-  assert.match(html, /<title>표준 &lt;기술&gt; &amp; 인사이트 — 위키드스톰<\/title>/);
+  assert.match(html, /<title>표준 &lt;기술&gt; &amp; 인사이트 \| 위키드스톰<\/title>/);
   assert.match(html, /<h1[^>]*>표준 &lt;기술&gt; &amp; 인사이트<\/h1>/);
   assert.doesNotMatch(html, /<h1[^>]*>표준 <기술>/);
   assert.match(html, /<script src="\.\.\/js\/main\.js" defer><\/script>/);
