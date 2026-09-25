@@ -158,7 +158,13 @@ h1,h2,h3{letter-spacing:-.035em;line-height:1.12;font-weight:800}
 .h-lg{font-size:clamp(30px,4.4vw,56px)}
 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .gc{background:var(--grad-c);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.sec-lead{margin-top:20px;max-width:52ch;color:#b3b8d4;font-size:clamp(15px,1.5vw,18px);font-weight:500}
+.sec-lead{margin-top:20px;max-width:44em;color:#b3b8d4;font-size:clamp(15px,1.5vw,18px);font-weight:500}
+/* 줄바꿈: 단어 단위(body keep-all) + 데스크톱에서는 의미 단위로 끊는 <br class="br-d">.
+   1280px 미만에서는 br-d를 숨기고 자연 줄바꿈에 맡긴다. .nw는 끊으면 뜻이 흐려지는 구. 끝줄 한 단어 고아는 pretty로 줄인다. */
+p,li,figcaption,dd{text-wrap:pretty}
+h1,h2,h3,.ch-title{text-wrap:balance}
+@media (max-width:1279px){.br-d{display:none}}
+.nw{white-space:nowrap}
 .tnum{font-family:var(--en);font-variant-numeric:tabular-nums;font-weight:800}
 
 /* ---- 레이아웃 ---- */
@@ -217,11 +223,11 @@ nav.main .cta:hover{color:#fff}
 .hero{position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;padding:96px 0 60px}
 .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;
   gap:clamp(32px,4vw,64px);align-items:center;width:min(var(--wrap),100% - 48px);margin-inline:auto}
-.hero h1{font-size:clamp(38px,5.6vw,74px);line-height:1.05;font-weight:800}
+.hero h1{font-size:clamp(32px,4.2vw,56px);line-height:1.14;font-weight:800}
 .hero h1 .line{display:block;overflow:hidden;padding-bottom:.04em}
 .hero h1 .line-inner{display:block}
 .hero .eyebrow{margin-bottom:26px}
-.hero-lead{margin-top:28px;max-width:46ch;color:#b9bed6;font-size:clamp(16px,1.5vw,18.5px);font-weight:500}
+.hero-lead{margin-top:26px;color:#b9bed6;font-size:clamp(15.5px,1.3vw,18px);font-weight:500}
 .hero-cta{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap}
 .hero-trust{display:flex;column-gap:0;row-gap:12px;margin-top:44px;flex-wrap:wrap;align-items:center;color:var(--faint);
   font-size:13px;font-family:var(--en);font-weight:600}
