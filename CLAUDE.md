@@ -33,6 +33,7 @@
 **코드**
 - 움직임은 transform·opacity만 쓰고, prefers-reduced-motion을 따른다.
 - `js/main.js`는 한 IIFE라 블록 하나가 오류를 던지면 뒤가 전부 멈춘다. 블록마다 방어적으로 짠다.
+- `css/style.css`·`js/*.js`를 고치면 HTML이 불러오는 `?v=` 버전을 함께 올린다(`index.html`·`news.html`·`privacy.html`·`links.html`·`admin.html`, 소식 템플릿 `lambda/admin-api/news-artifacts.mjs` → `node scripts/generate-news.mjs`, 그다음 `build_i18n.py build`). 버전은 숫자만 쓴다(예: 날짜+순번 `2026092502`, 소식 템플릿 테스트가 숫자를 확인한다). 안 올리면 브라우저가 예전 CSS를 그대로 쓴다.
 - 소식은 `data/posts.json` → `node scripts/generate-news.mjs`.
 - 공개 저장소다. 병합(곧 공개)은 사람이 정한다.
 

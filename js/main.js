@@ -289,8 +289,9 @@
       c.width = Math.round(W * DPR); c.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-      // 기록 레저 영역: 가로 ~60%, 세로 ~44% 중앙 정렬
-      var gw = W * 0.60, gh = H * 0.44, ox = (W - gw) / 2, oy = (H - gh) / 2;
+      // 기록 레저 영역: 가로 60% 가운데, 세로 20~54%. 캡션(.hero-overlay)은 그 아래 일정한 간격에서 시작해
+      // 두 줄 캡션이나 낮은 창에서도 막대와 겹치지 않는다(css/style.css .hero-overlay와 짝)
+      var gw = W * 0.60, gh = H * 0.34, ox = (W - gw) / 2, oy = H * 0.20;
       var rowGap = gh / ROWS, GAP = 9;
       var pillH = Math.max(7, Math.min(rowGap * 0.5, 13));
       var px0 = ox + 22, px1 = ox + gw - 26;                        // 필 영역(오른쪽 끝은 신호 도트 여백)
