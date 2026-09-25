@@ -119,15 +119,17 @@
   --bg:#06070e; --bg2:#0a0b16; --panel:#0e1020;
   --ink:#eef1fb; --muted:#8b90ad; --faint:#767c9e;
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.14); --line3:rgba(255,255,255,.38);
-  --magenta:#e930b0; --violet:#7c4dff; --blue:#2f7cff; --cyan:#22e0d6;
+  --magenta:#e930b0; --violet:#7c4dff; --blue:#2f7cff;
+  /* 링크·라이브 점·완료 표시 같은 작은 강조색. 예전 청록은 팔레트 밖이라 그라디언트 가운데~파랑 사이의 밝은 톤으로 */
+  --accent:#a3b1ff;
   --grad:linear-gradient(92deg,#e930b0,#7c4dff 52%,#2f7cff);
   /* AA 대비용 파생 그라디언트: 흰 텍스트가 얹히는 .ntag 전용, 양 끝 스톱을 4.6:1+로 낮춤 */
   --grad-tag:linear-gradient(92deg,#cf2b9d,#7c4dff 52%,#2a70e6);
   /* 제품 색은 새 색을 만들지 않고 브랜드 그라디언트를 둘로 나눠 쓴다.
-     마젠타 쪽 0~39% = LearnHubble AI, 파랑 쪽 61~100% = Lecognizer·Lecognizer AI(LRS 계열).
+     마젠타 쪽 0~39% = Lecognizer·Lecognizer AI(LRS 계열), 파랑 쪽 61~100% = LearnHubble AI.
      두 조각은 가운데 보라를 기준으로 대칭이라, 브랜드 그라디언트와 벌어지는 정도가 같다(사용자 기준: '교수·학습 플랫폼' 정도) */
-  --grad-lec:linear-gradient(92deg,#6d56ff,#2f7cff);
-  --grad-lhb:linear-gradient(92deg,#e930b0,#9a4bf0);
+  --grad-lec:linear-gradient(92deg,#e930b0,#9a4bf0);
+  --grad-lhb:linear-gradient(92deg,#6d56ff,#2f7cff);
   --font:"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif;
   --en:"Sora",var(--font);
   --wrap:1240px;
@@ -217,7 +219,7 @@ nav.main .cta:hover{color:#fff}
   justify-content:center;gap:8px;padding:0 32px;transform:translateY(-100%);transition:transform .38s cubic-bezier(.4,0,.2,1)}
 .drawer.open{transform:translateY(0)}
 .drawer a{font-family:var(--en);font-size:28px;font-weight:700;color:#fff;padding:14px 0;border-bottom:1px solid var(--line)}
-.drawer a.cta{border:0;margin-top:20px;color:var(--cyan)}
+.drawer a.cta{border:0;margin-top:20px;color:var(--accent)}
 
 /* ---- 언어 선택 ---- */
 .lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
@@ -293,9 +295,9 @@ nav.main .cta:hover{color:#fff}
 .cap-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;margin-bottom:10px}
 .cap-badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--en);font-size:11.5px;font-weight:700;
   letter-spacing:.14em;text-transform:uppercase;color:#cfd3ee}
-.cap-live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--cyan);font-family:var(--en);font-weight:600}
-.cap-live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);
-  box-shadow:0 0 10px var(--cyan);animation:blink 1.4s infinite}
+.cap-live{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--accent);font-family:var(--en);font-weight:600}
+.cap-live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 10px var(--accent);animation:blink 1.4s infinite}
 @keyframes blink{50%{opacity:.35}}
 
 /* 스트림 뷰포트(고정 높이) + 트랙(FLIP 슬라이드 대상) */
@@ -311,8 +313,8 @@ nav.main .cta:hover{color:#fff}
 .chip.actor{background:rgba(47,124,255,.16);color:#9dc0ff;border:1px solid rgba(47,124,255,.32)}
 .chip.verb{background:rgba(124,77,255,.16);color:#c3b0ff;border:1px solid rgba(124,77,255,.34)}
 .chip.object{background:rgba(233,48,176,.14);color:#ffa6e2;border:1px solid rgba(233,48,176,.3)}
-.chip.result{margin-left:auto;background:rgba(34,224,214,.12);color:#7bece3;
-  border:1px solid rgba(34,224,214,.28);font-family:var(--en);font-variant-numeric:tabular-nums}
+.chip.result{margin-left:auto;background:rgba(255,255,255,.06);color:#dfe3f7;
+  border:1px solid rgba(255,255,255,.16);font-family:var(--en);font-variant-numeric:tabular-nums}
 .arrow{color:var(--muted);font-size:13px;flex:none}
 /* 행 진입/퇴장 (CSS만) */
 .xrow{animation:xin .45s cubic-bezier(.2,.7,.2,1) both}
@@ -338,7 +340,7 @@ nav.main .cta:hover{color:#fff}
   text-transform:uppercase;color:var(--faint);line-height:1.2}
 .spark{flex:1;height:34px}
 .ins-chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:7px 13px;
-  border-radius:999px;background:linear-gradient(92deg,#885eff,#22e0d6);color:#04121a;transition:opacity .2s ease}
+  border-radius:999px;background:var(--grad);color:#fff;transition:opacity .2s ease}
 
 /* ---- 파이프라인 ---- */
 .pipe-wrap{position:relative}
@@ -347,7 +349,7 @@ nav.main .cta:hover{color:#fff}
 .pipe-line{position:absolute;inset:0;border-radius:2px;background:var(--grad);
   transform:scaleX(0);transform-origin:0 50%;will-change:transform}
 .pipe-dot{position:absolute;top:50%;left:0;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;
-  background:#fff;box-shadow:0 0 18px var(--violet),0 0 6px var(--cyan);transform:translateX(0);will-change:transform;opacity:0}
+  background:#fff;box-shadow:0 0 18px var(--violet),0 0 6px var(--blue);transform:translateX(0);will-change:transform;opacity:0}
 .pipe-wrap.armed .pipe-dot{opacity:1}
 .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
   border:1px solid var(--line);border-radius:18px;overflow:hidden}
@@ -376,9 +378,9 @@ nav.main .cta:hover{color:#fff}
 .pl-title{margin-top:.7cqw;font-size:2.4cqw;font-weight:800;letter-spacing:-.02em;color:#fff}
 .pl-sub{margin-top:.7cqw;font-size:1.28cqw;font-weight:500;color:#9aa3ad}
 .pl-steps{list-style:none;position:absolute;left:0;right:0;top:29.5%;display:grid;grid-template-columns:repeat(3,26%);column-gap:4.2%;justify-content:center}
-.pl-step{--c:#6d56ff;--d:0s}
-.pl-step.s2{--c:#4f68ff;--d:-8s}
-.pl-step.s3{--c:#2f7cff;--d:-4s}
+.pl-step{--c:#e930b0;--d:0s}
+.pl-step.s2{--c:#c03bcd;--d:-8s}
+.pl-step.s3{--c:#9a4bf0;--d:-4s}
 .pl-lab{text-align:center;font-size:1.95cqw;font-weight:800;color:#fff;animation:pl-lab 12s linear infinite var(--d)}
 .pl-lab i{font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:1.05cqw;font-weight:600;color:var(--c);margin-right:.6cqw}
 .pl-note{margin:.35cqw 0 1.25cqw;text-align:center;font-size:1.08cqw;font-weight:500;color:#9aa3ad;white-space:nowrap}
@@ -437,12 +439,12 @@ nav.main .cta:hover{color:#fff}
 .feature .feat-copy li{position:relative;padding-left:20px;font-size:14.5px;color:#c7cbe6}
 .feature .feat-copy li::before{content:"";position:absolute;left:0;top:9px;width:11px;height:2px;background:var(--grad)}
 .feature .feat-badge{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-family:var(--en);font-size:12px;font-weight:700;
-  letter-spacing:.06em;padding:7px 14px;border-radius:999px;background:rgba(34,224,214,.12);color:#7bece3}
-/* 제품 feature: 제목은 제품 이름(Lecognizer와 Lecognizer AI가 같은 위계·같은 파랑 쪽 그라디언트) */
+  letter-spacing:.06em;padding:7px 14px;border-radius:999px;background:rgba(124,77,255,.12);color:#c9bcff}
+/* 제품 feature: 제목은 제품 이름(Lecognizer와 Lecognizer AI가 같은 위계·같은 마젠타 쪽 그라디언트) */
 .feature .feat-copy h3.pname{width:fit-content;font-family:var(--en);letter-spacing:-.02em;
   background:var(--grad-lec);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .feature.p-lec .feat-copy li::before{background:var(--grad-lec)}
-.feature.p-lec .feat-badge{background:rgba(79,104,255,.14);color:#a9b6ff}
+.feature.p-lec .feat-badge{background:rgba(192,59,205,.15);color:#f2a9e6}
 
 /* ---- 브라우저 프레임 목업 ---- */
 .frame{position:relative;border-radius:16px;overflow:hidden;background:#0b0d1a;border:1px solid var(--line2);
@@ -455,7 +457,7 @@ nav.main .cta:hover{color:#fff}
 /* feature 프레임은 GSAP가 transform(패럴랙스)을 점유 → hover 피드백은 box-shadow로만 */
 .feature .frame{will-change:transform}
 .feature .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(124,77,255,.2)}
-.feature.p-lec .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(79,104,255,.24)}
+.feature.p-lec .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(192,59,205,.22)}
 /* 영상 루프 프레임 (파이프라인 / 컴퍼니) */
 .media-frame{margin-top:clamp(28px,4vw,48px)}
 .media-frame video{width:100%;height:auto;display:block;background:#0b0d1a}
@@ -501,13 +503,13 @@ nav.main .cta:hover{color:#fff}
 .std-card p+.std-meta{margin-top:auto}
 .std-meta .st{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#dfe3f7}
 .std-meta .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--faint)}
-.std-meta .st.apply::before{background:var(--grad)}
-.std-meta .st.soon::before{background:#8a8fb2}
+.std-meta .st.apply::before{background:#8f6bff}
+.std-meta .st.soon::before{background:#c9cde6}
 .std-meta .st.ref::before{background:#b9a6ff}
-/* 제목 색으로 세 상태 구분(눈에 띄는 순서): 적용 = 브랜드 그라디언트 > 설계 참조 = 그라디언트 가운데의 밝은 보라 > 적용 예정 = 한 단계 낮춘 흰색.
-   제품 줄은 중립색 한 가지(카드 안 색을 제목 하나로 줄인다) */
+/* 제목 색으로 세 상태 구분: 적용 = 브랜드 그라디언트, 설계 참조 = 그라디언트 가운데의 밝은 보라, 적용 예정 = 흰색(중요한 표준이라 죽이지 않는다).
+   상태 점은 단색 하나씩, 제품 줄은 중립색 한 가지(카드 안 색을 제목 하나로 줄인다) */
 .std-card .k.ref{color:#b9a6ff}
-.std-card .k.soon{color:#c3c7df}
+.std-card .k.soon{color:var(--ink)}
 .std-meta .pd{font-family:var(--en);font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.4}
 
 /* '적용' 카드 진입 시 보더 글로우 1회 펄스 (bounded, 1 iteration) */
@@ -520,7 +522,7 @@ nav.main .cta:hover{color:#fff}
 .lhub-top{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,4vw,56px);align-items:start}
 .lhub-name{width:fit-content;margin:18px 0 10px;font-family:var(--en);font-size:clamp(22px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;
   background:var(--grad-lhb);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-/* 제목 강조(.gc)도 이 섹션에서는 LearnHubble AI 쪽 조각. background 단축형은 background-clip을 풀어 버리므로 image만 바꾼다 */
+/* 제목 강조(.gc)도 이 섹션에서는 LearnHubble AI 쪽(파랑) 조각. background 단축형은 background-clip을 풀어 버리므로 image만 바꾼다 */
 .lhub .sec-head .gc{background-image:var(--grad-lhb)}
 .lhub-points{list-style:none;display:grid;gap:0;border-top:1px solid var(--line)}
 .lhub-points li{display:grid;grid-template-columns:2.6em 1fr;column-gap:10px;row-gap:3px;padding:16px 0;border-bottom:1px solid var(--line)}
@@ -548,11 +550,11 @@ nav.main .cta:hover{color:#fff}
 .loop-notes li{position:absolute;left:var(--x);top:var(--y);width:var(--w);text-align:var(--align,left);
   display:flex;flex-direction:column;align-items:flex-start;gap:.45cqw}
 .loop-notes li[style*="--align:right"]{align-items:flex-end}
-/* 솔루션 알약은 세 개 모두 같은 크기. 색은 브랜드 그라디언트 두 조각: Lecognizer·Lecognizer AI = 파랑 쪽, LearnHubble AI = 마젠타 쪽 */
+/* 솔루션 알약은 세 개 모두 같은 크기. 색은 브랜드 그라디언트 두 조각: Lecognizer·Lecognizer AI = 마젠타 쪽, LearnHubble AI = 파랑 쪽 */
 .loop-notes .pill{display:inline-block;padding:.3cqw .85cqw;border-radius:999px;color:#fff;
   font-family:var(--en);font-size:clamp(10px,1.08cqw,15px);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.loop-notes .pill.lrs{background:var(--grad-lec);box-shadow:0 0 1.6cqw rgba(79,104,255,.46)}
-.loop-notes .pill.lxp{background:var(--grad-lhb);box-shadow:0 0 1.6cqw rgba(192,59,205,.42)}
+.loop-notes .pill.lrs{background:var(--grad-lec);box-shadow:0 0 1.6cqw rgba(192,59,205,.42)}
+.loop-notes .pill.lxp{background:var(--grad-lhb);box-shadow:0 0 1.6cqw rgba(79,104,255,.46)}
 .loop-notes .ln-role b{font-size:clamp(12px,1.3cqw,18px);font-weight:800;color:#d7c6ff;letter-spacing:-.02em;white-space:nowrap}
 .loop-notes .ln-desc{font-size:clamp(10px,.92cqw,13px);line-height:1.5;color:#c4bde4;text-wrap:balance;text-shadow:0 1px 8px rgba(6,4,24,.9)}
 .loop-figure>figcaption{margin-top:12px}
@@ -618,9 +620,9 @@ html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{
   background:linear-gradient(150deg,#161a3a,#0a0b16 72%)}
 .ncard .ncover::before{content:"";position:absolute;inset:0;
   background:radial-gradient(115% 88% at 16% 12%,rgba(124,77,255,.34),transparent 58%),
-             radial-gradient(92% 82% at 94% 98%,rgba(34,224,214,.15),transparent 60%)}
+             radial-gradient(92% 82% at 94% 98%,rgba(47,124,255,.16),transparent 60%)}
 .ncard .ncover[data-cover="insight"]::before{
-  background:radial-gradient(115% 88% at 16% 12%,rgba(34,224,214,.30),transparent 58%),
+  background:radial-gradient(115% 88% at 16% 12%,rgba(47,124,255,.32),transparent 58%),
              radial-gradient(92% 82% at 94% 98%,rgba(124,77,255,.18),transparent 60%)}
 .ncard .ncover[data-cover="story"]::before{
   background:radial-gradient(115% 88% at 16% 12%,rgba(233,48,176,.28),transparent 58%),
@@ -640,7 +642,7 @@ html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{
   font-weight:700;color:var(--muted);transition:color .2s}
 .nmore i{font-style:normal;font-size:16px;line-height:1;transition:transform .3s}
 .ncard.open .nmore i{transform:rotate(45deg)}
-.ncard.open .nmore{color:var(--cyan)}
+.ncard.open .nmore{color:var(--accent)}
 .npanel{height:0;overflow:hidden;transition:height .4s cubic-bezier(.4,0,.2,1)}
 .npanel-inner{padding:0 22px 24px;color:var(--muted);font-size:14px;line-height:1.72}
 .npanel-inner p+p{margin-top:12px}
@@ -674,8 +676,8 @@ html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{
 .hist-year{position:relative;text-align:right;font-family:var(--en);font-variant-numeric:tabular-nums;
   font-size:clamp(26px,3.4vw,40px);font-weight:700;letter-spacing:-.02em;line-height:1.05;color:var(--faint)}
 .hist-year::after{content:"";position:absolute;top:.5em;margin-top:-5px;right:calc(var(--gap)/-2);
-  width:10px;height:10px;border-radius:50%;background:var(--cyan);transform:translateX(50%);
-  box-shadow:0 0 0 4px #090b15,0 0 12px rgba(34,224,214,.5)}
+  width:10px;height:10px;border-radius:50%;background:var(--accent);transform:translateX(50%);
+  box-shadow:0 0 0 4px #090b15,0 0 12px rgba(163,177,255,.5)}
 .hist-body{min-width:0}
 /* 강조(1~2): --ink로 밝게 — 훑어볼 때 눈에 들어오는 유일한 요소 */
 .hist-hl{list-style:none;display:grid;gap:9px}
@@ -684,7 +686,7 @@ html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{
 .hist-hl li::before{content:"";position:absolute;left:0;top:.62em;width:9px;height:2px;background:var(--grad)}
 .hist-hl a{color:var(--ink);transition:color .2s}
 .hist-hl a .arw{display:inline-block;margin-left:8px;font-family:var(--en);font-size:.8em;font-weight:700;
-  color:var(--cyan);opacity:.5;transform:translateX(-2px);transition:opacity .22s ease,transform .22s ease}
+  color:var(--accent);opacity:.5;transform:translateX(-2px);transition:opacity .22s ease,transform .22s ease}
 .hist-hl a:hover,.hist-hl a:focus-visible{color:#fff}
 .hist-hl a:hover .arw,.hist-hl a:focus-visible .arw{opacity:1;transform:translateX(2px)}
 /* 보조 실적: 항목별 독립 행, 모바일에서는 긴 항목만 자연스럽게 줄바꿈 */
@@ -718,7 +720,7 @@ html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{
 .cform .check input{width:auto;height:auto}
 .cform .check a{color:#cbb4ff;text-decoration:underline}
 .cform .status{min-height:20px;font-size:13.5px;font-weight:600}
-.cform .status.ok{color:#22e0d6}.cform .status.err{color:#ff6b8a}
+.cform .status.ok{color:var(--accent)}.cform .status.err{color:#ff6b8a}
 /* 인라인 필드 오류: status.err와 같은 경고 톤 유지(빨강 과용 금지). label이 grid라
    input 바로 아래에 8px 간격으로 놓인다. */
 .cform .field-err{font-size:12.5px;font-weight:600;color:#ff6b8a;letter-spacing:-.01em}
@@ -785,7 +787,7 @@ html.nogsap .hero h1 .line-inner{transform:none}
 /* 메인 뉴스 섹션 헤더 우측 "전체 보기" 링크 */
 .sec-head.rowlink{max-width:none;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
 .sec-more{font-family:var(--en);font-size:13.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:color .2s}
-.sec-more:hover{color:var(--cyan)}
+.sec-more:hover{color:var(--accent)}
 /* news.html 카테고리 탭 */
 .board-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px)}
 .board-tab{padding:9px 18px;border-radius:999px;border:1px solid var(--line3);background:transparent;
@@ -795,10 +797,10 @@ html.nogsap .hero h1 .line-inner{transform:none}
 .board-tab[aria-pressed="true"]{border-color:transparent;background:var(--grad);color:#fff}
 /* 빈 카테고리 · 로드 실패 플레이스홀더 */
 .board-empty{grid-column:1/-1;text-align:center;padding:clamp(48px,8vw,90px) 20px;color:var(--faint);font-size:15px}
-.board-empty a{color:var(--cyan);text-decoration:underline}
+.board-empty a{color:var(--accent);text-decoration:underline}
 
 /* news.html 링크 카드(상세 진입) — 목록 카드 hover 시 더보기 강조 */
-a.ncard:hover .nmore{color:var(--cyan)}
+a.ncard:hover .nmore{color:var(--accent)}
 a.ncard:hover .nmore i{transform:translateX(3px)}
 
 /* ---- news.html 상세 화면(게시판식) ---- */
@@ -820,7 +822,7 @@ a.ncard:hover .nmore i{transform:translateX(3px)}
 .detail-body{color:#c4c9e4;font-size:clamp(15px,1.55vw,17px);line-height:1.85}
 .detail-body p+p{margin-top:20px}
 .detail-body strong{color:#cbd0ee;font-weight:700}
-.detail-body a{color:var(--cyan);text-decoration:underline;text-underline-offset:3px;
+.detail-body a{color:var(--accent);text-decoration:underline;text-underline-offset:3px;
   text-decoration-thickness:1px}
 .detail-body a:hover{color:#7ff0e8}
 /* 본문 삽입 이미지 — .frame 톤의 얇은 보더 + 상하 여백, 60vh 상한 */
@@ -843,7 +845,7 @@ a.ncard:hover .nmore i{transform:translateX(3px)}
 .detail-top{margin:0 0 22px;padding:0;border-top:0}
 .detail-back a{display:inline-flex;align-items:center;gap:8px;font-family:var(--en);
   font-size:14px;font-weight:600;color:var(--muted);transition:color .2s}
-.detail-back a:hover{color:var(--cyan)}
+.detail-back a:hover{color:var(--accent)}
 
 /* 한 줄 도입문(데스크톱) */
 .sec-lead.lead-1{max-width:none;text-wrap:wrap}

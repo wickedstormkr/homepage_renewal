@@ -672,9 +672,9 @@
           // 팝: 알파 페이드가 아니라 반지름 1.3배→1.0배로 ease-out 수축하며 등장(cA의 함수).
           // 알파는 빠르게 불투명으로 올려 "찍힌다"는 인상을 준다. 글로우 추가 없음.
           var pop = 1 - (1 - cA) * (1 - cA), sc = 1.3 - 0.3 * pop, aa = Math.min(1, cA * 2.4);
-          ctx.fillStyle = 'rgba(34,224,214,' + aa + ')';
+          ctx.fillStyle = 'rgba(163,177,255,' + aa + ')';
           ctx.beginPath(); ctx.arc(row.checkX, row.y, 3.4 * sc, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = 'rgba(34,224,214,' + (aa * 0.5) + ')';
+          ctx.strokeStyle = 'rgba(163,177,255,' + (aa * 0.5) + ')';
           ctx.lineWidth = 1.2;
           ctx.beginPath(); ctx.arc(row.checkX, row.y, 5.8 * sc, 0, 6.283); ctx.stroke();
         }
