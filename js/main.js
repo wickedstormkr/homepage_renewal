@@ -278,7 +278,7 @@
     // 반환값은 레저 영역 위 끝(oy). 헤더(76px)가 다시 내려와도 첫 행을 덮지 않게 위 여백은 96px 이상(여유가 있을 때)
     function placeLedger(rowGap, pillH) {
       var vh = Math.min(H, win.innerHeight || H);
-      var gap = Math.max(40, Math.min(80, vh * .07));
+      var gap = Math.max(56, Math.min(120, vh * .11));              // 막대와 캡션 사이: 행 간격(보이는 높이의 5.7%)보다 확실히 넓게
       var capH = 0;
       try {
         var mn = overlay && overlay.querySelector('.ho-main'), sb = overlay && overlay.querySelector('.ho-sub');
