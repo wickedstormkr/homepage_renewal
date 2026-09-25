@@ -75,3 +75,19 @@
 3. **data-auto**: 빌드 스크립트가 이제 번역하지 않으므로 서버에는 국문 값이 간다. utm_source 자동 선택도 VI 페이지에서 그대로 동작한다. 해결된 항목이다.
 4. **한국어로 남는 것**: 제품 화면 캡처(파이프라인 단계 화면 포함), 레퍼런스 로고 이미지, 기업 홍보 영상, 뉴스 카드(board.js가 국문 posts.json으로 다시 그린다), 연결된 기사·개인정보처리방침 페이지. 베트남어 문구는 이것들이 베트남어라고 말하지 않는다. "Xem bài viết"(기사 보기)와 화면 주석에 "(tiếng Hàn)"을 붙일지는 선택 사항이다. 국문에 없는 말이라 넣지 않았다.
 5. **히어로 h1 `.line{overflow:hidden}`**: 베트남어는 윗부호가 두 겹이다(ế, ổ). 렌더링에서는 잘리지 않았다. 다른 글꼴로 대체되는 환경(4-1)에서는 한 번 더 확인해야 한다.
+
+## 레이아웃 보정으로 바꾼 문구 (2026-09-25, 브랜치 fix/i18n-layout-en-vi)
+
+화면 폭에 따라 칸을 넘치거나 끝줄에 한 단어만 남던 곳. 뜻은 그대로 두고 줄이거나 줄바꿈만 제어했다(`&nbsp;`, `.nw`). 점검 도구: `scripts/qa/layout-check.cjs`.
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| AI 특허 2건 등록 · 이상 학습 탐지 · 학습자 프로파일링… | `2 bằng&nbsp;sáng&nbsp;chế AI được&nbsp;cấp · Phát&nbsp;hiện dấu&nbsp;hiệu bất&nbsp;thường trong học&nbsp;tập · Lập&nbsp;hồ&nbsp;sơ người&nbsp;học` | `<span class="nw">2 bằng sáng chế AI được cấp</span> · <span class="nw">Phát hiện học tập bất thường</span> · <span class="nw">Lập hồ sơ người học</span>` | 배지가 모든 폭에서 두 줄: 항목을 줄이고(.nw 묶음) 특허명은 회사소개서 표기 "học tập bất thường" 사용 |
+| 표준을 쓰는 것을 넘어,<br><span class="gc">표준을 함께… | `Không chỉ áp&nbsp;dụng chuẩn,<br><span class="gc">mà còn cùng xây&nbsp;dựng chuẩn</span>` | `Không chỉ áp&nbsp;dụng chuẩn,<br><span class="gc">mà còn cùng xây&nbsp;dựng&nbsp;chuẩn</span>` | 끝줄 한 단어(chuẩn) |
+| 위키드스톰 카탈로그 2026… | `Catalogue Wicked&nbsp;Storm 2026` | `Catalogue Wicked&nbsp;Storm&nbsp;2026` | 끝줄 "2026" |
+| 위키드스톰 회사소개서 2026… | `Giới&nbsp;thiệu công&nbsp;ty Wicked&nbsp;Storm 2026` | `Giới&nbsp;thiệu công&nbsp;ty Wicked&nbsp;Storm&nbsp;2026` | 끝줄 "2026" |
+| KERIS · 똑똑! 수학탐험대… | `KERIS · Toc Toc! Math Expedition` | `KERIS · Toc Toc! Math&nbsp;Expedition` | 끝줄 한 단어 |
+| 국제 표준으로 실시간 수집… | `Thu thập theo thời gian thực, theo chuẩn quốc tế` | `Thu thập thời gian thực theo chuẩn quốc tế` | 파이프라인 무대 노트(nowrap)가 창 폭에 거의 닿음: 쉼표·중복 theo 제거 |
+| 신호 · 반복 재생 구간… | `Dấu hiệu · Phần được xem lại nhiều lần` | `Dấu hiệu · Phần xem lại` | 정적 HTML 문구가 main.js 문구(Dấu hiệu · Phần xem lại)와 달라 첫 화면만 길었음 |
+| <b>학과 교육과정 운영자</b><span class="pill lxp"… | `<b>Quản trị viên chương trình đào tạo</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Quản trị viên xem xét cảnh báo AI và dữ liệu gốc. Họ cải tiến các khung <span class="nw">năng lực học thuật và nghề nghiệp</span> dựa trên 1EdTech CASE.</span>` | `<b>Quản trị viên chương trình đào tạo</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Xem xét cảnh báo AI và dữ liệu gốc, cải tiến khung <span class="nw">năng lực học thuật và nghề nghiệp</span> dựa trên 1EdTech&nbsp;CASE.</span>` | 선순환 그림 라벨이 그림 밖으로 나감: 주어(Quản trị viên) 생략, 한 문장으로. 카탈로그 p.7 문장을 줄인 것 |
+| 에 동의합니다.… | `để xử lý yêu cầu liên hệ.` | ` để xử lý yêu cầu liên hệ.` | 링크 뒤 띄어쓰기 누락 |

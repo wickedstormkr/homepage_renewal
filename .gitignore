@@ -5,3 +5,4 @@
 node_modules/
 npm-debug.log*
 scripts/__pycache__/
+scripts/qa/out/

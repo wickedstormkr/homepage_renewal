@@ -67,3 +67,23 @@
 18. **학습자 설명(delta2로 갱신)**: 카탈로그 p.6 국문은 "필요한 순간 AI와 교수자가 개입해, 학습이 끊기지 않고 효과적으로 이어집니다"이고 영문은 "Learners receive timely support from AI and instructors to keep learning effectively."이다. 새 사이트 국문은 "필요한 순간 AI와 상호작용하며, ..."로 교수자 개입이 빠져 있어, 카탈로그 영문을 그대로 쓰면 국문에 없는 "instructors"가 들어간다. **사이트 사용**: `Learners interact with AI when they need it, to keep learning effectively.` 국문과 카탈로그 중 어느 쪽에 맞출지 결정이 필요하다.
 19. **Lecognizer 라벨 문장(delta2)**: 국문 "모든 학습 활동이 국제 표준 규격으로 수집되어 1EdTech CASE 체계로 쌓입니다"는 카탈로그 p.7 국문과 같다. 카탈로그 영문은 "CASE 체계로 쌓는다"를 "links the data to competency frameworks based on 1EdTech CASE"로 옮겨서, 국문(체계에 쌓임)보다 범위가 좁다(역량 체계로 한정). **사이트 사용**: 카탈로그 영문(주어만 뺌).
 20. **운영자 문장에서 "다음 학기"가 빠짐**: 카탈로그 p.7 국문은 "...운영자가 다음 학기 교과·직무역량 체계(CASE 기반)를 보완합니다."인데, 영문 "Administrators review AI alerts and raw data. They refine CASE-based academic and job-related competency frameworks."에는 "next semester"가 없다. 사이트 국문에도 "다음 학기"가 있다. **사이트 사용**: 지시대로 카탈로그 영문 그대로. 카탈로그 재인쇄 때 "for the next semester"를 넣을지 결정이 필요하다(카탈로그 p.5 운영자 설명에는 "for the next semester"가 있다).
+
+## 레이아웃 보정으로 바꾼 문구 (2026-09-25, 브랜치 fix/i18n-layout-en-vi)
+
+화면 폭에 따라 칸을 넘치거나 끝줄에 한 단어만 남던 곳. 뜻은 그대로 두고 줄이거나 줄바꿈만 제어했다(`&nbsp;`, `.nw`). 점검 도구: `scripts/qa/layout-check.cjs`.
+
+| 국문 키 | 전 | 후 | 이유 |
+|---|---|---|---|
+| <span class="line"><span class="line-inn… | `<span class="line"><span class="line-inner">Every Learning Moment,</span></span> <span class="line"><span class="line-inner">Designed for</span></span> <span class="line"><span class="line-inner"><span class="g">Growth.</span></span></span>` | `<span class="line"><span class="line-inner">Every Learning Moment,</span></span> <span class="line"><span class="line-inner">Designed for <span class="g">Growth.</span></span></span>` |  |
+| AI 특허 2건 등록 · 이상 학습 탐지 · 학습자 프로파일링… | `2 granted AI patents · Learning anomaly detection · Learner profiling` | `<span class="nw">2 granted AI patents</span> · <span class="nw">Learning anomaly detection</span> · <span class="nw">Learner profiling</span>` | 배지가 두 줄일 때 항목 사이에서만 끊도록 항목을 .nw로 묶음 |
+| 교육과정·성취기준·역량 체계 표준… | `Standard for curriculum, achievement standard, and competency frameworks` | `Standard for curriculum, achievement standards, and&nbsp;competencies` | 끝줄 한 단어 + 360px에서 &nbsp; 묶음이 칸을 넘어 표현을 바꿈(competency frameworks → competencies). 원어민·카탈로그 확인 필요 |
+| 디지털 성취 증거(배지) 발행 표준… | `Standard for issuing digital evidence of achievement (badges)` | `Standard for issuing digital evidence of achievement&nbsp;(badges)` | 끝줄 한 단어 |
+| 차세대 교육 데이터 연동 API… | `Next-generation API for education data integration` | `Next-generation API for education data&nbsp;integration` | 끝줄 한 단어 |
+| 검증 가능한 디지털 자격증명 생태계… | `Ecosystem for verifiable digital credentials` | `Ecosystem for verifiable digital&nbsp;credentials` | 끝줄 한 단어 |
+| 학습 도구 상호운용 표준… | `Standard for learning tool interoperability` | `Standard for learning tool&nbsp;interoperability` | 끝줄 한 단어 |
+| 평가 문항 상호운용 표준… | `Standard for assessment item interoperability` | `Standard for assessment item&nbsp;interoperability` | 끝줄 한 단어 |
+| KERIS · 똑똑! 수학탐험대… | `KERIS · Toc Toc! Math Expedition` | `KERIS · Toc Toc! Math&nbsp;Expedition` | 끝줄 한 단어 |
+| 인사혁신처 · 인재개발… | `Ministry of Personnel Management · HRD` | `Ministry of Personnel Management&nbsp;·&nbsp;HRD` | 끝줄 "· HRD" |
+| <b>학과 교육과정 운영자</b><span class="pill lxp"… | `<b>Curriculum Administrator</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Administrators review AI alerts and raw data. They refine CASE-based <span class="nw">academic and job-related</span> competency frameworks.</span>` | `<b>Curriculum Administrator</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Review AI alerts and raw data, then refine CASE-based <span class="nw">academic and job-related</span> competency&nbsp;frameworks.</span>` | 선순환 그림 라벨이 4줄로 그림 아래 끝에 닿음: 주어(Administrators) 생략, 두 문장을 한 문장으로. 카탈로그 p.7 문장을 줄인 것 |
+| 학습데이터·표준·AI 도입을<br>함께 <span class="g">검토… | `Adopting learning data, standards, or AI?<br>Let’s <span class="g">review</span> it together` | `Adopting learning data, standards, or AI?<br>Let’s <span class="g">review</span> it&nbsp;together` | 끝줄 한 단어 |
+| 에 동의합니다.… | `for handling my inquiry.` | ` for handling my inquiry.` | 링크 뒤 띄어쓰기 누락(국문에는 공백이 없어 번역에도 없었음) |
