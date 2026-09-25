@@ -19,7 +19,7 @@
   var LANG = (root.getAttribute('lang') || 'ko').slice(0, 2);
   var I18N = {
     ko: {
-      menuOpen: '메뉴 열기', menuClose: '메뉴 닫기',
+      menuOpen: '메뉴 열기', menuClose: '메뉴 닫기', histMore: '세부 연혁 모두 보기', histLess: '세부 연혁 접기',
       actors: ['학습자', '학습자', '학습자', '교수자'],
       events: [
         { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '2회 반복', '구간 멈춤'] },
@@ -38,7 +38,7 @@
       failed: '전송에 실패했습니다. manager@wickedstorm.kr로 보내주세요.'
     },
     en: {
-      menuOpen: 'Open menu', menuClose: 'Close menu',
+      menuOpen: 'Open menu', menuClose: 'Close menu', histMore: 'Show full history', histLess: 'Show less',
       actors: ['Learner', 'Learner', 'Learner', 'Instructor'],
       events: [
         { v: 'watched', o: ['Concept lecture 04', 'Explainer video', 'Review lecture'], r: ['100% complete', 'Replayed 2×', 'Paused here'] },
@@ -57,7 +57,7 @@
       failed: 'Sending failed. Please email manager@wickedstorm.kr.'
     },
     ja: {
-      menuOpen: 'メニューを開く', menuClose: 'メニューを閉じる',
+      menuOpen: 'メニューを開く', menuClose: 'メニューを閉じる', histMore: '詳しい沿革をすべて見る', histLess: '詳しい沿革を閉じる',
       actors: ['学習者', '学習者', '学習者', '教員'],
       events: [
         { v: '視聴', o: ['概念講義 04', '解説動画', '補充講義'], r: ['進捗 100%', '2回リピート', '区間で停止'] },
@@ -76,7 +76,7 @@
       failed: '送信に失敗しました。manager@wickedstorm.kr までお送りください。'
     },
     vi: {
-      menuOpen: 'Mở menu', menuClose: 'Đóng menu',
+      menuOpen: 'Mở menu', menuClose: 'Đóng menu', histMore: 'Xem toàn bộ lịch sử chi tiết', histLess: 'Thu gọn lịch sử',
       actors: ['Người học', 'Người học', 'Người học', 'Giảng viên'],
       events: [
         { v: 'đã xem', o: ['Bài giảng khái niệm 04', 'Video giải thích', 'Bài giảng bổ sung'], r: ['Hoàn thành 100%', 'Xem lại 2 lần', 'Dừng ở phần này'] },
@@ -1219,6 +1219,26 @@
     var inView = false;
     new IntersectionObserver(function (ents) { ents.forEach(function (en) { inView = en.isIntersecting; run(inView && !doc.hidden); }); }, { threshold: 0.1 }).observe(el);
     doc.addEventListener('visibilitychange', function () { run(inView && !doc.hidden); });
+  })();
+
+  /* ============================================================
+   *  연혁 펼치기(폰 전용 버튼, 넓은 화면은 CSS가 항상 펼쳐 둔다)
+   *  접을 때는 연혁 머리로 돌아가 읽던 자리를 잃지 않게 한다.
+   * ============================================================ */
+  (function () {
+    var box = doc.getElementById('history');
+    var btn = box && box.querySelector('.hist-more');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var open = box.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.textContent = open ? TX.histLess : TX.histMore;
+      if (!open) {
+        var y = box.getBoundingClientRect().top + (win.pageYOffset || 0) - 80;
+        if (lenis) lenis.scrollTo(y, { immediate: true }); else win.scrollTo(0, y);
+      }
+      if (win.ScrollTrigger) win.ScrollTrigger.refresh();
+    });
   })();
 
   /* ============================================================

@@ -414,20 +414,43 @@ nav.main .cta:hover{color:#fff}
 @keyframes pl-scan{0%{opacity:0;transform:translateY(-100%)}3%{opacity:1}31%{opacity:1;transform:translateY(0)}34%{opacity:0;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
 @keyframes pl-flow{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .pipe-loop.paused *{animation-play-state:paused!important}
-/* 좁은 화면: 16:9 안 글자가 너무 작아지므로 세로 배치 */
-@media (max-width:760px){
-  .pipe-loop .pl-stage{aspect-ratio:auto;container-type:normal;padding:22px 18px 20px}
-  .pl-head,.pl-steps,.pl-arc-text{position:static}
-  .pl-idx{font-size:11px}.pl-title{font-size:19px;margin-top:6px}.pl-sub{font-size:13px;margin-top:6px}
-  .pl-steps{display:grid;grid-template-columns:1fr;row-gap:22px;margin-top:22px}
-  .pl-lab{font-size:17px}.pl-lab i{font-size:12px;margin-right:6px}
-  .pl-note{font-size:13px;margin:4px 0 10px;white-space:normal}
-  .pl-win{border-radius:10px}.pl-bar{height:22px;gap:5px;padding:0 9px;border-radius:10px 10px 0 0}
-  .pl-bar span{width:7px;height:7px}.pl-bar em{font-size:9.5px;padding:2px 7px;border-radius:5px}
-  .pl-shot{border-radius:0 0 10px 10px}
-  .pl-flow,.pl-arc{display:none}
-  .pl-arc-text{margin-top:18px;font-size:13px}
+/* 데스크톱(1024px 이상): 16:9 무대 안 글자는 컨테이너 폭 비례, 다만 읽을 수 있는 최소 크기는 지킨다 */
+@media (min-width:1024px){
+  .pl-idx{font-size:max(10px,.95cqw)}
+  .pl-sub{font-size:max(12.5px,1.28cqw)}
+  .pl-lab i{font-size:max(10.5px,1.05cqw)}
+  .pl-note,.pl-arc-text{font-size:max(11px,1.08cqw)}
 }
+/* 1023px 이하(태블릿·폰): 세 창을 줄여 나란히 두면 글자가 5~10px로 작아지고, 세로로 쌓으면 화면 세 개 분량이 된다.
+   → '한 자리 순서 재생': 단계 이름은 위에 탭 한 줄(진행 막대), 설명과 화면은 한 자리에 겹쳐 두고 활성 단계만 보인다.
+   같은 12초 주기·같은 지연값이라 데스크톱과 박자가 같다. 움직임은 opacity/transform만. */
+@media (max-width:1023px){
+  .pipe-loop .pl-stage{aspect-ratio:auto;container-type:normal;padding:clamp(22px,4vw,40px) clamp(16px,4vw,44px) clamp(20px,3.6vw,34px)}
+  .pl-head,.pl-steps,.pl-arc-text{position:static}
+  .pl-idx{font-size:11px}
+  .pl-title{font-size:clamp(19px,3.3vw,28px);margin-top:6px;text-wrap:balance}
+  .pl-sub{font-size:clamp(13px,1.9vw,15.5px);margin-top:6px;text-wrap:balance}
+  .pl-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:10px;max-width:720px;margin:clamp(20px,3.4vw,30px) auto 0}
+  .pl-step{display:contents}
+  .pl-lab{grid-row:1;position:relative;padding-bottom:12px;font-size:clamp(15px,2.2vw,19px);white-space:nowrap}
+  .pl-step.s1 .pl-lab{grid-column:1}.pl-step.s2 .pl-lab{grid-column:2}.pl-step.s3 .pl-lab{grid-column:3}
+  .pl-lab i{font-size:clamp(11px,1.5vw,13px);margin-right:6px}
+  .pl-lab::before,.pl-lab::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px}
+  .pl-lab::before{background:rgba(255,255,255,.1)}
+  .pl-lab::after{background:var(--c);transform-origin:left center;transform:scaleX(0);animation:pl-prog 12s linear infinite var(--d)}
+  .pl-note{grid-row:2;grid-column:1/-1;margin:14px 0 12px;font-size:clamp(13px,1.9vw,15px);white-space:normal;opacity:0;animation:pl-seq 12s linear infinite var(--d)}
+  .pl-win{grid-row:3;grid-column:1/-1;opacity:0;border-radius:12px;animation:pl-seq 12s linear infinite var(--d)}
+  /* 애니메이션이 꺼진 경우(모션 줄이기)에는 첫 단계가 보이게 */
+  .pl-step.s1 .pl-note,.pl-step.s1 .pl-win{opacity:1}
+  .pl-bar{height:24px;gap:5px;padding:0 10px;border-radius:12px 12px 0 0}
+  .pl-bar span{width:7px;height:7px}.pl-bar em{font-size:10px;padding:2px 8px;border-radius:5px}
+  .pl-shot{border-radius:0 0 12px 12px}
+  .pl-shot::after{display:none}
+  .pl-flow,.pl-arc{display:none}
+  .pl-arc-text{margin-top:16px;font-size:clamp(12.5px,1.8vw,14.5px)}
+}
+@keyframes pl-seq{0%{opacity:0}3%{opacity:1}33.3%{opacity:1}38%{opacity:0}100%{opacity:0}}
+@keyframes pl-prog{0%{transform:scaleX(0);opacity:1}33.3%{transform:scaleX(1);opacity:1}38%{transform:scaleX(1);opacity:0}100%{transform:scaleX(0);opacity:0}}
 
 /* ---- 제품 feature ---- */
 .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
@@ -553,20 +576,27 @@ nav.main .cta:hover{color:#fff}
 .loop-notes li[style*="--align:right"]{align-items:flex-end}
 /* 솔루션 알약은 세 개 모두 같은 크기. 색은 브랜드 그라디언트 두 조각: Lecognizer·Lecognizer AI = 마젠타 쪽, LearnHubble AI = 파랑 쪽 */
 .loop-notes .pill{display:inline-block;padding:.3cqw .85cqw;border-radius:999px;color:#fff;
-  font-family:var(--en);font-size:clamp(10px,1.08cqw,15px);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+  font-family:var(--en);font-size:clamp(11px,1.08cqw,15px);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
 .loop-notes .pill.lrs{background:var(--grad-lec);box-shadow:0 0 1.6cqw rgba(192,59,205,.42)}
 .loop-notes .pill.lxp{background:var(--grad-lhb);box-shadow:0 0 1.6cqw rgba(79,104,255,.46)}
 .loop-notes .ln-role b{font-size:clamp(12px,1.3cqw,18px);font-weight:800;color:#d7c6ff;letter-spacing:-.02em;white-space:nowrap}
-.loop-notes .ln-desc{font-size:clamp(10px,.92cqw,13px);line-height:1.5;color:#c4bde4;text-wrap:balance;text-shadow:0 1px 8px rgba(6,4,24,.9)}
+.loop-notes .ln-desc{font-size:clamp(11px,.92cqw,13px);line-height:1.5;color:#c4bde4;text-wrap:balance;text-shadow:0 1px 8px rgba(6,4,24,.9)}
 .loop-figure>figcaption{margin-top:12px}
-/* 좁은 화면: 그림 안 글자가 너무 작아지므로 같은 라벨을 그림 아래 목록으로 */
-@media (max-width:760px){
+/* 1023px 이하: 그림 안 글자가 10px 아래로 작아지므로 같은 라벨을 그림 아래 목록으로 */
+@media (max-width:1023px){
   .loop-stage{container-type:normal}
     .loop-notes{position:static;display:grid;gap:16px;padding:20px 18px 22px;border-top:1px solid var(--line);background:var(--panel)}
   .loop-notes li{position:static;width:auto;text-align:left;align-items:flex-start!important;gap:6px}
   .loop-notes .pill{font-size:12.5px;padding:3px 11px;box-shadow:none}
   .loop-notes .ln-role b{font-size:15px}
   .loop-notes .ln-desc{font-size:13.5px;text-wrap:pretty;text-shadow:none}
+}
+/* 태블릿: 솔루션 두 개를 한 줄, 역할 세 개를 한 줄로(카탈로그의 위계 그대로) */
+@media (min-width:700px) and (max-width:1023px){
+  .loop-notes{grid-template-columns:repeat(6,minmax(0,1fr));column-gap:28px;row-gap:24px;padding:26px 28px 28px}
+  .loop-notes .ln-sol{grid-column:span 3}
+  .loop-notes .ln-role{grid-column:span 2}
+  .loop-notes .ln-desc{font-size:14px}
 }
 
 /* ---- 레퍼런스 로고 띠 ---- */
@@ -773,7 +803,74 @@ html.nogsap .hero h1 .line-inner{transform:none}
   .capture{margin-top:8px}
   .hero{min-height:auto}
 }
-@media (max-width:560px){.std-grid,.news-grid,.lhub-sub,.pipe{grid-template-columns:1fr}.res-card{grid-template-columns:84px 1fr;gap:16px;padding:22px}.res-thumb{width:84px}.lhub-points li{grid-template-columns:1fr;gap:4px}}
+@media (max-width:560px){.lhub-sub{grid-template-columns:1fr}.res-card{grid-template-columns:84px 1fr;gap:16px;padding:22px}.res-thumb{width:84px}.lhub-points li{grid-template-columns:1fr;gap:4px}}
+
+/* ---- 반응형 2차: 폰(≤699) · 태블릿(700~1023) · 데스크톱(≥1024)을 따로 설계 ----
+   원칙: 데스크톱은 넓게 펼쳐 비교·탐색, 태블릿은 2~3열로 한 화면 밀도를 유지, 폰은 한 열 + '같은 종류 묶음은 가로로 넘기기'로 세로 길이를 줄인다.
+   터치 기기는 누르는 곳을 40px 이상으로. */
+
+/* 히어로: 한 열이 되는 태블릿에서 제목이 34px로 작아 보이던 문제 */
+@media (max-width:960px){
+  .hero h1{font-size:clamp(30px,6.2vw,52px)}
+}
+/* 레퍼런스: 태블릿은 2열 유지(한 열은 폰에서만) */
+@media (min-width:641px) and (max-width:960px){
+  .ref-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ref-card{padding:28px 26px}
+}
+/* 소식: 태블릿은 3열(2열이면 세 번째 카드가 혼자 남는다) */
+@media (min-width:700px) and (max-width:960px){
+  .news-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .ncard .nbody{padding:18px 18px 20px}
+  .ncard h3{font-size:15.5px}
+}
+/* 문의: 태블릿은 연락처와 폼을 나란히 */
+@media (min-width:700px) and (max-width:960px){
+  .contact-grid{grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:36px}
+}
+/* 폰: 같은 종류 묶음(소식 카드, LearnHubble 보조 화면)은 가로로 넘긴다. 다음 카드가 살짝 보여 넘길 수 있음을 알린다 */
+@media (max-width:699px){
+  .news-grid,.lhub-sub{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:min(82%,330px);gap:14px;align-items:stretch;
+    overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    margin-inline:-24px;padding:2px 24px 10px;scroll-padding-inline:24px}
+  .news-grid::-webkit-scrollbar,.lhub-sub::-webkit-scrollbar{display:none}
+  .news-grid>*,.lhub-sub>*{scroll-snap-align:start}
+  /* 가로 스크롤 안의 카드는 세로 리빌을 쓰지 않는다(옆 카드가 늦게 나타나 보이지 않게) */
+  html.js .news-grid .rv,html.js .lhub-sub .rv{opacity:1;transform:none}
+}
+/* 폰: 파이프라인 네 단계와 표준 카드는 2열(한 열이면 화면 두세 개 분량) */
+@media (max-width:560px){
+  .pipe{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pipe .step{padding:18px 16px}
+  .pipe .step h3{margin:8px 0 6px;font-size:17px}
+  .pipe .step p{font-size:13px}
+  .pipe .step .step-detail{display:none}
+  .std-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .std-card{padding:16px 14px 14px}
+  .std-card .k{font-size:15.5px}
+  .std-card p{font-size:12.5px}
+  .std-meta{padding-top:12px}
+  .ref-card{padding:24px 20px}
+  .ref-card h3{font-size:19px}
+}
+/* 연혁: 폰에서는 해마다 주요 항목만 보이고, 세부 항목은 버튼으로 펼친다(무JS면 항상 펼침) */
+.hist-more{display:none}
+@media (max-width:760px){
+  html.js .history:not(.open) .hist-dim{display:none}
+  html.js .hist-more{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-top:22px;border-radius:14px;
+    border:1px solid var(--line2);background:var(--panel);color:#dfe3f7;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer}
+  .hist-more::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+  .history.open .hist-more::after{transform:translateY(2px) rotate(-135deg)}
+}
+/* 터치·좁은 화면: 누르는 곳을 40px 이상으로 */
+@media (max-width:960px),(pointer:coarse){
+  .res-links{gap:8px}
+  .res-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line2);border-radius:999px}
+  .ci-info a{display:inline-block;padding:9px 0}
+  .ci-info .lab{margin-bottom:0}
+  .sec-more{display:inline-block;padding:12px 0}
+}
+.cform .check input{width:18px;height:18px;flex:none;accent-color:var(--violet)}
 
 /* ---- reduced-motion: 모든 콘텐츠 정적 완전 노출 ---- */
 @media (prefers-reduced-motion:reduce){
@@ -852,6 +949,10 @@ a.ncard:hover .nmore i{transform:translateX(3px)}
 .sec-lead.lead-1{max-width:none;text-wrap:wrap}
 /* 한 줄 리드도 좁은 화면에서 줄이 나뉘면 고르게(한 줄이 꽉 차고 둘째 줄이 짧게 남지 않게) */
 @media (max-width:1023px){.sec-lead.lead-1{text-wrap:balance}}
-/* 일본어: 한글용 keep-all 대신 구 단위 줄바꿈 */
-html:lang(ja) body{word-break:auto-phrase;line-break:strict}
+/* 일본어: 한글용 keep-all(띄어쓰기 없는 일본어를 통째로 한 단어로 만든다)을 쓰지 않는다.
+   기본은 글자 단위 + 금칙 처리(모든 브라우저), 지원 브라우저(Chrome)만 구 단위(auto-phrase).
+   구가 칸보다 길면(예: 国家人材開発知能型オープンプラットフォームの) 그 안에서도 줄을 바꿔 폰에서 가로로 넘치지 않게 한다 */
+html:lang(ja) body{word-break:normal;line-break:strict}
+@supports (word-break:auto-phrase){html:lang(ja) body{word-break:auto-phrase}}
+html:lang(ja) :is(p,li,h1,h2,h3,h4,dt,dd,figcaption,label,td,th){overflow-wrap:anywhere}
 html:lang(ja) .lhub .h-lg{font-size:clamp(26px,4.4vw,56px)}
