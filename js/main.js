@@ -273,9 +273,9 @@
     function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
     // 핀 장면의 세로 배치: 레저(6행) + 간격 + 캡션(.hero-overlay)을 한 덩어리로 보고, 보이는 높이에서 남는
-    // 여백을 위 40 : 아래 60으로 나눈다(가운데보다 조금 위, 모든 언어가 같은 비율). 캡션은 언어마다 높이가
+    // 여백을 위아래 똑같이 나눈다(덩어리가 화면 세로 가운데, 모든 언어가 같은 규칙). 캡션은 언어마다 높이가
     // 다르므로(국문 한 줄, 영·베·일 두 줄) 실제 높이를 잰다. 캡션 위치는 --cap-top으로 CSS에 넘긴다.
-    // 반환값은 레저 영역 위 끝(oy). 헤더(76px)가 다시 내려와도 첫 행을 덮지 않게 위 여백은 96px 이상(여유가 있을 때)
+    // 반환값은 레저 영역 위 끝(oy)
     function placeLedger(rowGap, pillH) {
       var vh = Math.min(H, win.innerHeight || H);
       var gap = Math.max(56, Math.min(120, vh * .11));              // 막대와 캡션 사이: 행 간격(보이는 높이의 5.7%)보다 확실히 넓게
@@ -286,7 +286,7 @@
       } catch (e) { capH = 0; }
       var lh = rowGap * (ROWS - 1) + pillH;                          // 첫 필 위 끝 ~ 마지막 필 아래 끝
       var free = Math.max(0, vh - (lh + gap + capH));
-      var top = Math.max(free * .4, Math.min(96, free * .5));
+      var top = free / 2;
       if (overlay) overlay.style.setProperty('--cap-top', Math.round(top + lh + gap) + 'px');
       c.setAttribute('data-ledger', Math.round(top) + ',' + Math.round(top + lh));  // 점검용(scripts/qa)
       return top - rowGap / 2 + pillH / 2;
