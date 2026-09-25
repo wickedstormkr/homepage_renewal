@@ -265,10 +265,32 @@
     });
     var W = 0, H = 0, DPR = 1, P = [], edges = [], rows = [], guides = [];
     var guideTop = 0, guideBot = 0, ledgerX0 = 0, ledgerX1 = 0, introId = null, headGrad = null;
+    var ledgerOy = 0, ledgerGap = 0, ledgerPillH = 0;                // 레저 세로 배치(relayout에서 다시 씀)
+    var overlay = doc.getElementById('heroOverlay');
     var MD = 150, ROWS = 6;
     var HEAD_R = 4.5;                                               // 패널 .xrow .dot의 9px와 동일
 
     function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+
+    // 핀 장면의 세로 배치: 레저(6행) + 간격 + 캡션(.hero-overlay)을 한 덩어리로 보고, 보이는 높이에서 남는
+    // 여백을 위 40 : 아래 60으로 나눈다(가운데보다 조금 위, 모든 언어가 같은 비율). 캡션은 언어마다 높이가
+    // 다르므로(국문 한 줄, 영·베·일 두 줄) 실제 높이를 잰다. 캡션 위치는 --cap-top으로 CSS에 넘긴다.
+    // 반환값은 레저 영역 위 끝(oy). 헤더(76px)가 다시 내려와도 첫 행을 덮지 않게 위 여백은 96px 이상(여유가 있을 때)
+    function placeLedger(rowGap, pillH) {
+      var vh = Math.min(H, win.innerHeight || H);
+      var gap = Math.max(56, Math.min(120, vh * .11));              // 막대와 캡션 사이: 행 간격(보이는 높이의 5.7%)보다 확실히 넓게
+      var capH = 0;
+      try {
+        var mn = overlay && overlay.querySelector('.ho-main'), sb = overlay && overlay.querySelector('.ho-sub');
+        if (mn) capH = Math.max(0, (sb || mn).getBoundingClientRect().bottom - mn.getBoundingClientRect().top);
+      } catch (e) { capH = 0; }
+      var lh = rowGap * (ROWS - 1) + pillH;                          // 첫 필 위 끝 ~ 마지막 필 아래 끝
+      var free = Math.max(0, vh - (lh + gap + capH));
+      var top = Math.max(free * .4, Math.min(96, free * .5));
+      if (overlay) overlay.style.setProperty('--cap-top', Math.round(top + lh + gap) + 'px');
+      c.setAttribute('data-ledger', Math.round(top) + ',' + Math.round(top + lh));  // 점검용(scripts/qa)
+      return top - rowGap / 2 + pillH / 2;
+    }
 
     // 라운드 필(pill) 경로 (ctx.roundRect 미지원 브라우저 대비 arcTo 구현)
     function rr(x, y, w, h, rad) {
@@ -289,10 +311,13 @@
       c.width = Math.round(W * DPR); c.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-      // 기록 레저 영역: 가로 ~60%, 세로 ~44% 중앙 정렬
-      var gw = W * 0.60, gh = H * 0.44, ox = (W - gw) / 2, oy = (H - gh) / 2;
+      // 기록 레저 영역: 가로 60% 가운데, 세로 높이는 보이는 높이의 34%. 세로 위치는 캡션과 한 덩어리로(placeLedger)
+      var vh = Math.min(H, win.innerHeight || H);
+      var gw = W * 0.60, gh = vh * 0.34, ox = (W - gw) / 2;
       var rowGap = gh / ROWS, GAP = 9;
       var pillH = Math.max(7, Math.min(rowGap * 0.5, 13));
+      var oy = placeLedger(rowGap, pillH);
+      ledgerOy = oy; ledgerGap = rowGap; ledgerPillH = pillH;
       var px0 = ox + 22, px1 = ox + gw - 26;                        // 필 영역(오른쪽 끝은 신호 도트 여백)
       rows = [];
       for (var i = 0; i < ROWS; i++) {
@@ -683,6 +708,18 @@
 
     return {
       build: build,
+      // 글꼴이 늦게 들어와 캡션 줄 수·높이가 바뀌면 레저만 세로로 옮긴다(파티클을 다시 만들지 않아 인트로가 끊기지 않는다)
+      relayout: function () {
+        if (!W || !rows.length) return;
+        var dy = placeLedger(ledgerGap, ledgerPillH) - ledgerOy;
+        if (Math.abs(dy) < .5) return;
+        ledgerOy += dy; guideTop += dy; guideBot += dy;
+        for (var i = 0; i < rows.length; i++) rows[i].y += dy;
+        for (var j = 0; j < P.length; j++) {
+          var q = P[j];
+          if (q.role > 0) { q.by += dy; q.ry += dy; q.cpy += dy / 2; }
+        }
+      },
       staticA: function () { setPos(0); ctx.clearRect(0, 0, W, H); drawLines(1); drawParticles(0); },
       intro: function () {                                          // bounded ≤ 2.4s(SPEC §0-2 ≤2.5s), 1회
         win.cancelAnimationFrame(introId);
@@ -739,6 +776,9 @@
     canvas.build();
     canvas.staticA();
     if (!REDUCE) canvas.intro();
+    try {
+      if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(function () { try { canvas.relayout(); } catch (e) {} });
+    } catch (e) {}
   }
 
   /* ============================================================

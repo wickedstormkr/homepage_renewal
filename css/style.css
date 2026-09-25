@@ -258,9 +258,12 @@ nav.main .cta:hover{color:#fff}
 .hero-copy{position:relative;z-index:2}
 
 /* 히어로 카피/캡처를 개별 제어하기 위한 래퍼 */
-.hero-overlay{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-end;text-align:center;padding:0 24px clamp(64px,14vh,130px);opacity:0;pointer-events:none}
-.hero-overlay .ho-main{font-size:clamp(28px,4.4vw,52px);font-weight:800;letter-spacing:-.04em;line-height:1.16}
+/* 핀-스크럽 장면 배치: 기록 막대(캔버스)와 캡션을 한 덩어리로 보고, 남는 여백을 위 40 : 아래 60으로 나눈다.
+   캡션 높이는 언어마다 달라 main.js(placeLedger)가 재서 캡션 위치를 --cap-top으로 준다(막대 아래 11vh 간격, 56~120px).
+   JS가 없을 때의 값은 막대 20~54% 기준. 캡션 글자는 폭(3.1vw)과 높이(5.6vh) 중 작은 쪽을 따라 막대 폭(화면 폭 60%)보다 넓어지지 않는다 */
+.hero-overlay{position:absolute;inset:var(--cap-top,calc(54% + clamp(56px,11vh,120px))) 0 0;z-index:5;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;text-align:center;padding:0 24px;opacity:0;pointer-events:none}
+.hero-overlay .ho-main{font-size:clamp(26px,min(3.1vw,5.6vh),46px);font-weight:800;letter-spacing:-.04em;line-height:1.16}
 .hero-overlay .ho-sub{margin-top:16px;color:#b3b8d4;font-size:clamp(15px,1.7vw,19px);font-weight:500}
 
 /* 앰비언트 글로우 오브 (compositor-only) */
@@ -600,7 +603,8 @@ nav.main .cta:hover{color:#fff}
 }
 
 /* ---- 레퍼런스 로고 띠 ---- */
-.ref-logos{margin-top:28px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+/* 로고는 흰색만 남긴 투명 이미지(ref-logos-mono.webp). 바탕은 위 레퍼런스 카드와 같은 패널색(그라디언트 없음) */
+.ref-logos{margin-top:28px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--panel)}
 .ref-logos img{display:block;width:100%;height:auto}
 
 /* ---- 채널(인스타그램·블로그) — site-config.js SOCIAL이 채워진 경우에만 노출 ---- */
@@ -618,12 +622,16 @@ nav.main .cta:hover{color:#fff}
 
 /* ---- 자료 받기 ---- */
 .res-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.res-card{display:grid;grid-template-columns:120px 1fr;gap:24px;align-items:start;padding:28px;border-radius:20px;background:var(--panel);border:1px solid var(--line)}
-.res-thumb{width:120px;height:auto;border-radius:8px;border:1px solid var(--line)}
-.res-thumb.wide{margin-top:4px}
+/* 카탈로그 표지는 세로, 회사소개서 표지는 가로라 표지를 글자 옆에 두면 두 카드의 높이·글자 위치가 어긋났다.
+   카드마다 같은 높이의 표지 자리를 위에 두고 표지를 가운데(같은 높이)에, 글자와 내려받기 링크는 그 아래에 둔다 */
+.res-card{display:flex;flex-direction:column;padding:24px;border-radius:20px;background:var(--panel);border:1px solid var(--line)}
+.res-cover{height:220px;display:flex;align-items:center;justify-content:center;padding:24px;border-radius:14px;
+  background:rgba(255,255,255,.025);border:1px solid var(--line)}
+.res-thumb{display:block;width:auto;height:auto;max-width:100%;max-height:100%;border-radius:6px;box-shadow:0 14px 32px rgba(0,0,0,.5)}
+.res-body{display:flex;flex-direction:column;flex:1;padding:22px 4px 0}
 .res-card h3{font-size:20px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
 .res-card p{margin-top:8px;color:var(--muted);font-size:14.5px;line-height:1.6}
-.res-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px}
+.res-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:auto;padding-top:18px}
 .res-links a{font-size:14px;font-weight:700;color:#fff;border-bottom:1px solid var(--line2);padding-bottom:2px;transition:border-color .2s}
 .res-links a:hover{border-color:#fff}
 /* 보고 있는 페이지 언어의 자료를 맨 앞에, 밑줄을 밝게 */
@@ -803,7 +811,7 @@ html.nogsap .hero h1 .line-inner{transform:none}
   .capture{margin-top:8px}
   .hero{min-height:auto}
 }
-@media (max-width:560px){.lhub-sub{grid-template-columns:1fr}.res-card{grid-template-columns:84px 1fr;gap:16px;padding:22px}.res-thumb{width:84px}.lhub-points li{grid-template-columns:1fr;gap:4px}}
+@media (max-width:560px){.lhub-sub{grid-template-columns:1fr}.res-card{padding:18px}.res-cover{height:160px;padding:16px}.res-links{display:grid;grid-template-columns:1fr 1fr}.res-links a{justify-content:center}.lhub-points li{grid-template-columns:1fr;gap:4px}}
 
 /* ---- 반응형 2차: 폰(≤699) · 태블릿(700~1023) · 데스크톱(≥1024)을 따로 설계 ----
    원칙: 데스크톱은 넓게 펼쳐 비교·탐색, 태블릿은 2~3열로 한 화면 밀도를 유지, 폰은 한 열 + '같은 종류 묶음은 가로로 넘기기'로 세로 길이를 줄인다.
@@ -1041,9 +1049,6 @@ html:not(:lang(ko)) .cform .check .field-err{display:block;margin-top:6px}
   html:lang(en) .hero-overlay .ho-main{max-width:16em}
   html:lang(vi) .hero-overlay .ho-main{max-width:19.5em}
   html:lang(ja) .hero-overlay .ho-main{max-width:16.5em}
-  /* 두 줄이 되면서 캡션 위쪽이 빛 막대(화면 높이 28~72%)의 마지막 줄에 닿았다. 글자를 조금 줄이고 아래 여백을 줄여 72% 아래에 둔다 */
-  html:not(:lang(ko)) .hero-overlay{padding-bottom:clamp(36px,7vh,72px)}
-  html:not(:lang(ko)) .hero-overlay .ho-main{font-size:clamp(26px,3.6vw,46px)}
 }
 /* 캡션의 .nw 묶음은 데스크톱 두 줄용. 캡션이 숨는 960px 이하에서도 넘치지 않게 푼다 */
 @media (max-width:960px){html:lang(ja) .hero-overlay .ho-main .nw{white-space:normal}}
