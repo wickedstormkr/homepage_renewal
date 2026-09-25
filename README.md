@@ -16,3 +16,4 @@
   `python3 scripts/build_i18n.py extract`(번역 단위 → `i18n/ko.json`) → `i18n/{en,ja,vi}.json`에 빠진 키 번역 →
   `python3 scripts/build_i18n.py build`(→ `en/ ja/ vi/index.html`). `check`는 빠진 번역만 보고한다.
   용어는 카탈로그 다국어판 기준(`i18n/*_terms.md`), 원어민 검수·카탈로그 확인 필요 사항은 `i18n/*_notes.md`
+- 다국어 레이아웃 점검: 저장소 루트에서 `python3 -m http.server 8123`을 띄우고 `node scripts/qa/layout-check.cjs [--shots=390,820,1440]` → `scripts/qa/out/report.txt`(넘침·겹침·고아 단어·두 줄 배지·11px 미만·제목이 본문 폭 끝까지 늘어진 한 줄·그라디언트 강조 구절 쪼개짐)와 스크린샷 (playwright는 `npm i -D playwright` 또는 전역 설치 + `NODE_PATH=$(npm root -g)`)

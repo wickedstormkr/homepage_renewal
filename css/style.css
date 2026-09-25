@@ -956,3 +956,132 @@ html:lang(ja) body{word-break:normal;line-break:strict}
 @supports (word-break:auto-phrase){html:lang(ja) body{word-break:auto-phrase}}
 html:lang(ja) :is(p,li,h1,h2,h3,h4,dt,dd,figcaption,label,td,th){overflow-wrap:anywhere}
 html:lang(ja) .lhub .h-lg{font-size:clamp(26px,4.4vw,56px)}
+
+/* ---- 언어별 레이아웃 보정(영·베·일). 국문(KO) 화면은 바꾸지 않는다 ----
+   번역문이 한국어보다 길어(영·베 1.5~2배) 칸을 넘치거나 줄 수가 늘어 배치가 무너지는 곳만 해당 언어에서 조정한다.
+   점검: scripts/qa/layout-check.cjs */
+/* 헤더(961~1279px): 메뉴 간격 32px 그대로면 영·일은 로고와 메뉴가 붙는다(1024px에서 10px·7px, 961px에서 0) */
+@media (min-width:961px) and (max-width:1279px){
+  html:not(:lang(ko)) nav.main{gap:clamp(16px,calc(16px + (100vw - 961px) * .05),32px)}
+}
+/* 히어로 캡처: 배지 자간을 줄이고, 배지와 '실시간' 표시가 한 줄에 안 들어가면 줄을 나눠 각자 한 줄로 둔다 */
+html:is(:lang(en),:lang(vi)) .cap-top{flex-wrap:wrap;row-gap:6px;column-gap:12px}
+html:is(:lang(en),:lang(vi)) .cap-badge{letter-spacing:.07em}
+html:is(:lang(en),:lang(vi)) .cap-live{white-space:nowrap}
+/* 히어로 캡처 행(961px 이상, 두 열 히어로): main.js가 행위자·동사·대상·결과 조합을 바꿔 가며 넣는다. 번역 칩이 길어
+   가장 긴 조합에서 결과 칩이 둘째 줄로 밀려 행 높이가 들쭉날쭉해진다(영 45개 중 최대 31개, 베 37개, 일 26개).
+   칩을 조금 줄이고, 961~1279px에서는 캡처 열을 조금 넓힌다 */
+@media (min-width:961px){
+  html:not(:lang(ko)) .xrow{gap:6px;padding:11px 10px}
+  html:not(:lang(ko)) .xrow .chip{font-size:12px;padding:4px 8px}
+  html:not(:lang(ko)) .xrow .arrow{font-size:12px}
+}
+@media (min-width:961px) and (max-width:1279px){
+  html:not(:lang(ko)) .hero-grid{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media (min-width:961px) and (max-width:1099px){
+  html:is(:lang(en),:lang(vi)) .xrow{gap:4px;padding:10px 8px}
+  html:is(:lang(en),:lang(vi)) .xrow .chip{font-size:11.5px;padding:4px 6px;letter-spacing:-.03em}
+  html:is(:lang(en),:lang(vi)) .xrow .dot{width:8px;height:8px}
+  html:is(:lang(en),:lang(vi)) .xrow .arrow{font-size:11px}
+}
+@media (min-width:1100px) and (max-width:1279px){
+  html:lang(vi) .xrow{gap:4px;padding:10px 8px}
+  html:lang(vi) .xrow .chip{font-size:11.5px;padding:4px 6px;letter-spacing:-.03em}
+}
+/* 그래도 가장 긴 조합(긴 행위자 + 'Concept lecture 04'/'Bài giảng khái niệm 04' + 긴 결과)은 칸을 넘는다.
+   장식용 스트림(aria-hidden)이라 행 높이가 들쭉날쭉한 것보다 한 줄을 지키고, 그 경우에만 대상 칩을 말줄임한다 */
+@media (min-width:961px) and (max-width:1279px){
+  html:is(:lang(en),:lang(vi)) .xrow{flex-wrap:nowrap}
+  html:is(:lang(en),:lang(vi)) .xrow .chip.object{min-width:0;overflow:hidden;text-overflow:ellipsis}
+}
+/* 히어로 AI 신호 알약: main.js가 문구를 바꿔 가며 보여 준다. 영·베 문구는 길어 폰에서 두 줄이 되고 알약 길이에 따라 줄 수가 바뀐다
+   → 폰에서는 알약을 늘 아랫줄에 두고(높이 고정) 한 줄로 */
+@media (max-width:430px){
+  html:is(:lang(en),:lang(vi)) .cap-foot{flex-wrap:wrap;row-gap:10px}
+  html:is(:lang(en),:lang(vi)) .cap-foot .spark{flex:1 1 calc(100% - 70px)}
+  html:is(:lang(en),:lang(vi)) .ins-chip{white-space:nowrap;max-width:100%}
+}
+/* 히어로 신뢰 줄(폰): 영·베 항목이 한 줄보다 길어 항목 안에서 두 줄이 된다 → 글자와 구분자 여백을 줄인다 */
+@media (max-width:430px){
+  html:is(:lang(en),:lang(vi)) .hero-trust{font-size:12px}
+  html:is(:lang(en),:lang(vi)) .hero-trust>span:not(:last-child)::after{margin:0 12px}
+}
+/* 선순환 그림(1024px 이상): 베트남어 역할 이름(학과 교육과정 운영자)은 nowrap이면 그림 오른쪽 밖으로 나간다 → 두 줄 허용.
+   라벨 자리는 옮기지 않는다(왼쪽·위는 화살표와 책상). 대신 영·베 운영자 설명을 3줄로 줄였다(i18n/*_notes.md) */
+@media (min-width:1024px){
+  html:lang(vi) .loop-notes .ln-role b{white-space:normal;text-wrap:balance;line-height:1.25}
+}
+/* 1024~1279px: 두 줄 역할 이름만큼 베트남어 운영자 라벨이 그림 아래 끝에 닿아 2%만 올린다(화살표 끝보다 아래) */
+@media (min-width:1024px) and (max-width:1279px){
+  html:lang(vi) .loop-notes li:nth-child(3){top:72%}
+}
+/* 제품 배지: 번역문은 항목이 길어 두 줄이 되기도 한다. 항목(.nw) 사이에서만 끊고, 두 줄이어도 알약이 찌그러지지 않게 모서리를 줄인다 */
+html:not(:lang(ko)) .feature .feat-badge{display:inline-block;border-radius:14px;line-height:1.45;letter-spacing:.03em;text-wrap:balance}
+/* 문의 동의 줄: 라벨이 flex라 글자·링크·글자가 따로 된 칸이 되어, 번역문이 길면 세 조각으로 흩어진다 → 한 문단으로 흐르게 */
+html:not(:lang(ko)) .cform .check{display:block;padding-left:28px;text-indent:0;position:relative}
+html:not(:lang(ko)) .cform .check input{position:absolute;left:0;top:2px}
+html:not(:lang(ko)) .cform .check .field-err{display:block;margin-top:6px}
+/* 표준 카드 상태(폰 2열): 베트남어 'Tham chiếu thiết kế'가 두 줄이 된다 */
+@media (max-width:560px){
+  html:lang(vi) .std-meta .st{font-size:11.5px;letter-spacing:-.02em;white-space:nowrap}
+}
+
+/* 제목·캡션 줄바꿈(영·베·일): 그라디언트 강조 구절은 한 줄에, 끝줄 한 단어 없이, 의미 단위로.
+   강조 구절 폭(em, 실측): EN 'Every Learning Moment,' 10.8 · 'global EdTech company' 10.6, VI 'dữ liệu cho sự phát triển' 10.8 ·
+   'Công ty EdTech toàn cầu' 11.0, JA 'グローバルエドテック企業' 11.0. 360px 칸(312px)에는 30px로 넘쳐 이 폭에서만 28px로 */
+@media (max-width:380px){
+  html:not(:lang(ko)) .hero h1,html:not(:lang(ko)) .h-lg{font-size:28px}
+}
+/* 히어로 스크롤 캡션(961px 이상 핀 구간에서만 보인다): 번역문은 화면 폭 끝까지 한 줄로 늘어지거나 강조 구절이 쪼개졌다.
+   폭을 두 줄 분량으로 제한하고 balance, 강조 구절은 한 줄. 끊는 자리는 번역문의 &nbsp;로 의미 단위에 맞춘다 */
+@media (min-width:961px){
+  html:not(:lang(ko)) .hero-overlay .ho-main{text-wrap:balance}
+  html:not(:lang(ko)) .hero-overlay .ho-main .g{white-space:nowrap}
+  html:lang(en) .hero-overlay .ho-main{max-width:16em}
+  html:lang(vi) .hero-overlay .ho-main{max-width:19.5em}
+  html:lang(ja) .hero-overlay .ho-main{max-width:16.5em}
+  /* 두 줄이 되면서 캡션 위쪽이 빛 막대(화면 높이 28~72%)의 마지막 줄에 닿았다. 글자를 조금 줄이고 아래 여백을 줄여 72% 아래에 둔다 */
+  html:not(:lang(ko)) .hero-overlay{padding-bottom:clamp(36px,7vh,72px)}
+  html:not(:lang(ko)) .hero-overlay .ho-main{font-size:clamp(26px,3.6vw,46px)}
+}
+/* 캡션의 .nw 묶음은 데스크톱 두 줄용. 캡션이 숨는 960px 이하에서도 넘치지 않게 푼다 */
+@media (max-width:960px){html:lang(ja) .hero-overlay .ho-main .nw{white-space:normal}}
+/* 파이프라인 단계 제목(폰 2열): 'Standards-based'가 하이픈에서 쪼개지지 않게 묶었고, 좁은 칸에 들어가게 조금 줄인다 */
+@media (max-width:430px){html:lang(en) .pipe .step h3{font-size:15.5px}}
+@media (max-width:380px){html:lang(en) .pipe .step h3{font-size:14.5px}}
+/* 회사 제목(영어, 폰): 'A global EdTech company'(11.1em)를 한 줄에 두려면 390px 칸(342px)에서 30px는 넘친다 */
+@media (max-width:430px){html:lang(en) #company .h-lg{font-size:27px}}
+/* 섹션 제목: 번역 제목 한 줄이 본문 폭(약 22em) 끝까지 늘어지지 않게 한다. 국문 제목의 가장 긴 줄은 15.9em(본문 폭의 72%)이고,
+   번역에서 19em을 넘던 한 줄(VI 파이프라인 22.0em, EN 레퍼런스 20.4em, JA 레퍼런스 19.7em)만 balance로 두 줄이 된다 */
+html:not(:lang(ko)) .sec-head .h-lg{max-width:19em}
+/* 파이프라인 단계 제목(961~1023px, 4열): 베트남어 'Thu thập theo chuẩn'(9.6em)이 칸(179px)보다 조금 길어 두 줄이 된다 */
+@media (min-width:961px) and (max-width:1023px){html:lang(vi) .pipe .step h3{font-size:18px}}
+/* 레퍼런스 기관명(그라디언트 라벨): 번역은 기관 이름이 길어 이름 한가운데서 줄이 바뀌었다(Seoul Metropolitan / Government ·).
+   번역문에서 '기관 ·'과 '분야'를 .nw로 묶어 가운뎃점 뒤에서만 끊고, 좁은 폭에서는 자간·크기를 줄여 이름이 한 줄에 들어가게 한다 */
+@media (max-width:960px){
+  html:not(:lang(ko)) .ref-card .rorg{letter-spacing:.04em}
+  html:lang(en) .ref-card .rorg{font-size:11.5px}
+}
+@media (max-width:380px){html:lang(en) .ref-card .rorg{font-size:11px}}
+
+/* ---- 네 언어 공통 보정(국문 포함). 번역만의 문제가 아니라 국문에도 있던 것이라 공통 규칙으로 고친다 ---- */
+/* 11px 미만 글자: 캡처 'AI SIGNAL'·소식 태그 10.5px, 1024px 파이프라인 무대 'ONE PIPELINE' 10px·단계 번호 10.5px */
+.ins-label{font-size:11px}
+.ncard .ntag,.detail-eyebrow .ntag{font-size:11px}
+@media (min-width:1024px){
+  .pl-idx{font-size:max(11px,.95cqw)}
+  .pl-lab i{font-size:max(11px,1.05cqw)}
+}
+/* 파이프라인 창 주소줄(연출용 가짜 주소): 좁은 창에서 글자가 칸 끝에서 잘려 보였다 → 말줄임표 */
+.pl-bar em{text-overflow:ellipsis}
+/* 헤더(961~1023px, 국문): 메뉴 간격 32px면 961px에서 로고와 메뉴가 붙는다(간격 0). 번역은 위 961~1279px 규칙이 맡는다 */
+@media (min-width:961px) and (max-width:1023px){html:lang(ko) nav.main{gap:20px}}
+/* 히어로 캡처 행(961~1023px, 국문): 두 열 히어로가 가장 좁은 폭이라 칩 조합 45개 중 10개가 둘째 줄로 밀린다 */
+@media (min-width:961px) and (max-width:1023px){
+  html:lang(ko) .xrow{gap:7px;padding:12px 11px}
+  html:lang(ko) .xrow .chip{padding:5px 9px}
+}
+/* 히어로 캡처 배지(폰, 네 언어 공통): 자간 .14em이면 국문도 360px에서 두 줄이 되고, 영어는 'GLOBAL-/STANDARD'처럼 낱말 가운데서 끊겼다.
+   자간을 줄이고, 두 줄이 될 때는 balance로 '· ' 뒤에서 나뉘게 한다(영어는 번역문에서 줄바꿈 없는 하이픈) */
+@media (max-width:430px){.cap-badge{letter-spacing:.06em;text-wrap:balance}}
