@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="ja" data-base="../" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.className="js";</script>
+<title>WICKED STORM · ウィキッドストーム | 学びのすべての瞬間を、成長のデータとして設計します</title>
+<meta name="description" content="Wicked Stormは、学習活動を国際標準の学習データとして収集・保存し、AIが分析して教育の次の行動へとつなげます。Lecognizer · LearnHubble AI · 1EdTech Korea設立理事会。">
+<link rel="canonical" href="https://wickedstorm.kr/ja/">
+<link rel="alternate" hreflang="ko" href="https://wickedstorm.kr/">
+<link rel="alternate" hreflang="en" href="https://wickedstorm.kr/en/">
+<link rel="alternate" hreflang="ja" href="https://wickedstorm.kr/ja/">
+<link rel="alternate" hreflang="vi" href="https://wickedstorm.kr/vi/">
+<link rel="alternate" hreflang="x-default" href="https://wickedstorm.kr/">
+<meta name="theme-color" content="#06070e">
+
+<!-- OG / Twitter -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WICKED STORM">
+<meta property="og:title" content="WICKED STORM · 学びのすべての瞬間を、成長のデータとして設計します">
+<meta property="og:description" content="国際標準の学習データリポジトリLecognizerと、AI学習体験プラットフォームLearnHubble AI。学習データとAIで学びの新時代を切り拓きます。">
+<meta property="og:url" content="https://wickedstorm.kr/ja/">
+<meta property="og:image" content="https://wickedstorm.kr/img/og-home-ja.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WICKED STORM · ウィキッドストーム">
+<meta name="twitter:description" content="Every Learning Moment, Designed for Growth. 学習データとAIで学びの新時代を切り拓きます。">
+<meta name="twitter:image" content="https://wickedstorm.kr/img/og-home-ja.jpg">
+
+<!-- 파비콘 -->
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="../img/favicon.png">
+
+<!-- 폰트: 한글·영문 모두 로컬 woff2 (@font-face는 style.css, 한글 preload는 아래) -->
+<!-- 히어로·헤더 텍스트가 쓰는 서브셋 청크만 preload (실측 12개 292.9KB).
+     LCP 요소가 히어로 h1 텍스트라 폰트 도착이 곧 LCP다. 나머지 청크는
+     style.css의 unicode-range를 보고 브라우저가 필요할 때만 받는다. -->
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.73.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.75.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.80.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.82.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.84.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.85.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.86.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.87.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.88.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.89.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.90.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/pretendard/woff2-dynamic-subset/PretendardVariable.subset.91.woff2" as="font" type="font/woff2" crossorigin>
+
+<link rel="stylesheet" href="../css/style.css?v=20260925">
+
+<!-- JSON-LD Organization -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Organization",
+  "name":"주식회사 위키드스톰",
+  "alternateName":"Wicked Storm Inc.",
+  "foundingDate":"2021",
+  "taxID":"135-88-02020",
+  "url":"https://wickedstorm.kr/",
+  "logo":"https://wickedstorm.kr/img/og-image.png",
+  "slogan":"Every Learning Moment, Designed for Growth.",
+  "email":"manager@wickedstorm.kr",
+  "telephone":"+82-2-2205-1470",
+  "address":{
+    "@type":"PostalAddress",
+    "streetAddress":"마곡중앙로 161-8, A동 901~905호",
+    "addressLocality":"강서구",
+    "addressRegion":"서울특별시",
+    "addressCountry":"KR"
+  },
+  "sameAs":[]
+}
+</script>
+
+<!-- GA4 (기존 속성 유지) -->
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0Y5QD1HBGN"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());
+gtag('config','G-0Y5QD1HBGN');
+</script>
+</head>
+<body>
+<a class="skip-link" href="#top">本文へスキップ</a>
+<div class="progress" aria-hidden="true"></div>
+
+<header id="hdr">
+  <div class="hwrap">
+    <a class="brand" href="#top" aria-label="WICKED STORM ホーム"><img src="../img/logo-white.svg" alt="WICKED STORM" width="208" height="26"></a>
+    <nav class="main" aria-label="メインメニュー">
+      <a href="#product">Product</a>
+      <a href="#learnhubble">LearnHubble AI</a>
+      <a href="#standards">Standards</a>
+      <a href="../news.html">News</a>
+      <a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="採用情報（新しいウィンドウ）">Recruit</a>
+      <div class="lang-switch" role="group" aria-label="言語選択"><a href="../" hreflang="ko" lang="ko" data-lang="ko">KO</a><a href="../en/" hreflang="en" lang="en" data-lang="en">EN</a><a href="../ja/" hreflang="ja" lang="ja" aria-current="true" data-lang="ja">JA</a><a href="../vi/" hreflang="vi" lang="vi" data-lang="vi">VI</a></div>
+      <a class="cta" href="#contact">導入のご相談</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<nav class="drawer" id="drawer" aria-label="モバイルメニュー" hidden>
+  <a href="#product">Product</a>
+  <a href="#learnhubble">LearnHubble AI</a>
+  <a href="#standards">Standards</a>
+  <a href="../news.html">News</a>
+  <a href="#resources">Resources</a>
+  <a href="#company">Company</a>
+  <a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="採用情報（新しいウィンドウ）">Recruit</a>
+  <div class="lang-switch drawer-lang" role="group" aria-label="言語選択"><a href="../" hreflang="ko" lang="ko" data-lang="ko">KO</a><a href="../en/" hreflang="en" lang="en" data-lang="en">EN</a><a href="../ja/" hreflang="ja" lang="ja" aria-current="true" data-lang="ja">JA</a><a href="../vi/" hreflang="vi" lang="vi" data-lang="vi">VI</a></div>
+  <a class="cta" href="#contact">導入のご相談 →</a>
+</nav>
+
+<main id="top">
+<!-- ① HERO -->
+<section class="hero" id="hero">
+  <div class="orbs" aria-hidden="true"><span></span><span></span></div>
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="veil" aria-hidden="true"></div>
+
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16"> <span>Every Learning Moment, <span class="nw">Designed for Growth.</span></span></p>
+      <h1><span class="line"><span class="line-inner">学びのすべての瞬間を</span></span> <span class="line"><span class="line-inner"><span class="g">成長のデータ</span>として</span></span> <span class="line"><span class="line-inner">設計します</span></span></h1>
+      <p class="hero-lead">Wicked Stormは、学習活動を国際標準の学習データとして収集・保存し、<br class="br-d">AIが分析して、管理者・教員・学習者の次の行動へとつなげます。</p>
+      <div class="hero-cta">
+        <a class="btn p" href="#contact">導入のご相談</a>
+        <a class="btn s" href="#product">製品を見る</a>
+      </div>
+      <div class="hero-trust">
+        <span><b>1EdTech Korea</b>&nbsp;設立理事会</span>
+        <span>GS 1等級認証 · AI特許2件取得</span>
+      </div>
+    </div>
+
+    <!-- 국제 표준 실시간 수집 뷰. 인트로 등장은 .cap-wrap, 스크롤 퇴장은 .capture가 맡는다
+         (같은 요소를 두 타임라인이 건드리면 스크롤 중 새로고침 시 인트로가 패널을 되살려 겹친다) -->
+    <div class="cap-wrap">
+    <div class="capture" id="capture">
+      <div class="cap-top">
+        <span class="cap-badge"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16"> Lecognizer · 国際標準で収集</span>
+        <span class="cap-live">リアルタイム収集</span>
+      </div>
+      <div class="stream-viewport" aria-hidden="true">
+        <div class="stream-track" id="streamTrack">
+          <!-- 무JS/reduced-motion/초기 상태에서도 보이도록 5행 사전 렌더 -->
+          <div class="xrow"><span class="dot"></span><span class="chip actor">学習者</span><span class="arrow">→</span><span class="chip verb">視聴</span><span class="arrow">→</span><span class="chip object">概念講義 04</span><span class="chip result">2回リピート</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">学習者</span><span class="arrow">→</span><span class="chip verb">回答</span><span class="arrow">→</span><span class="chip object">確認クイズ</span><span class="chip result">正解</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">教員</span><span class="arrow">→</span><span class="chip verb">設計</span><span class="arrow">→</span><span class="chip object">補充区間</span><span class="chip result">適用</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">学習者</span><span class="arrow">→</span><span class="chip verb">提出</span><span class="arrow">→</span><span class="chip object">記述式課題</span><span class="chip result">期限内</span></div>
+          <div class="xrow"><span class="dot"></span><span class="chip actor">学習者</span><span class="arrow">→</span><span class="chip verb">質問</span><span class="arrow">→</span><span class="chip object">講義Q&amp;A</span><span class="chip result">回答 3</span></div>
+        </div>
+      </div>
+      <div class="cap-foot" aria-hidden="true">
+        <span class="ins-label">AI<br>Signal</span>
+        <svg class="spark" viewBox="0 0 240 34" preserveAspectRatio="none" aria-hidden="true">
+          <polyline id="sparkline" fill="none" stroke="url(#sg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" points=""></polyline>
+          <defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#7c4dff"></stop><stop offset="1" stop-color="#22e0d6"></stop></linearGradient></defs>
+        </svg>
+        <span class="ins-chip" id="insChip">兆候 · 繰り返し再生の区間</span>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- 핀-스크럽 오버레이 캡션 (초기 숨김, scrub 후반 페이드인) -->
+  <div class="hero-overlay" id="heroOverlay" aria-hidden="true">
+    <p class="ho-main">学びのすべての瞬間が、<span class="g">国際標準のデータ</span>として蓄積されます</p>
+    <p class="ho-sub">Lecognizerが収集し、AIが兆候を見つけ出します。</p>
+  </div>
+</section>
+
+<!-- ② PIPELINE -->
+<section class="band" style="padding-top:clamp(56px,7vw,96px)" aria-labelledby="pipeline-title">
+  <div class="wrap">
+    <div class="pipe-wrap" id="pipeWrap">
+      <div class="sec-head pipe-head rv">
+        <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Pipeline</p>
+        <h2 class="h-lg" id="pipeline-title" style="margin-top:16px">国際標準で収集し、蓄積し、<span class="g">分析します</span></h2>
+        <p class="sec-lead">学習データは最初から国際標準で取り込まれ、収集されたまま蓄積・分析されます。</p>
+      </div>
+      <div class="pipe-rail" aria-hidden="true">
+        <span class="pipe-line" id="pipeLine"></span>
+        <span class="pipe-dot" id="pipeDot"></span>
+      </div>
+      <div class="pipe">
+        <div class="step"><span class="n"><em>01</em> · Collect</span><h3>標準収集</h3><p>国際標準でリアルタイムに収集</p><p class="step-detail"><span>教育・学習・運営のあらゆる活動から生まれる学習データを、同じ基準で集めます。</span></p></div>
+        <div class="step"><span class="n"><em>02</em> · Store</span><h3>保存</h3><p>教育課程の文脈とともに蓄積</p><p class="step-detail"><span>学習活動が教育課程のどの項目で起きたのか、その文脈まで含めて蓄積します。</span></p></div>
+        <div class="step"><span class="n"><em>03</em> · Analyze</span><h3>AI分析</h3><p>通常と異なる兆候を検知してアラートを発信</p><p class="step-detail"><span>蓄積した学習データから、多くの学習者がつまずいた箇所を優先順位を付けて知らせます。</span></p></div>
+        <div class="step"><span class="n"><em>04</em> · Act</span><h3>インサイト</h3><p>人が判断し、実行</p><p class="step-detail"><span>アラートと元データを確認して人が判断し、その結果が再び学習データとして蓄積されます。</span></p></div>
+      </div>
+    </div>
+    <figure class="frame media-frame rv"><video width="1280" height="720" muted loop playsinline autoplay preload="auto" disablepictureinpicture disableremoteplayback poster="../media/pipeline-poster-ja.webp" aria-label="Lecognizerの収集・保存・分析の画面が順に強調されるループ動画"><source src="../media/pipeline-loop-ja.mp4" type="video/mp4"></video><figcaption class="note">Lecognizerでは、収集・保存・分析がひとつの流れでつながります</figcaption></figure>
+  </div>
+</section>
+
+<!-- ③ PRODUCT -->
+<section class="band" id="product">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Product · Learning Loop</p>
+      <h2 class="h-lg" style="margin-top:16px">3つのソリューションと3つの役割が<br><span class="g">Learning Loop</span>を完成させます</h2>
+      <p class="sec-lead">Lecognizerが学習データを蓄積して兆候を見つけ出すと、<span class="nw">LearnHubble AI</span>がその兆候を管理者・教員・学習者の判断と行動へとつなげます。</p>
+    </div>
+
+    <figure class="loop-figure rv">
+      <div class="loop-stage">
+        <img src="../img/learning-loop.webp" alt="Learning Loop（学びの好循環）：学習者の活動がLecognizerに蓄積され、Lecognizer AIが兆候を見つけると、カリキュラム管理者と教員がLearnHubble AIで判断して適用し、その結果が再び学習者へとつながる循環構造" width="1920" height="975" loading="lazy">
+        <!-- 카탈로그 6~7쪽과 같은 위계: 솔루션은 채운 알약, 역할은 색 글자 + 그 역할이 쓰는 솔루션 알약, 설명은 작은 회색 글자 -->
+        <ol class="loop-notes">
+          <li class="ln-sol" style="--x:21%;--y:4%;--w:18%;--align:right"><span class="pill lrs">Lecognizer</span><span class="ln-desc">Lecognizerは学習データを国際標準で収集・保存し、1EdTech CASEに基づくコンピテンシー体系と連携します。</span></li>
+          <li class="ln-sol" style="--x:85.5%;--y:31%;--w:13.5%"><span class="pill lrs">Lecognizer AI</span><span class="ln-desc">学習データから多くの学習者がつまずいた箇所を特定し、次学期の設計に活かします。</span></li>
+          <li class="ln-role" style="--x:79%;--y:74%;--w:19.5%"><b>カリキュラム管理者</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">管理者はAIアラートと元データを確認し、CASEに基づく<span class="nw">科目・職務コンピテンシー</span>体系を改善します。</span></li>
+          <li class="ln-role" style="--x:1.5%;--y:66%;--w:15.5%;--align:right"><b>教員</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">教員はAIアラートをもとに追加授業を計画し、支援が必要な学習者をサポートします。</span></li>
+          <li class="ln-role" style="--x:1.5%;--y:28%;--w:15.5%;--align:right"><b>学習者</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">学習者は適切なタイミングでAIと対話し、効果的に学び続けます。</span></li>
+        </ol>
+      </div>
+      <figcaption class="note">今学期の学習データが、次学期の学習設計に活かされます。</figcaption>
+    </figure>
+
+    <div class="feature stag">
+      <div class="feat-copy">
+        <p class="kick rv">Learning Data Repository</p>
+        <h3 class="rv">Lecognizer</h3>
+        <p class="rv">AIによる異常検知を備えた国際標準の学習データリポジトリです。教育・学習・運営のあらゆる活動から生まれる学習データをリアルタイムに収集・保存し、1EdTech CASEに基づく教育課程の文脈とともに蓄積します。</p>
+        <ul class="rv">
+          <li>国際標準に基づくリアルタイムの収集・保存、システムが変わっても途切れない学習データ</li>
+          <li>統合ダッシュボードとカスタマイズ可能な可視化、条件別の照会とJSON・CSVのダウンロード</li>
+          <li>国家レベルの学習データハブや、教育庁・企業のAIプラットフォームに導入</li>
+        </ul>
+        <span class="feat-badge rv">GS 1等級認証</span>
+      </div>
+      <figure class="frame rv fade"><img src="../img/dash-main-public.webp" alt="Lecognizer 統合ダッシュボードの画面例" width="1319" height="684" loading="lazy"></figure>
+    </div>
+
+    <div class="feature reverse stag">
+      <div class="feat-copy">
+        <p class="kick rv">Lecognizer AI</p>
+        <h3 class="rv">通常と異なる兆候を<br><span class="gc">いち早く見つけて知らせます</span></h3>
+        <p class="rv">Lecognizerに蓄積された学習データを分析するAIソリューションです。通常と異なる兆候や多くの学習者がつまずいた箇所を見つけて知らせ、その根拠となった元データまでつなげて示します。</p>
+        <ul class="rv">
+          <li>確認すべき兆候に優先順位を付けて知らせます</li>
+          <li>アラートを生成した条件から元データまで、ひとつの流れで確認</li>
+          <li>AIが見つけて分析し、判断するのは管理者と教員です</li>
+        </ul>
+        <span class="feat-badge rv">AI特許2件取得 · 学習異常検知 · 学習者プロファイリング</span>
+      </div>
+      <figure class="frame rv fade"><img src="../img/lecognizer-ai-signals.webp" alt="Lecognizer AIの異常の兆候を検知する画面の例：CASEの教育課程体系別の学習データ蓄積状況と、つまずいた箇所のアラート" width="1600" height="1000" loading="lazy"></figure>
+    </div>
+    <p class="note rv">※ 画面は韓国語UIです。画面内の教科・人物・数値は、製品説明のためのデモ用データです。</p>
+  </div>
+</section>
+
+<!-- ④ LEARNHUBBLE AI -->
+<section class="band lhub" id="learnhubble">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Learning Experience Platform</p>
+      <p class="lhub-name">LearnHubble <span class="gc">AI</span></p>
+      <h2 class="h-lg">AIと対話するパーソナライズ型の<span class="gc nw">教育・学習プラットフォーム</span></h2>
+      <p class="sec-lead lead-1">学習者が講義や課題に取り組む中、必要なときにAIが説明とヒントを提供します。</p>
+    </div>
+    <div class="lhub-top">
+      <div class="lhub-copy rv">
+        <ol class="lhub-points">
+          <li><i>01</i><b>ポートフォリオ</b><span>身につけた科目コンピテンシーを、目標とする職務に求められるコンピテンシーと比較します。</span></li>
+          <li><i>02</i><b>課題のヒント</b><span>作成が止まると、正解ではなく構造と条件を重視したヒントを提供します。</span></li>
+          <li><i>03</i><b>コンピテンシーマップ</b><span>1EdTech CASEで連携された講義とコンピテンシーから、つまずきの原因を探ります。</span></li>
+          <li><i>04</i><b>講義室AIパネル</b><span>教員が設計した区間で、説明・クイズ・資料を提供します。</span></li>
+        </ol>
+        <p class="lhub-principle">答えは学習者が自分で書き、支援と適用は教員が確認します。</p>
+        <div class="lhub-cta">
+          <a class="btn p" href="#contact" data-topic="LearnHubble AIのデモを希望します。">LearnHubble AIのデモを依頼</a>
+        </div>
+      </div>
+      <figure class="frame lhub-main"><img src="../img/lh-portfolio.webp" alt="LearnHubble AI 学習者の職務適合ポートフォリオ画面：学期別の科目コンピテンシーを目標職務の要求コンピテンシーと比較したレーダーチャートと、職務要件のマッピング" width="1600" height="1000" loading="lazy"><figcaption><i>01</i>職務適合ポートフォリオ</figcaption></figure>
+    </div>
+    <div class="lhub-sub stag">
+      <figure class="frame rv"><img src="../img/lh-assignment.webp" alt="LearnHubble AI 学習者の課題画面：作成が止まると、AIアシスタントが作成のヒント・達成水準の点検・講義の根拠確認を提案" width="1600" height="1000" loading="lazy"><figcaption><i>02</i>課題作成中のAIヒント</figcaption></figure>
+      <figure class="frame rv"><img src="../img/lh-casemap.webp" alt="LearnHubble AI 学習者のコンピテンシーマップ画面：CASEで連携された前提・現在・後続の講義とコンピテンシーの関係" width="1600" height="1000" loading="lazy"><figcaption><i>03</i>CASEコンピテンシーマップ</figcaption></figure>
+      <figure class="frame rv"><img src="../img/lh-lecture-qa.webp" alt="LearnHubble AI 講義室画面：確認が必要な区間と質問掲示板、右側のAIパネルに表示される区間クイズ" width="1600" height="1000" loading="lazy"><figcaption><i>04</i>講義室Q&amp;Aと区間クイズ</figcaption></figure>
+    </div>
+    <p class="note rv">※ 学習者画面の例です（韓国語UI）。画面内の講義・人物・数値はデモ用データです。</p>
+  </div>
+</section>
+
+<!-- ⑤ REFERENCES -->
+<section class="band" id="references">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> References</p>
+      <h2 class="h-lg" style="margin-top:16px">公共・教育の現場で実証された<span class="g">データの専門性</span></h2>
+      <p class="sec-lead">国家レベルの学習データ収集・分析の経験をもとに、公共機関や教育機関とともにデータに基づく革新を進めてきました。</p>
+    </div>
+    <div class="ref-grid stag">
+      <article class="ref-card rv">
+        <p class="rorg">教育部 · 国家レベル</p>
+        <h3>AIデジタル教科書<br>学習データハブ構築</h3>
+        <p>AIデジタル教科書の学習データを国際標準で収集するハブを構築し、国家レベルの学習分析指標・教育課程標準体系・学習マップを支援しました。</p>
+        <div class="rtags"><span>AIデジタル教科書</span><span>学習データハブ</span><span>国家レベル</span></div>
+      </article>
+      <article class="ref-card rv">
+        <p class="rorg">KERIS · 「トクトク！算数探検隊」</p>
+        <h3>AIを活用した小学校算数<br>授業支援システム</h3>
+        <p>ゲーミフィケーションを取り入れた授業支援システムで学習行動データを収集し、レベル診断・問題推薦モデルを適用しました。累計利用者数240万人の国民向けサービスです。</p>
+        <div class="rtags"><span>学習診断</span><span>問題推薦</span><span>累計240万人</span></div>
+      </article>
+      <article class="ref-card rv">
+        <p class="rorg">人事革新処 · 人材開発</p>
+        <h3>人材開発プラットフォーム<br>ソーシャルラーニングのデータ化</h3>
+        <p>人材開発プラットフォームのソーシャルコミュニティや、リアルタイムの大規模ウェビナーで生まれるソーシャルラーニングの経験を、学習データとして具体化して収集しました。</p>
+        <div class="rtags"><span>ソーシャルラーニング</span><span>コミュニティ</span><span>ウェビナー</span></div>
+      </article>
+      <article class="ref-card rv">
+        <p class="rorg">ソウル特別市 · 教育プラットフォーム</p>
+        <h3>ソウル型教育プラットフォーム<br>オンラインメンタリング分析</h3>
+        <p>ソウル型教育プラットフォームのオンラインメンタリングで、メンターとメンティーの相互作用、感情の状態や発話を学習データとして収集し、深い学習分析を支援します。</p>
+        <div class="rtags"><span>オンラインメンタリング</span><span>相互作用</span><span>LRS構築</span></div>
+      </article>
+    </div>
+    <figure class="ref-logos rv"><img src="../img/ref-logos.webp" alt="主な導入機関：教育部、韓国教育学術情報院（KERIS）、人事革新処、ソウル特別市、京畿道教育庁、江原特別自治道教育庁" width="1200" height="150" loading="lazy"></figure>
+  </div>
+</section>
+
+<!-- ⑥ STANDARDS / 1EDTECH -->
+<section class="band std" id="standards">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Standards Leadership</p>
+      <h2 class="h-lg" style="margin-top:16px">標準を使うだけでなく、<br><span class="gc">標準をともにつくります</span></h2>
+      <p class="sec-lead">Wicked Stormは、国際的な教育技術標準コンソーシアム1EdTechの韓国組織である<b class="nw" style="color:#dfe3f7">1EdTech Korea</b>の設立理事会に参画し、<span class="nw">1EdTech Contributing Member</span>として活動しています。xAPI・Caliperと1EdTech CASEを製品と事業に適用してきました。</p>
+      <p class="std-badge"><span class="powered"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> 1EdTech Korea設立理事会 · <b>Contributing&nbsp;Member</b></span></p>
+    </div>
+    <div class="std-grid stag">
+      <a class="std-card rv pulse" href="https://github.com/adlnet/xAPI-Spec" target="_blank" rel="noopener noreferrer" aria-label="xAPI公式仕様（新しいウィンドウ）"><div class="k on">xAPI</div><p>学習活動データの収集標準</p><div class="std-meta"><span class="st apply">適用</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
+      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/case" target="_blank" rel="noopener noreferrer" aria-label="CASE公式仕様（新しいウィンドウ）"><div class="k on">CASE</div><p>教育課程・達成基準・コンピテンシー体系の標準</p><div class="std-meta"><span class="st apply">適用</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
+      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/caliper" target="_blank" rel="noopener noreferrer" aria-label="Caliper公式仕様（新しいウィンドウ）"><div class="k on">Caliper</div><p>学習イベントデータの標準</p><div class="std-meta"><span class="st apply">適用</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/open-badges" target="_blank" rel="noopener noreferrer" aria-label="Open Badges 3.0公式仕様（新しいウィンドウ）"><div class="k soon">Open Badges 3.0</div><p>デジタルな達成証明（バッジ）の発行標準</p><div class="std-meta"><span class="st soon">適用予定</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/clr" target="_blank" rel="noopener noreferrer" aria-label="CLR 2.0公式仕様（新しいウィンドウ）"><div class="k soon">CLR 2.0</div><p>学習者の総合的な学習記録の標準</p><div class="std-meta"><span class="st soon">適用予定</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/edu-api" target="_blank" rel="noopener noreferrer" aria-label="EduAPI公式仕様（新しいウィンドウ）"><div class="k soon">EduAPI</div><p>次世代の教育データ連携API</p><div class="std-meta"><span class="st soon">適用予定</span><span class="pd">LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/workstream/credentials" target="_blank" rel="noopener noreferrer" aria-label="Digital Credentials公式仕様（新しいウィンドウ）"><div class="k soon">Digital Credentials</div><p>検証可能なデジタル資格証明のエコシステム</p><div class="std-meta"><span class="st soon">適用予定</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/oneroster" target="_blank" rel="noopener noreferrer" aria-label="OneRoster公式仕様（新しいウィンドウ）"><div class="k ref">OneRoster</div><p>名簿・成績の連携標準</p><div class="std-meta"><span class="st ref">設計参照</span><span class="pd">LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/lti" target="_blank" rel="noopener noreferrer" aria-label="LTI公式仕様（新しいウィンドウ）"><div class="k ref">LTI</div><p>学習ツールの相互運用標準</p><div class="std-meta"><span class="st ref">設計参照</span><span class="pd">LearnHubble AI</span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/qti" target="_blank" rel="noopener noreferrer" aria-label="QTI公式仕様（新しいウィンドウ）"><div class="k ref">QTI</div><p>評価問題の相互運用標準</p><div class="std-meta"><span class="st ref">設計参照</span><span class="pd">LearnHubble AI</span></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- ⑦ NEWS -->
+<section class="band" id="news">
+  <div class="wrap">
+    <div class="sec-head rv rowlink">
+      <div>
+        <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Feed · Update</p>
+        <h2 class="h-lg" style="margin-top:16px">最新ニュース</h2>
+      </div>
+      <a class="sec-more" href="../news.html">すべて見る <span aria-hidden="true">→</span></a>
+    </div>
+    <!-- board.js가 data/posts.json의 pinned 상위 3건으로 다시 그린다. 아래는 무JS·fetch 실패 시 폴백 -->
+    <div class="news-grid stag">
+      <a class="ncard rv" href="../news/2026-09-edtech-korea-fair.html">
+        <div class="nimg"><img src="../img/news/2026-09-edtech-fair-booth.webp" alt="EdTech Korea Fair 2026のWicked Stormブースで、デモ画面の前に集まった来場者" width="1600" height="900" loading="lazy"></div>
+        <div class="nbody">
+          <div class="nmeta"><span class="ntag">NEWS</span> 2026.09.25</div>
+          <h3>Wicked Storm、EdTech Korea Fairで「Learning Loop」を披露</h3>
+          <span class="nmore">記事を見る <i aria-hidden="true">→</i></span>
+        </div>
+      </a>
+      <a class="ncard rv" href="../news/2025-11-patent-anomaly.html">
+        <div class="nimg"><img src="../img/patent-anomaly.webp" alt="特許証 第10-2883249号 xAPI学習行動データを用いた学習異常検知システム" width="900" height="1272" loading="lazy"></div>
+        <div class="nbody">
+          <div class="nmeta"><span class="ntag">NEWS</span> 2025.11.04</div>
+          <h3>Wicked Storm、xAPI学習異常検知システムの特許を取得</h3>
+          <span class="nmore">記事を見る <i aria-hidden="true">→</i></span>
+        </div>
+      </a>
+      <a class="ncard rv" href="../news/2025-02-patent-profiling.html">
+        <div class="nimg"><img src="../img/patent-profiling.webp" alt="特許証 第10-2767110号 学習者の傾向を分析するLLM活用の学習者プロファイリング手法" width="900" height="1272" loading="lazy"></div>
+        <div class="nbody">
+          <div class="nmeta"><span class="ntag">NEWS</span> 2025.02.20</div>
+          <h3>Wicked Storm、学習者プロファイリング手法の特許を取得</h3>
+          <span class="nmore">記事を見る <i aria-hidden="true">→</i></span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 인스타그램·블로그 채널: js/site-config.js의 SOCIAL 값이 채워진 채널만 보인다 -->
+    <div class="channels rv" data-social-group hidden>
+      <div class="ch-copy">
+        <p class="ch-title">現場の様子は、各チャンネルでいち早くお届けします</p>
+        <p class="ch-sub">イベントの様子や製品画面、標準・技術ノートをInstagramとブログで発信しています。詳しい記事は、このホームページのニュースに掲載します。</p>
+      </div>
+      <div class="ch-links">
+        <a class="ch-link" data-social="instagram" href="#" target="_blank" rel="noopener noreferrer" hidden><span class="ch-k">Instagram</span><span class="ch-v" data-social-handle>@wickedstorm</span></a>
+        <a class="ch-link" data-social="blog" href="#" target="_blank" rel="noopener noreferrer" hidden><span class="ch-k">Blog</span><span class="ch-v" data-social-handle>Wicked Stormのブログ</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑧ RESOURCES -->
+<section class="band" id="resources">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Resources</p>
+      <h2 class="h-lg" style="margin-top:16px">資料ダウンロード</h2>
+      <p class="sec-lead">展示会でお配りしたカタログと会社案内を、PDFでダウンロードいただけます。</p>
+    </div>
+    <div class="res-grid stag">
+      <article class="res-card rv">
+        <img class="res-thumb" src="../img/thumb-catalog.webp" alt="Wicked Storm 製品カタログ 2026 表紙" width="480" height="679" loading="lazy">
+        <div class="res-body">
+          <h3>Wicked Storm 製品カタログ 2026</h3>
+          <p>Lecognizer、LearnHubble AI、そしてLearning Loopを8ページにまとめました。</p>
+          <div class="res-links">
+            <a href="../files/WICKEDSTORM_Catalog_2026_KO.pdf" target="_blank" rel="noopener" data-dl="catalog_ko" lang="ko">韓国語 PDF</a>
+            <a href="../files/WICKEDSTORM_Catalog_2026_EN.pdf" target="_blank" rel="noopener" data-dl="catalog_en" lang="en">English</a>
+            <a href="../files/WICKEDSTORM_Catalog_2026_JA.pdf" target="_blank" rel="noopener" data-dl="catalog_ja" lang="ja">日本語</a>
+            <a href="../files/WICKEDSTORM_Catalog_2026_VI.pdf" target="_blank" rel="noopener" data-dl="catalog_vi" lang="vi">Tiếng Việt</a>
+          </div>
+        </div>
+      </article>
+      <article class="res-card rv">
+        <img class="res-thumb wide" src="../img/thumb-profile.webp" alt="Wicked Storm 会社案内 2026 表紙" width="480" height="270" loading="lazy">
+        <div class="res-body">
+          <h3>Wicked Storm 会社案内 2026</h3>
+          <p>沿革、事業領域、主な導入実績、認証と特許をまとめました。</p>
+          <div class="res-links">
+            <a href="../files/WICKEDSTORM_Company_Profile_2026_KO.pdf" target="_blank" rel="noopener" data-dl="profile_ko" lang="ko">韓国語 PDF</a>
+            <a href="../files/WICKEDSTORM_Company_Profile_2026_EN.pdf" target="_blank" rel="noopener" data-dl="profile_en" lang="en">English</a>
+            <a href="../files/WICKEDSTORM_Company_Profile_2026_JA.pdf" target="_blank" rel="noopener" data-dl="profile_ja" lang="ja">日本語</a>
+            <a href="../files/WICKEDSTORM_Company_Profile_2026_VI.pdf" target="_blank" rel="noopener" data-dl="profile_vi" lang="vi">Tiếng Việt</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ⑨ COMPANY -->
+<section class="band" id="company" style="background:linear-gradient(180deg,var(--bg),#080a16)">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Company · Vision</p>
+      <h2 class="h-lg" style="margin-top:16px">学習データとAIで<br>学びの新時代を切り拓く<br><span class="gc">グローバルエドテック企業</span></h2>
+      <p class="sec-lead">あらゆる学習体験を国際標準のデータでつなぎ、より良い教育と成長の根拠をつくります。</p>
+      <p class="co-slogan"><span>Slogan</span>学びのすべての瞬間を、成長のデータとして設計します。</p>
+    </div>
+    <div class="co-stats rv">
+      <div class="co-stat"><b class="tnum"><span data-count="2021">2021</span></b><span>設立年</span></div>
+      <div class="co-stat"><b class="tnum"><span data-count="2">2</span><span class="unit">件</span></b><span>AI特許取得</span></div>
+      <div class="co-stat"><b class="tnum"><span data-count="1">1</span><span class="unit">等級</span></b><span>GS認証（Lecognizer）</span></div>
+      <div class="co-stat"><b class="tnum"><span data-count="3">3</span><span class="unit">種</span></b><span>国際標準を適用 · xAPI・Caliper・CASE</span></div>
+    </div>
+    <figure class="frame media-frame film rv" id="film">
+      <video width="1280" height="720" controls playsinline preload="none" poster="../media/company-film-poster.webp" aria-label="Wicked Storm 企業紹介映像"><source src="../media/company-film.mp4" type="video/mp4"></video>
+      <figcaption class="note">Wicked Storm 企業紹介映像 · 89秒</figcaption>
+    </figure>
+
+    <!-- 연혁 -->
+    <div class="history" id="history">
+      <div class="hist-head rv">
+        <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> History</p>
+        <h3 class="hist-title"><span class="yr gc">2021〜2026</span>、標準の上に築いてきた歩み</h3>
+      </div>
+      <ol class="hist-list stag" aria-label="Wicked Stormの沿革 2021〜2026">
+        <li class="hist-item rv">
+          <div class="hist-year">2021</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><span>株式会社Wicked Stormを設立</span></li>
+              <li><a href="#references">人事革新処、国家人材開発知能型オープンプラットフォームのLRS構築（第2期）<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KIRD、次世代統合教育システムの学習分析コンサルティング</li>
+              <li>ビサン教育、スマートプラットフォームのコンサルティング・構築</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2022</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#references">KERIS、K-エデュ統合プラットフォームISMP、学習分析指標・分析標準の策定<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">ソウル特別市、ソウル型教育プラットフォームのLRS構築<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>学習データ収集・管理ソリューション（LRS）を自社開発</li>
+              <li>人事革新処（第3期）、ライブ映像のxAPI収集</li>
+              <li>ベンチャー企業認証を取得</li>
+              <li>韓国貿易協会、FTA統合プラットフォーム活性化事業</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2023</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#product">インテリジェント学習分析ソリューションLecognizerをリリース<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">プロセス評価AI技術の開発、CASEに基づく知識空間の構築（産業通商資源部）<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>米国ADLのxAPI LRS認証を取得</li>
+              <li>KERIS、AIデジタル教科書開発ガイドラインを共同執筆</li>
+              <li>KERIS、小学校算数授業支援システムの高度化</li>
+              <li>中小ベンチャー企業部の「飛び石」課題に選定</li>
+              <li>AIデジタル教科書向け教育課程標準体系の配布モデル設計</li>
+              <li>東亜出版、AIデジタル教科書プラットフォーム構築</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2024</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#product">LecognizerがGS 1等級認証を取得<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">教育部、AIデジタル教科書学習データハブ構築<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KERIS、小学校算数授業支援システムの運営</li>
+              <li>調達庁デジタルサービスモールに製品登録</li>
+              <li>学習診断・推薦モデルがAIモデル認証を取得（KOLAS）</li>
+              <li>AI特許2件を出願（学習異常検知・LLM活用の学習者プロファイリング）</li>
+              <li>KERIS、学習データ辞書の開発研究</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2025</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="../news/2025-02-patent-profiling.html">特許取得：LLM活用の学習者プロファイリング手法（第10-2767110号）<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="../news/2025-11-patent-anomaly.html">特許取得：xAPI学習異常検知システム（第10-2883249号）<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>KERIS、小学校算数授業支援システムの運営</li>
+              <li>中小ベンチャー企業部の市場対応型課題に選定</li>
+              <li>INNOBIZ（技術革新型中小企業）認証を取得（AA）</li>
+              <li>江原アイロAIプラットフォーム構築</li>
+              <li>KERIS、市・道教育庁の学習データ収集連携体制</li>
+              <li>NICE D&amp;R、次世代システム構築</li>
+            </ul>
+          </div>
+        </li>
+        <li class="hist-item rv">
+          <div class="hist-year">2026</div>
+          <div class="hist-body">
+            <ul class="hist-hl">
+              <li><a href="#standards">1EdTech Korea設立理事会に参画（共同設立会員社）<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="#references">KERIS、国際標準に基づく学習データ標準化体系・活用モデル構築<span class="arw" aria-hidden="true">→</span></a></li>
+              <li><a href="../news/2026-09-edtech-korea-fair.html">EdTech Korea Fair 2026に出展、Learning Loopのデモを実施<span class="arw" aria-hidden="true">→</span></a></li>
+            </ul>
+            <ul class="hist-dim">
+              <li>京畿道教育庁、ハイラーニングAIプラットフォーム運営</li>
+              <li>江原特別自治道教育庁、AIプラットフォーム運営</li>
+              <li>京畿道AI教員コンピテンシー統合支援システムのLRS構築</li>
+              <li>AIデジタル教科書学習データハブのLRS保守</li>
+            </ul>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ⑩ CONTACT -->
+<section class="band" id="contact" style="background:linear-gradient(180deg,#080a16,var(--bg))">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Contact</p>
+      <h2 class="h-lg" style="margin-top:16px">学習データ・標準・AIの導入を<br>ともに<span class="g">検討</span>します</h2>
+      <p class="sec-lead">Lecognizerの導入、LearnHubble AIのデモ、学習データ設計のコンサルティング、協業のご相談まで、機関のご環境に合わせてご案内いたします。</p>
+    </div>
+    <div class="contact-grid">
+      <div class="ci-info rv">
+        <span class="lab">Tel</span><a href="tel:0222051470">02-2205-1470</a>
+        <span class="lab">Email</span><a href="mailto:manager@wickedstorm.kr">manager@wickedstorm.kr</a>
+        <span class="lab">Address</span><p>韓国ソウル特別市江西区麻谷中央路161-8 A棟901〜905号</p>
+        <p class="ci-note">お問い合わせ内容を確認のうえ、ご入力いただいたメールアドレスへご返信いたします。</p>
+      </div>
+      <form class="cform rv" id="cform" novalidate>
+        <noscript><p class="status err" style="min-height:auto">お問い合わせフォームのご利用にはJavaScriptが必要です。ブラウザでJavaScriptを有効にするか、<a href="mailto:manager@wickedstorm.kr" style="color:#cbb4ff;text-decoration:underline">manager@wickedstorm.kr</a>までお問い合わせください。</p></noscript>
+        <div class="row2">
+          <label>お名前 *<input type="text" name="userName" required autocomplete="name" placeholder="お名前"></label>
+          <label>ご所属 *<input type="text" name="userCompany" required autocomplete="organization" placeholder="所属・機関名"></label>
+        </div>
+        <label>メールアドレス *<input type="email" name="userEmail" required autocomplete="email" placeholder="abc@example.com"></label>
+        <label>お知りになったきっかけ *
+          <select name="userTraffic" required>
+            <option value="">きっかけを選択してください</option>
+            <option value="direct">その他（直接入力）</option>
+            <option value="portal">検索エンジン</option>
+            <!-- 아래 세 항목은 서버 값 목록을 늘리지 않도록 value="etc"로 보내고, 내용을 userTrafficEtc에 자동으로 채운다(main.js) -->
+            <option value="etc" data-auto="인스타그램">Instagram</option>
+            <option value="etc" data-auto="블로그">ブログ</option>
+            <option value="etc" data-auto="박람회·행사">展示会・イベント</option>
+            <option value="job_posting">求人情報</option>
+            <option value="news">記事・ニュース</option>
+            <option value="referral">知人の紹介</option>
+            <option value="etc">その他</option>
+          </select>
+        </label>
+        <label data-etc hidden><span data-etc-label>きっかけを入力 *</span><input type="text" name="userTrafficEtc" placeholder="直接ご入力ください"></label>
+        <label>お問い合わせ内容 *<textarea name="userMemo" rows="5" required placeholder="導入目的、連携対象、スケジュールなど"></textarea></label>
+        <!-- honeypot -->
+        <label class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        <label class="check"><input type="checkbox" name="checkPrivacy" required> お問い合わせ内容の確認のための <a href="../privacy.html">個人情報の収集・利用</a>に同意します。</label>
+        <button class="btn p" type="submit" data-submit>送信する</button>
+        <p class="status" role="status" aria-live="polite" data-status></p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img src="../img/logo-white.svg" alt="WICKED STORM" width="208" height="26" loading="lazy">
+        <p>株式会社Wicked Storm&nbsp;· 代表取締役 イ・ジョンジュン&nbsp;· 事業者登録番号 <span style="white-space:nowrap">135-88-02020</span></p>
+        <p>韓国ソウル特別市江西区麻谷中央路161-8 A棟901〜905号</p>
+        <p>Tel 02-2205-1470&nbsp;· Fax 02-6956-1473&nbsp;· manager@wickedstorm.kr</p>
+      </div>
+      <nav class="foot-nav" aria-label="フッターメニュー">
+        <a href="#product">Product</a><a href="#learnhubble">LearnHubble AI</a><a href="#standards">Standards</a><a href="../news.html">News</a><a href="#resources">Resources</a><a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="採用情報（新しいウィンドウ）">Recruit</a><a href="../privacy.html">プライバシーポリシー</a>
+        <a data-social="instagram" href="#" target="_blank" rel="noopener noreferrer" hidden>Instagram</a><a data-social="blog" href="#" target="_blank" rel="noopener noreferrer" hidden>Blog</a>
+      </nav>
+    </div>
+    <p class="legal">Every Learning Moment, Designed for Growth. · © 2026 Wicked Storm Inc.</p>
+  </div>
+</footer>
+
+<script src="../js/vendor/gsap.min.js" defer></script>
+<script src="../js/vendor/ScrollTrigger.min.js" defer></script>
+<script src="../js/vendor/lenis.min.js" defer></script>
+<script src="../js/site-config.js?v=20260925" defer></script>
+<script src="../js/social.js?v=20260925" defer></script>
+<script src="../js/main.js?v=20260925" defer></script>
+<script src="../js/board.js?v=20260925" defer></script>
+</body>
+</html>

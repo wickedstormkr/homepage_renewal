@@ -230,6 +230,9 @@ def post(lang, text):
         name = "pipeline-loop" if ext == "mp4" else "pipeline-poster"
         if os.path.exists(os.path.join(ROOT, "media", f"{name}-{lang}.{ext}")):
             text = text.replace(f"../media/{name}.{ext}", f"../media/{name}-{lang}.{ext}")
+    # 영문판은 히어로 제목이 곧 영문 슬로건이라, 위 eyebrow(영문 슬로건)를 회사 소개 한 줄로 바꾼다
+    if lang == "en":
+        text = text.replace('<span>Every Learning Moment, <span class="nw">Designed for Growth.</span></span>', '<span>Wicked Storm · Learning Data &amp; AI</span>', 1)
     # 언어 스위처 현재 표시
     text = text.replace('aria-current="true" data-lang="ko"', 'data-lang="ko"')
     text = text.replace(f'data-lang="{lang}"', f'aria-current="true" data-lang="{lang}"')

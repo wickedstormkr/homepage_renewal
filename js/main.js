@@ -79,13 +79,13 @@
       menuOpen: 'Mở menu', menuClose: 'Đóng menu',
       actors: ['Người học', 'Người học', 'Người học', 'Giảng viên'],
       events: [
-        { v: 'đã xem', o: ['Bài giảng khái niệm 04', 'Video giải thích', 'Bài giảng bổ trợ'], r: ['Hoàn thành 100%', 'Xem lại 2 lần', 'Dừng ở đoạn này'] },
+        { v: 'đã xem', o: ['Bài giảng khái niệm 04', 'Video giải thích', 'Bài giảng bổ sung'], r: ['Hoàn thành 100%', 'Xem lại 2 lần', 'Dừng ở phần này'] },
         { v: 'đã trả lời', o: ['Câu hỏi kiểm tra', 'Quiz trực tiếp', 'Khảo sát lớp học'], r: ['Đúng', 'Tham gia', 'Làm lại'] },
         { v: 'đã nộp', o: ['Bài tự luận', 'Báo cáo dự án', 'Bài thực hành'], r: ['Đã nộp', 'Đúng hạn', 'Sửa 1 lần'] },
         { v: 'đã hỏi', o: ['Hỏi đáp bài giảng', 'Hỏi đáp bài tập', 'Thảo luận'], r: ['3 trả lời', 'Đã giải quyết', '5 lượt thích'] },
-        { v: 'đã mở', o: ['Gợi ý AI', 'Tài liệu bổ trợ', 'Bản đồ năng lực'], r: ['1 gợi ý', 'Đã xem', 'Đã kiểm tra'] }
+        { v: 'đã mở', o: ['Gợi ý từ AI', 'Tài liệu bổ sung', 'Bản đồ năng lực'], r: ['1 gợi ý', 'Đã xem', 'Đã kiểm tra'] }
       ],
-      insights: ['Tín hiệu · Đoạn xem lại', 'Tín hiệu · Dừng viết bài', 'Cảnh báo · Đoạn khó', 'Đề xuất · Bản nháp tài liệu bổ trợ'],
+      insights: ['Dấu hiệu · Phần xem lại', 'Dấu hiệu · Dừng viết bài', 'Cảnh báo · Phần khó', 'Đề xuất · Bản nháp tài liệu bổ sung'],
       field: { userName: 'Vui lòng nhập họ tên.', userCompany: 'Vui lòng nhập tổ chức.', userEmail: 'Vui lòng nhập email.',
         userTraffic: 'Vui lòng chọn kênh biết đến chúng tôi.', userTrafficEtc: 'Vui lòng nhập kênh biết đến chúng tôi.', userMemo: 'Vui lòng nhập nội dung yêu cầu.',
         checkPrivacy: 'Vui lòng đồng ý thu thập và sử dụng thông tin cá nhân.' },
