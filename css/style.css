@@ -1041,6 +1041,9 @@ html:not(:lang(ko)) .cform .check .field-err{display:block;margin-top:6px}
   html:lang(en) .hero-overlay .ho-main{max-width:16em}
   html:lang(vi) .hero-overlay .ho-main{max-width:19.5em}
   html:lang(ja) .hero-overlay .ho-main{max-width:16.5em}
+  /* 두 줄이 되면서 캡션 위쪽이 빛 막대(화면 높이 28~72%)의 마지막 줄에 닿았다. 글자를 조금 줄이고 아래 여백을 줄여 72% 아래에 둔다 */
+  html:not(:lang(ko)) .hero-overlay{padding-bottom:clamp(36px,7vh,72px)}
+  html:not(:lang(ko)) .hero-overlay .ho-main{font-size:clamp(26px,3.6vw,46px)}
 }
 /* 캡션의 .nw 묶음은 데스크톱 두 줄용. 캡션이 숨는 960px 이하에서도 넘치지 않게 푼다 */
 @media (max-width:960px){html:lang(ja) .hero-overlay .ho-main .nw{white-space:normal}}
