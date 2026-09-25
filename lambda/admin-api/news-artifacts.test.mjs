@@ -67,6 +67,16 @@ test('article bodies keep allowlisted markup, harden links, and rewrite local im
   assert.doesNotMatch(body, /onerror=/);
 });
 
+test('article bodies keep figure captions but drop their attributes', () => {
+  const body = sanitizeArticleBody(
+    '<figure><img src="./img/news/a.webp" alt="현장"><figcaption>부스 현장</figcaption></figure>' +
+    '<figure class="x" onclick="bad()">속성 있는 figure</figure>'
+  );
+
+  assert.match(body, /<figure><img src="\.\.\/img\/news\/a\.webp" alt="현장" loading="lazy"><figcaption>부스 현장<\/figcaption><\/figure>/);
+  assert.match(body, /&lt;figure class=/);
+});
+
 test('renderArticle emits canonical SEO metadata, JSON-LD, H1, GA4, and nested relative assets', () => {
   const post = samplePost({ title: '표준 <기술> & 인사이트' });
   const html = renderArticle(post, { updated: '2026-07-14' });
@@ -74,17 +84,17 @@ test('renderArticle emits canonical SEO metadata, JSON-LD, H1, GA4, and nested r
   assert.match(html, /<link rel="canonical" href="https:\/\/wickedstorm\.kr\/news\/2026-07-sample\.html">/);
   assert.match(html, /<meta property="og:type" content="article">/);
   assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
-  assert.match(html, /<link rel="stylesheet" href="\.\.\/css\/style\.css">/);
+  assert.match(html, /<link rel="stylesheet" href="\.\.\/css\/style\.css\?v=\d+">/);
   // 폰트는 style.css의 @font-face(서브셋)로 로드하므로 별도 폰트 CSS 링크는 없다.
   assert.doesNotMatch(html, /pretendard.*\.css/);
   // GA4는 index/news와 동일 속성으로 아티클에도 유지한다.
   assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-0Y5QD1HBGN/);
   assert.match(html, /gtag\('config','G-0Y5QD1HBGN'\)/);
   assert.match(html, /<img src="\.\.\/img\/feed-img01\.webp"/);
-  assert.match(html, /<title>표준 &lt;기술&gt; &amp; 인사이트 — 위키드스톰<\/title>/);
+  assert.match(html, /<title>표준 &lt;기술&gt; &amp; 인사이트 \| 위키드스톰<\/title>/);
   assert.match(html, /<h1[^>]*>표준 &lt;기술&gt; &amp; 인사이트<\/h1>/);
   assert.doesNotMatch(html, /<h1[^>]*>표준 <기술>/);
-  assert.match(html, /<script src="\.\.\/js\/main\.js" defer><\/script>/);
+  assert.match(html, /<script src="\.\.\/js\/main\.js\?v=\d+" defer><\/script>/);
 
   const jsonLdSource = html.match(/<script type="application\/ld\+json">\n([\s\S]*?)\n<\/script>/)?.[1];
   assert.ok(jsonLdSource);

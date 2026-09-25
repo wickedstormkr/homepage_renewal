@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#06070e">
 
 <link rel="icon" href="./favicon.ico" sizes="any">
-<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/style.css?v=20260925">
 
 <style>
   /* 관리자 전용 UI — 공개 스타일시트를 오염시키지 않도록 이 문서 안에서만 정의(기존 팔레트 재사용) */
@@ -36,7 +36,7 @@
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;
     padding:11px 20px;font-family:var(--en);font-weight:700;font-size:14px;cursor:pointer;transition:.18s;border:1px solid transparent}
-  .btn2.p{background:var(--grad-c);color:#06070e}
+  .btn2.p{background:var(--grad);color:#fff}
   .btn2.p:hover{filter:brightness(1.08)}
   .btn2.s{background:transparent;border-color:var(--line2);color:var(--ink)}
   .btn2.s:hover{border-color:#fff}
@@ -49,7 +49,7 @@
   .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
   .toolbar .spacer{flex:1}
   .status{font-size:13px;min-height:1.2em;color:var(--muted);font-family:var(--en)}
-  .status.ok{color:var(--cyan)}
+  .status.ok{color:var(--accent)}
   .status.err{color:#ff8ec6}
   .muted{color:var(--faint);font-size:14px}
 
@@ -65,7 +65,7 @@
   .badge.cat-news{background:rgba(47,124,255,.16);color:#9fc0ff}
   .badge.cat-story{background:rgba(233,48,176,.16);color:#f3a6da}
   .badge.cat-insight{background:rgba(124,77,255,.16);color:#b3a1ff}
-  .badge.pin{background:rgba(34,224,214,.16);color:#7fe9e0}
+  .badge.pin{background:rgba(163,177,255,.16);color:#c3ccff}
   .badge.ext{background:rgba(255,255,255,.08);color:var(--faint)}
 
   .thumb-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
@@ -168,7 +168,7 @@
   </section>
 </div>
 
-<script src="./js/site-config.js"></script>
-<script src="./js/admin.js" defer></script>
+<script src="./js/site-config.js?v=20260925"></script>
+<script src="./js/admin.js?v=20260925" defer></script>
 </body>
 </html>

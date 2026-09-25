@@ -1,7 +1,7 @@
 /* WICKED STORM — board.js
  * 소식 게시판 공용 렌더러.
  *  - news.html: 전체 목록 + 탭 필터 + 딥링크(#p=<id>) + 헤더/드로어 크롬
- *  - index.html: #news 그리드를 pinned 상위 3건으로 프로그레시브 재렌더
+ *  - index.html: #news 그리드를 pinned 상위 3건(기사 링크 카드)으로 프로그레시브 재렌더
  * main.js/GSAP에 의존하지 않는다. 상시 rAF 루프 없음(드로어 open은 1회성 rAF).
  */
 (function () {
@@ -10,7 +10,17 @@
   var doc = document, win = window;
   var REDUCE = win.matchMedia && win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var IO = ('IntersectionObserver' in win);
-  var POSTS_URL = './data/posts.json';
+  // 다국어 페이지(en/ 등 하위 폴더)는 <html data-base="../">로 사이트 루트를 알려 준다
+  var BASE = doc.documentElement.getAttribute('data-base') || './';
+  var LANG = (doc.documentElement.getAttribute('lang') || 'ko').slice(0, 2);
+  var TXT = ({
+    ko: { more: '자세히 보기', go: '바로가기', win: '(새 창)' },
+    en: { more: 'Read more', go: 'Open', win: '(new window)' },
+    ja: { more: '詳しく見る', go: '開く', win: '(新しいウィンドウ)' },
+    vi: { more: 'Xem thêm', go: 'Mở', win: '(cửa sổ mới)' }
+  })[LANG] || { more: '자세히 보기', go: '바로가기', win: '(새 창)' };
+  function asset(p) { return typeof p === 'string' && p.indexOf('./') === 0 ? BASE + p.slice(2) : p; }
+  var POSTS_URL = BASE + 'data/posts.json';
   var CAT_LABEL = { news: 'NEWS', story: 'STORY', insight: 'INSIGHT' };
 
   function esc(s) {
@@ -52,42 +62,6 @@
       '<span class="cover-rail"></span><span class="cover-cat">' + esc(word) + '</span></div>';
   }
 
-  var uid = 0;
-  function cardEl(post) {
-    uid++;
-    var pid = 'np' + uid, hid = 'nh' + uid;
-    var tag = CAT_LABEL[post.category] || 'NEWS';
-    var img = post.thumb
-      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
-      : coverHtml(post);
-    var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
-
-    var extUrl = safeExternalUrl(post.externalUrl);
-    var el;
-    if (extUrl) {
-      el = doc.createElement('a');
-      el.className = 'ncard rv';
-      el.href = extUrl;
-      el.target = '_blank';
-      el.rel = 'noopener noreferrer';
-      el.setAttribute('aria-label', post.title + ' (새 창)');
-      el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">바로가기 <i aria-hidden="true">↗</i></span></div>';
-    } else {
-      el = doc.createElement('article');
-      el.className = 'ncard rv';
-      var body = post.body || ('<p>' + esc(post.summary || '') + '</p>');
-      el.innerHTML =
-        '<button class="nhead" aria-expanded="false" aria-controls="' + pid + '">' + img + meta +
-        '<h3 id="' + hid + '">' + esc(post.title) + '</h3>' +
-        '<span class="nmore">자세히 보기 <i aria-hidden="true">+</i></span></div></button>' +
-        '<div class="npanel" id="' + pid + '" role="region" aria-labelledby="' + hid + '"><div class="npanel-inner">' + body + '</div></div>';
-    }
-    el.setAttribute('data-cat', post.category || 'news');
-    el.setAttribute('data-id', post.id || '');
-    return el;
-  }
-
   /* news.html 게시판용 카드 — 아코디언 대신 정적 아티클(./news/<id>.html)로 링크.
    * 글마다 고유 URL을 부여해 검색 노출·공유가 되게 한다. 구 해시 딥링크
    * (news.html#p=<id>)는 initBoardPage의 route()가 하위호환으로 계속 렌더한다.
@@ -95,7 +69,7 @@
   function boardCardEl(post) {
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
-      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
+      ? '<div class="nimg"><img src="' + esc(asset(post.thumb)) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
       : coverHtml(post);
     var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
     var el = doc.createElement('a');
@@ -105,46 +79,17 @@
       el.href = extUrl;
       el.target = '_blank';
       el.rel = 'noopener noreferrer';
-      el.setAttribute('aria-label', post.title + ' (새 창)');
+      el.setAttribute('aria-label', post.title + ' ' + TXT.win);
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">바로가기 <i aria-hidden="true">↗</i></span></div>';
+        '<span class="nmore">' + TXT.go + ' <i aria-hidden="true">↗</i></span></div>';
     } else {
-      el.href = './news/' + encodeURIComponent(post.id || '') + '.html';
+      el.href = BASE + 'news/' + encodeURIComponent(post.id || '') + '.html';
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">자세히 보기 <i aria-hidden="true">→</i></span></div>';
+        '<span class="nmore">' + TXT.more + ' <i aria-hidden="true">→</i></span></div>';
     }
     el.setAttribute('data-cat', post.category || 'news');
     el.setAttribute('data-id', post.id || '');
     return el;
-  }
-
-  /* 아코디언(한 번에 하나만 열림) — main.js는 개별 바인딩이라 동적 카드는 여기서 바인딩 */
-  function bindAccordion(container) {
-    var cards = [].slice.call(container.querySelectorAll('.ncard'));
-    function label(card, txt) { var m = card.querySelector('.nmore'); if (m && m.firstChild) m.firstChild.nodeValue = txt; }
-    function close(card) {
-      var b = card.querySelector('.nhead'), p = card.querySelector('.npanel');
-      if (!b || !p) return;
-      card.classList.remove('open');
-      b.setAttribute('aria-expanded', 'false');
-      p.style.height = '0px';
-      label(card, '자세히 보기 ');
-    }
-    cards.forEach(function (card) {
-      var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
-      if (!btn || !panel) return; // 외부 링크 카드는 아코디언 아님
-      btn.addEventListener('click', function () {
-        var isOpen = card.classList.contains('open');
-        cards.forEach(function (c) { if (c !== card) close(c); });
-        if (isOpen) { close(card); }
-        else {
-          card.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-          panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
-          label(card, '접기 ');
-        }
-      });
-    });
   }
 
   /* 최소 IO 리빌 (없거나 reduced-motion이면 즉시 표시) */
@@ -179,11 +124,12 @@
         .sort(byDateDesc)
         .slice(0, 3);
       if (!posts.length) return; // 데이터 없으면 정적 3카드 유지
+      // 메인 카드도 글마다 고유 기사 주소(./news/<id>.html)로 연결한다. 인스타그램·블로그에서
+      // 공유하는 주소와 같은 페이지로 들어오게 하려는 것(2026-09 개편, 아코디언 → 링크 카드).
       var frag = doc.createDocumentFragment(), made = [];
-      posts.forEach(function (p) { var el = cardEl(p); frag.appendChild(el); made.push(el); });
+      posts.forEach(function (p) { var el = boardCardEl(p); frag.appendChild(el); made.push(el); });
       grid.innerHTML = '';
       grid.appendChild(frag);
-      bindAccordion(grid);
       reveal(made);
     }).catch(function (err) {
       quiet('feed fetch 실패 — 정적 카드 유지', err); // file:// 포함, 조용히

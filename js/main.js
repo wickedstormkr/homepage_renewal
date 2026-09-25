@@ -12,6 +12,91 @@
   var hasLenis = (typeof win.Lenis !== 'undefined');
   var IO = ('IntersectionObserver' in win);
 
+  /* ============================================================
+   *  다국어 문자열 — <html lang>에 맞춰 스크립트가 만드는 문구를 고른다.
+   *  마크업 문구는 scripts/build_i18n.py가 i18n/<lang>.json으로 번역한다.
+   * ============================================================ */
+  var LANG = (root.getAttribute('lang') || 'ko').slice(0, 2);
+  var I18N = {
+    ko: {
+      menuOpen: '메뉴 열기', menuClose: '메뉴 닫기', histMore: '세부 연혁 모두 보기', histLess: '세부 연혁 접기',
+      actors: ['학습자', '학습자', '학습자', '교수자'],
+      events: [
+        { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '2회 반복', '구간 멈춤'] },
+        { v: '응답함', o: ['확인 퀴즈', '실시간 퀴즈', '수업 설문'], r: ['정답', '참여', '재시도'] },
+        { v: '제출함', o: ['서술형 과제', '프로젝트 보고서', '실습 과제'], r: ['제출 완료', '기한 내', '1회 수정'] },
+        { v: '질문함', o: ['강의 Q&A', '과제 Q&A', '토론 활동'], r: ['답변 3', '해결', '공감 5'] },
+        { v: '열람함', o: ['AI 힌트', '보충 자료', '역량맵'], r: ['힌트 1', '열람', '확인'] }
+      ],
+      insights: ['신호 · 반복 재생 구간', '신호 · 과제 작성 멈춤', '알림 · 어려워한 구간', '제안 · 보충 자료 초안'],
+      field: { userName: '이름을 입력해 주세요.', userCompany: '소속을 입력해 주세요.', userEmail: '이메일을 입력해 주세요.',
+        userTraffic: '유입 경로를 선택해 주세요.', userTrafficEtc: '유입 경로를 입력해 주세요.', userMemo: '문의사항을 입력해 주세요.',
+        checkPrivacy: '개인정보 수집·이용에 동의해 주세요.' },
+      emailFmt: '이메일 형식을 확인해 주세요.', required: '필수 항목입니다.',
+      etcDirect: '유입 경로 직접 입력 *', etcOther: '기타 내용 *',
+      sending: '전송 중입니다…', sent: '문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.',
+      failed: '전송에 실패했습니다. manager@wickedstorm.kr로 보내주세요.'
+    },
+    en: {
+      menuOpen: 'Open menu', menuClose: 'Close menu', histMore: 'Show full history', histLess: 'Show less',
+      actors: ['Learner', 'Learner', 'Learner', 'Instructor'],
+      events: [
+        { v: 'watched', o: ['Concept lecture 04', 'Explainer video', 'Review lecture'], r: ['100% complete', 'Replayed 2×', 'Paused here'] },
+        { v: 'answered', o: ['Check quiz', 'Live quiz', 'Class survey'], r: ['Correct', 'Joined', 'Retried'] },
+        { v: 'submitted', o: ['Essay task', 'Project report', 'Lab task'], r: ['Submitted', 'On time', 'Revised once'] },
+        { v: 'asked', o: ['Lecture Q&A', 'Task Q&A', 'Discussion'], r: ['3 replies', 'Resolved', '5 upvotes'] },
+        { v: 'opened', o: ['AI hint', 'Extra material', 'Competency map'], r: ['1 hint', 'Viewed', 'Checked'] }
+      ],
+      insights: ['Signal · Replayed section', 'Signal · Writing paused', 'Alert · Difficult section', 'Proposal · Review material draft'],
+      field: { userName: 'Please enter your name.', userCompany: 'Please enter your organization.', userEmail: 'Please enter your email.',
+        userTraffic: 'Please choose how you found us.', userTrafficEtc: 'Please tell us how you found us.', userMemo: 'Please enter your inquiry.',
+        checkPrivacy: 'Please agree to the collection and use of personal information.' },
+      emailFmt: 'Please check the email format.', required: 'This field is required.',
+      etcDirect: 'How you found us *', etcOther: 'Details *',
+      sending: 'Sending…', sent: 'Your inquiry has been received. We will get back to you soon.',
+      failed: 'Sending failed. Please email manager@wickedstorm.kr.'
+    },
+    ja: {
+      menuOpen: 'メニューを開く', menuClose: 'メニューを閉じる', histMore: '詳しい沿革をすべて見る', histLess: '詳しい沿革を閉じる',
+      actors: ['学習者', '学習者', '学習者', '教員'],
+      events: [
+        { v: '視聴', o: ['概念講義 04', '解説動画', '補充講義'], r: ['進捗 100%', '2回リピート', '区間で停止'] },
+        { v: '回答', o: ['確認クイズ', 'ライブクイズ', '授業アンケート'], r: ['正解', '参加', '再挑戦'] },
+        { v: '提出', o: ['記述式課題', 'プロジェクト報告書', '実習課題'], r: ['提出済み', '期限内', '1回修正'] },
+        { v: '質問', o: ['講義Q&A', '課題Q&A', 'ディスカッション'], r: ['回答 3', '解決', 'いいね 5'] },
+        { v: '閲覧', o: ['AIヒント', '補充資料', 'コンピテンシーマップ'], r: ['ヒント 1', '閲覧', '確認'] }
+      ],
+      insights: ['兆候 · 繰り返し再生の箇所', '兆候 · 課題作成の停止', 'アラート · つまずいた箇所', '提案 · 補充資料の下書き'],
+      field: { userName: 'お名前を入力してください。', userCompany: 'ご所属を入力してください。', userEmail: 'メールアドレスを入力してください。',
+        userTraffic: 'お知りになったきっかけを選択してください。', userTrafficEtc: 'お知りになったきっかけを入力してください。', userMemo: 'お問い合わせ内容を入力してください。',
+        checkPrivacy: '個人情報の収集・利用に同意してください。' },
+      emailFmt: 'メールアドレスの形式をご確認ください。', required: '必須項目です。',
+      etcDirect: 'きっかけを入力 *', etcOther: 'その他の内容 *',
+      sending: '送信中です…', sent: 'お問い合わせを受け付けました。追ってご連絡いたします。',
+      failed: '送信に失敗しました。manager@wickedstorm.kr までお送りください。'
+    },
+    vi: {
+      menuOpen: 'Mở menu', menuClose: 'Đóng menu', histMore: 'Xem toàn bộ lịch sử chi tiết', histLess: 'Thu gọn lịch sử',
+      actors: ['Người học', 'Người học', 'Người học', 'Giảng viên'],
+      events: [
+        { v: 'đã xem', o: ['Bài giảng khái niệm 04', 'Video giải thích', 'Bài giảng bổ sung'], r: ['Hoàn thành 100%', 'Xem lại 2 lần', 'Dừng ở phần này'] },
+        { v: 'đã trả lời', o: ['Câu hỏi kiểm tra', 'Quiz trực tiếp', 'Khảo sát lớp học'], r: ['Đúng', 'Tham gia', 'Làm lại'] },
+        { v: 'đã nộp', o: ['Bài tự luận', 'Báo cáo dự án', 'Bài thực hành'], r: ['Đã nộp', 'Đúng hạn', 'Sửa 1 lần'] },
+        { v: 'đã hỏi', o: ['Hỏi đáp bài giảng', 'Hỏi đáp bài tập', 'Thảo luận'], r: ['3 trả lời', 'Đã giải quyết', '5 lượt thích'] },
+        { v: 'đã mở', o: ['Gợi ý từ AI', 'Tài liệu bổ sung', 'Bản đồ năng lực'], r: ['1 gợi ý', 'Đã xem', 'Đã kiểm tra'] }
+      ],
+      insights: ['Dấu hiệu · Phần xem lại', 'Dấu hiệu · Dừng viết bài', 'Cảnh báo · Phần khó', 'Đề xuất · Bản nháp tài liệu bổ sung'],
+      field: { userName: 'Vui lòng nhập họ tên.', userCompany: 'Vui lòng nhập tổ chức.', userEmail: 'Vui lòng nhập email.',
+        userTraffic: 'Vui lòng chọn kênh biết đến chúng tôi.', userTrafficEtc: 'Vui lòng nhập kênh biết đến chúng tôi.', userMemo: 'Vui lòng nhập nội dung yêu cầu.',
+        checkPrivacy: 'Vui lòng đồng ý thu thập và sử dụng thông tin cá nhân.' },
+      emailFmt: 'Vui lòng kiểm tra định dạng email.', required: 'Trường này là bắt buộc.',
+      etcDirect: 'Kênh biết đến chúng tôi *', etcOther: 'Nội dung khác *',
+      sending: 'Đang gửi…', sent: 'Yêu cầu của bạn đã được tiếp nhận. Chúng tôi sẽ sớm phản hồi.',
+      failed: 'Gửi không thành công. Vui lòng gửi email tới manager@wickedstorm.kr.'
+    }
+  };
+  var TX = I18N[LANG] || I18N.ko;
+
   if (!hasGSAP) root.classList.add('nogsap');
   if (hasGSAP) gsap.registerPlugin(ScrollTrigger);
 
@@ -80,7 +165,7 @@
     function set(next) {
       open = next;
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      btn.setAttribute('aria-label', open ? TX.menuClose : TX.menuOpen);
       if (open) {
         clearTimeout(hideTimer);
         drawer.hidden = false;
@@ -587,9 +672,9 @@
           // 팝: 알파 페이드가 아니라 반지름 1.3배→1.0배로 ease-out 수축하며 등장(cA의 함수).
           // 알파는 빠르게 불투명으로 올려 "찍힌다"는 인상을 준다. 글로우 추가 없음.
           var pop = 1 - (1 - cA) * (1 - cA), sc = 1.3 - 0.3 * pop, aa = Math.min(1, cA * 2.4);
-          ctx.fillStyle = 'rgba(34,224,214,' + aa + ')';
+          ctx.fillStyle = 'rgba(163,177,255,' + aa + ')';
           ctx.beginPath(); ctx.arc(row.checkX, row.y, 3.4 * sc, 0, 6.283); ctx.fill();
-          ctx.strokeStyle = 'rgba(34,224,214,' + (aa * 0.5) + ')';
+          ctx.strokeStyle = 'rgba(163,177,255,' + (aa * 0.5) + ')';
           ctx.lineWidth = 1.2;
           ctx.beginPath(); ctx.arc(row.checkX, row.y, 5.8 * sc, 0, 6.283); ctx.stroke();
         }
@@ -667,7 +752,7 @@
       .from('.hero-lead', { y: 18, opacity: 0, duration: .7 }, '-=.52')
       .from('.hero-cta', { y: 18, opacity: 0, duration: .7 }, '-=.55')
       .from('.hero-trust', { y: 18, opacity: 0, duration: .7 }, '-=.55')
-      .from('.capture', { y: 40, opacity: 0, duration: .9 }, .45); // 캡처 패널 진입(SPEC 씬1)
+      .from('.cap-wrap', { y: 40, opacity: 0, duration: .9 }, .45); // 캡처 패널 진입(SPEC 씬1). 래퍼를 움직여 스크럽의 .capture 퇴장과 충돌하지 않게 한다
   }
 
   /* ============================================================
@@ -742,8 +827,8 @@
         }));
       });
 
-      /* 씬7 — GROWA 메인 틸트 정착 + 이미지 패럴랙스 */
-      var gm = doc.querySelector('.growa-main'), gEnter = null, gPar = null;
+      /* 씬7 — LearnHubble AI 메인 틸트 정착 + 이미지 패럴랙스 */
+      var gm = doc.querySelector('.lhub-main'), gEnter = null, gPar = null;
       if (gm) {
         gEnter = gsap.from(gm, {
           rotateX: 5, y: 48, opacity: 0, transformPerspective: 900, transformOrigin: 'center top',
@@ -751,7 +836,7 @@
         });
         var gimg = gm.querySelector('img');
         if (gimg) gPar = gsap.fromTo(gimg, { y: 22 }, {
-          y: -22, ease: 'none', scrollTrigger: { trigger: '.growa', start: 'top bottom', end: 'bottom top', scrub: true }
+          y: -22, ease: 'none', scrollTrigger: { trigger: '.lhub', start: 'top bottom', end: 'bottom top', scrub: true }
         });
       }
 
@@ -869,34 +954,6 @@
   })();
 
   /* ============================================================
-   *  뉴스 아코디언 (1개만 열림, aria-expanded, height 트랜지션)
-   * ============================================================ */
-  (function () {
-    var cards = [].slice.call(doc.querySelectorAll('.ncard'));
-    function label(card, txt) { var m = card.querySelector('.nmore'); if (m && m.firstChild) m.firstChild.nodeValue = txt; }
-    function close(card) {
-      card.classList.remove('open');
-      card.querySelector('.nhead').setAttribute('aria-expanded', 'false');
-      card.querySelector('.npanel').style.height = '0px';
-      label(card, '자세히 보기 ');
-    }
-    cards.forEach(function (card) {
-      var btn = card.querySelector('.nhead'), panel = card.querySelector('.npanel');
-      btn.addEventListener('click', function () {
-        var isOpen = card.classList.contains('open');
-        cards.forEach(function (c) { if (c !== card) close(c); });
-        if (isOpen) { close(card); }
-        else {
-          card.classList.add('open');
-          btn.setAttribute('aria-expanded', 'true');
-          panel.style.height = panel.querySelector('.npanel-inner').offsetHeight + 'px';
-          label(card, '접기 ');
-        }
-      });
-    });
-  })();
-
-  /* ============================================================
    *  히어로 오브: 뷰포트 밖이면 애니메이션 정지 (SPEC §0-4)
    * ============================================================ */
   (function () {
@@ -917,15 +974,8 @@
     var track = doc.getElementById('streamTrack');
     if (!track) return;
     var GAP = 9;
-    var actors = ['학습자', '수강생', 'A반 학생', '튜티'];
-    var events = [
-      { v: '완료함', o: ['도형 퀴즈', '단원평가', '확인 학습'], r: ['92점', '정답률 85%', '정답률 78%'] },
-      { v: '제출함', o: ['서술형 과제', '프로젝트 보고서', '실습 과제'], r: ['제출 완료', '기한 내', '1회 수정'] },
-      { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '3분 12초', '2회 시청'] },
-      { v: '풀이함', o: ['오답 노트', '연습 문제', '도형 퀴즈'], r: ['8 / 10', '정답', '정답률 78%'] },
-      { v: '응답함', o: ['토론 활동', '실시간 퀴즈', '수업 설문'], r: ['참여', '답변 3', '정답'] }
-    ];
-    var insights = ['진단 · 도형 취약', '추천 · 유사 문항', '패턴 · 야간 학습', '개입 · 미제출 알림'];
+    // 표본 문장(언어별): 주체는 운영자·교수자·학습자 표기, AI는 찾고 제안까지
+    var actors = TX.actors, events = TX.events, insights = TX.insights;
     var rnd = function (a) { return a[Math.floor(Math.random() * a.length)]; };
     var chip = doc.getElementById('insChip'), sl = doc.getElementById('sparkline');
     var spark = [8, 10, 9, 12, 14, 13, 17, 16, 20, 19, 24];
@@ -1062,16 +1112,11 @@
     // 인라인 검증: novalidate 폼에서 제출 시 필수 항목을 일괄 검사해 각 필드 아래
     // 한국어 오류를 붙인다(네이티브 말풍선은 로케일 종속 + 첫 필드만 알림). required·
     // type=email 속성은 그대로 두고 el.validity로 판정 → 서버측 검증 계약 불변.
-    var FIELD_MSG = {
-      userName: '이름을 입력해 주세요.', userCompany: '소속을 입력해 주세요.',
-      userEmail: '이메일을 입력해 주세요.', userTraffic: '유입 경로를 선택해 주세요.',
-      userTrafficEtc: '유입 경로를 입력해 주세요.', userMemo: '문의사항을 입력해 주세요.',
-      checkPrivacy: '개인정보 수집·이용에 동의해 주세요.'
-    };
+    var FIELD_MSG = TX.field;
     var FIELDS = ['userName', 'userCompany', 'userEmail', 'userTraffic', 'userTrafficEtc', 'userMemo', 'checkPrivacy'];
     function msgFor(el) {
-      if (el.validity.typeMismatch && el.type === 'email') return '이메일 형식을 확인해 주세요.';
-      return FIELD_MSG[el.name] || '필수 항목입니다.';
+      if (el.validity.typeMismatch && el.type === 'email') return TX.emailFmt;
+      return FIELD_MSG[el.name] || TX.required;
     }
     function errHost(el) { return el.closest('label') || el.parentNode; }
     function showErr(el) {
@@ -1088,11 +1133,36 @@
       el.removeAttribute('aria-describedby');
     }
 
-    sel.addEventListener('change', function () {
-      var n = NEED.indexOf(sel.value) >= 0;
+    // data-auto 항목(인스타그램·블로그·박람회)은 서버에는 'etc'로 보내고 내용을 자동으로 채운다.
+    // 서버측 유입 경로 값 목록을 늘리지 않기 위한 방식이라, 입력칸은 보이지 않는다.
+    function autoOf() { var o = sel.options[sel.selectedIndex]; return o ? o.getAttribute('data-auto') : null; }
+    function syncTraffic(focus) {
+      var auto = autoOf(), n = NEED.indexOf(sel.value) >= 0 && !auto;
       etc.hidden = !n; etcIn.required = n;
-      if (n) { etcLab.textContent = sel.value === 'direct' ? '유입 경로 직접 입력 *' : '기타 내용 *'; etcIn.focus(); }
+      if (auto) { etcIn.value = auto; clearErr(etcIn); }
+      else if (n) { etcIn.value = ''; etcLab.textContent = sel.value === 'direct' ? TX.etcDirect : TX.etcOther; if (focus) etcIn.focus(); }
       else { etcIn.value = ''; clearErr(etcIn); }                   // 숨김 전환 시 잔여 오류 정리
+    }
+    sel.addEventListener('change', function () { syncTraffic(true); });
+
+    // ?utm_source=instagram|blog|fair 로 들어오면 유입 경로를 미리 골라 둔다(바꿀 수 있음).
+    (function () {
+      var src = '';
+      try { src = (new URLSearchParams(win.location.search).get('utm_source') || '').toLowerCase(); } catch (e) {}
+      var MAP = { instagram: '인스타그램', ig: '인스타그램', blog: '블로그', naver_blog: '블로그', fair: '박람회·행사', event: '박람회·행사' };
+      var want = MAP[src];
+      if (!want) return;
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].getAttribute('data-auto') === want) { sel.selectedIndex = i; syncTraffic(false); break; }
+      }
+    })();
+
+    // data-topic 버튼(예: LearnHubble AI 시연 요청)으로 들어오면 문의사항 첫 줄을 채워 둔다.
+    [].forEach.call(doc.querySelectorAll('a[data-topic]'), function (a) {
+      a.addEventListener('click', function () {
+        var memo = f.userMemo, t = a.getAttribute('data-topic');
+        if (memo && !memo.value.trim()) memo.value = t + '\n';
+      });
     });
     function set(m, t) { status.textContent = m; status.className = 'status ' + (t || ''); }
 
@@ -1116,19 +1186,58 @@
       var name = f.userName.value.trim(), aff = f.userCompany.value.trim();
       var payload = {
         name: name, affiliation: aff, email: f.userEmail.value.trim(), inquiry: f.userMemo.value.trim(),
-        userTraffic: f.userTraffic.value, subject: 'Contact Us 문의 접수: ' + name + '님 (소속: ' + aff + ')'
+        userTraffic: f.userTraffic.value, subject: 'Contact Us 문의 접수' + (LANG === 'ko' ? '' : ' [' + LANG.toUpperCase() + ']') + ': ' + name + '님 (소속: ' + aff + ')'
       };
       if (NEED.indexOf(f.userTraffic.value) >= 0 && f.userTrafficEtc.value.trim()) payload.userTrafficEtc = f.userTrafficEtc.value.trim();
-      btn.disabled = true; set('전송 중입니다…');
+      btn.disabled = true; set(TX.sending);
       // 15초 타임아웃: 서버 무응답 시 abort → catch 폴백으로 넘어가 버튼이 영구 비활성되지 않는다.
       fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(15000) })
         .then(function (r) {
           if (!r.ok) throw new Error('bad');
-          set('문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.', 'ok');
+          set(TX.sent, 'ok');
           f.reset(); etc.hidden = true; etcIn.required = false;
         })
-        .catch(function () { set('전송에 실패했습니다. manager@wickedstorm.kr로 보내주세요.', 'err'); })
+        .catch(function () { set(TX.failed, 'err'); })
         .then(function () { btn.disabled = false; });
+    });
+  })();
+
+  /* ============================================================
+   *  파이프라인 루프(HTML/CSS): 화면 밖이면 멈추고 들어오면 곧바로 이어서 돈다.
+   *  reduced-motion이면 CSS 애니메이션은 전역 규칙으로 꺼지고, SVG 호 점도 멈춘다.
+   * ============================================================ */
+  (function () {
+    var el = doc.getElementById('pipeLoop');
+    if (!el) return;
+    var svg = el.querySelector('svg');
+    function run(on) {
+      el.classList.toggle('paused', !on);
+      if (svg && svg.pauseAnimations) { if (on) svg.unpauseAnimations(); else svg.pauseAnimations(); }
+    }
+    if (REDUCE) { run(false); return; }
+    if (!IO) return;
+    var inView = false;
+    new IntersectionObserver(function (ents) { ents.forEach(function (en) { inView = en.isIntersecting; run(inView && !doc.hidden); }); }, { threshold: 0.1 }).observe(el);
+    doc.addEventListener('visibilitychange', function () { run(inView && !doc.hidden); });
+  })();
+
+  /* ============================================================
+   *  연혁 펼치기(폰 전용 버튼, 넓은 화면은 CSS가 항상 펼쳐 둔다)
+   *  접을 때는 연혁 머리로 돌아가 읽던 자리를 잃지 않게 한다.
+   * ============================================================ */
+  (function () {
+    var box = doc.getElementById('history');
+    var btn = box && box.querySelector('.hist-more');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var open = box.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.textContent = open ? TX.histLess : TX.histMore;
+      if (!open) {
+        var y = box.getBoundingClientRect().top + (win.pageYOffset || 0) - 80;
+        if (lenis) lenis.scrollTo(y, { immediate: true }); else win.scrollTo(0, y);
+      }
+      if (win.ScrollTrigger) win.ScrollTrigger.refresh();
     });
   })();
 
@@ -1137,18 +1246,34 @@
    *  상시 rAF 없음: 재생 여부는 전부 IntersectionObserver/이벤트로 결정.
    * ============================================================ */
   (function () {
-    var vids = [].slice.call(doc.querySelectorAll('.media-frame video'));
+    // 소리 있는 기업 영상(.film)은 자동재생하지 않는다(사용자가 재생). 나머지는 무음 무한 루프:
+    // 컨트롤을 보이지 않고, 자동재생이 막히면(저전력 모드 등) 첫 스크롤·터치 때 다시 튼다.
+    var vids = [].slice.call(doc.querySelectorAll('.media-frame:not(.film) video'));
     if (!vids.length) return;
-    if (REDUCE) {                                                   // reduced-motion: 자동재생 안 함, 수동 재생만
-      vids.forEach(function (v) { v.setAttribute('controls', ''); });
+    vids.forEach(function (v) { v.muted = true; v.loop = true; v.removeAttribute('controls'); });
+    if (REDUCE) {                                                   // reduced-motion: 첫 프레임에 멈춰 둔다
+      vids.forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); });
       return;
     }
-    if (!IO) return;
+    var blocked = false;
+    function retryOnGesture() {
+      if (blocked) return; blocked = true;
+      var go = function () {
+        ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function (e) { win.removeEventListener(e, go, true); });
+        blocked = false;
+        vids.forEach(function (v) { if (inView.get(v)) safePlay(v); });
+      };
+      ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function (e) { win.addEventListener(e, go, { capture: true, passive: true }); });
+    }
     function safePlay(v) {
       var p = v.play();
-      if (p && p.catch) p.catch(function () {});                    // play() reject 무시(콘솔 에러 0 원칙)
+      if (p && p.catch) p.catch(function (err) {
+        // pause()에 끊긴 AbortError는 무시, 정책 차단(NotAllowedError)만 사용자 동작 뒤 재시도
+        if (err && err.name === 'NotAllowedError') retryOnGesture();
+      });
     }
     var inView = new WeakMap();
+    if (!IO) { vids.forEach(function (v) { inView.set(v, true); safePlay(v); }); return; }
     var io = new IntersectionObserver(function (ents) {
       ents.forEach(function (en) {
         var v = en.target;
@@ -1162,6 +1287,8 @@
       if (doc.hidden) { vids.forEach(function (v) { v.pause(); }); }
       else { vids.forEach(function (v) { if (inView.get(v)) safePlay(v); }); }
     });
+    // 끝에서 멈추는 브라우저 대비: loop 속성과 별개로 ended 때 처음부터 다시
+    vids.forEach(function (v) { v.addEventListener('ended', function () { v.currentTime = 0; safePlay(v); }); });
   })();
 
   /* ============================================================

@@ -11,7 +11,7 @@ const CATEGORY_LABELS = {
   insight: '인사이트',
 };
 
-const SIMPLE_BODY_TAGS = ['p', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li'];
+const SIMPLE_BODY_TAGS = ['p', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li', 'h2', 'h3', 'blockquote', 'figure', 'figcaption'];
 
 export function normalizePostId(value) {
   if (typeof value !== 'string') return '';
@@ -260,7 +260,7 @@ export function renderArticle(post, options = {}) {
   const canonicalUrl = absoluteUrl(`/news/${id}.html`, baseUrl);
   const image = resolveImage(post.thumb, baseUrl);
   const label = categoryLabel(post.category);
-  const pageTitle = `${title} — 위키드스톰`;
+  const pageTitle = `${title} | 위키드스톰`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -322,7 +322,7 @@ export function renderArticle(post, options = {}) {
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="../img/favicon.png">
 
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=20260925">
 
 <!-- GA4 (기존 속성 유지) -->
 <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -347,8 +347,8 @@ ${safeJsonLd(jsonLd)}
     <a class="brand" href="../index.html" aria-label="WICKED STORM 홈"><img src="../img/logo-white.svg" alt="WICKED STORM" width="208" height="26"></a>
     <nav class="main" aria-label="주요 메뉴">
       <a href="../index.html#product">Product</a>
+      <a href="../index.html#learnhubble">LearnHubble AI</a>
       <a href="../index.html#standards">Standards</a>
-      <a href="../index.html#growa">GROWA</a>
       <a href="../news.html" aria-current="page">News</a>
       <a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="채용 정보 (새 창)">Recruit</a>
       <a class="cta" href="../index.html#contact">도입 문의</a>
@@ -361,8 +361,8 @@ ${safeJsonLd(jsonLd)}
 
 <nav class="drawer" id="drawer" aria-label="모바일 메뉴" hidden>
   <a href="../index.html#product">Product</a>
+  <a href="../index.html#learnhubble">LearnHubble AI</a>
   <a href="../index.html#standards">Standards</a>
-  <a href="../index.html#growa">GROWA</a>
   <a href="../news.html">News</a>
   <a href="../index.html#company">Company</a>
   <a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="채용 정보 (새 창)">Recruit</a>
@@ -393,14 +393,17 @@ ${safeJsonLd(jsonLd)}
         <p>Tel 02-2205-1470&nbsp;· Fax 02-6956-1473&nbsp;· manager@wickedstorm.kr</p>
       </div>
       <nav class="foot-nav" aria-label="푸터 메뉴">
-        <a href="../index.html#product">Product</a><a href="../index.html#standards">Standards</a><a href="../index.html#growa">GROWA</a><a href="../news.html">News</a><a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="채용 정보 (새 창)">Recruit</a><a href="../privacy.html">개인정보처리방침</a>
+        <a href="../index.html#product">Product</a><a href="../index.html#learnhubble">LearnHubble AI</a><a href="../index.html#standards">Standards</a><a href="../news.html">News</a><a href="https://www.saramin.co.kr/zf_user/company-info/view-inner-recruit?csn=dVFVWDFVV1Rab2VlaHo1NFV1Z1RsZz09" target="_blank" rel="noopener noreferrer" aria-label="채용 정보 (새 창)">Recruit</a><a href="../privacy.html">개인정보처리방침</a>
+        <a data-social="instagram" href="#" target="_blank" rel="noopener noreferrer" hidden>Instagram</a><a data-social="blog" href="#" target="_blank" rel="noopener noreferrer" hidden>Blog</a>
       </nav>
     </div>
-    <p class="legal">AI Insight, Empowered Education. — © 2026 Wicked Storm Inc.</p>
+    <p class="legal">Every Learning Moment, Designed for Growth. · © 2026 Wicked Storm Inc.</p>
   </div>
 </footer>
 
-<script src="../js/main.js" defer></script>
+<script src="../js/site-config.js?v=20260925" defer></script>
+<script src="../js/social.js?v=20260925" defer></script>
+<script src="../js/main.js?v=20260925" defer></script>
 </body>
 </html>
 `;
@@ -426,6 +429,9 @@ export function renderSitemap(posts, options = {}) {
 
   const defaultStaticEntries = [
     { path: '/', lastmod: updated, changefreq: 'monthly', priority: '1.0' },
+    { path: '/en/', lastmod: updated, changefreq: 'monthly', priority: '0.8' },
+    { path: '/ja/', lastmod: updated, changefreq: 'monthly', priority: '0.8' },
+    { path: '/vi/', lastmod: updated, changefreq: 'monthly', priority: '0.8' },
     { path: '/news.html', lastmod: updated, changefreq: 'weekly', priority: '0.7' },
     { path: '/privacy.html', lastmod: '2026-07-08', changefreq: 'yearly', priority: '0.3' },
   ];

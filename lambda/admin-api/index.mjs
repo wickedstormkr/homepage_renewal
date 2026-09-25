@@ -582,7 +582,7 @@ function buildCleanPayload(payload) {
 // 텍스트로 남아 무력화된다.
 // ---------------------------------------------------------------------------
 
-const SANITIZE_SIMPLE_TAGS = ['p', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li'];
+const SANITIZE_SIMPLE_TAGS = ['p', 'strong', 'em', 'b', 'i', 'ul', 'ol', 'li', 'h2', 'h3', 'blockquote', 'figure', 'figcaption'];
 
 function escapeHtml(str) {
   return String(str)

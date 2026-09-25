@@ -1,6 +1,7 @@
+
 .DS_Store
-.playwright-cli/
 .lighthouse/
+.playwright-cli/
 node_modules/
 npm-debug.log*
-
+scripts/__pycache__/

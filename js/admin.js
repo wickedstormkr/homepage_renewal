@@ -62,6 +62,8 @@
    * <em>·<img> 등)는 텍스트로 그대로 보존해 편집 왕복 후에도 소실되지 않는다.
    * 서버가 최종 정화하므로 클라이언트는 보존에 집중. */
   var ONLY_IMG_RE = /^<img\b[^>]*>$/i;
+  // 기사형 블록(요점 목록·사진 캡션·소제목·인용)은 <p>로 감싸지 않고 그대로 왕복시킨다.
+  var RAW_BLOCK_RE = /^<(ul|ol|figure|h2|h3|blockquote)\b[\s\S]*<\/\1>$/i;
 
   function textToBody(text) {
     return String(text || '').replace(/\r\n?/g, '\n').split(/\n\s*\n/)
@@ -69,6 +71,7 @@
       .filter(Boolean)
       .map(function (b) {
         if (ONLY_IMG_RE.test(b)) return b;                 // 단독 이미지 블록: 그대로
+        if (RAW_BLOCK_RE.test(b)) return b;                // 기사형 블록: 그대로
         return '<p>' + b.replace(/\n+/g, ' ') + '</p>';     // 일반 문단: 개행→공백
       })
       .join('');
@@ -79,10 +82,12 @@
   function bodyToText(body) {
     if (!body) return '';
     var s = String(body).replace(/\r/g, '');
-    var blocks = [], re = /<p\b[^>]*>([\s\S]*?)<\/p>|<img\b[^>]*>/gi, m, any = false;
+    var blocks = [], m, any = false;
+    var re = /<(ul|ol|figure|h2|h3|blockquote)\b[^>]*>[\s\S]*?<\/\1>|<p\b[^>]*>([\s\S]*?)<\/p>|<img\b[^>]*>/gi;
     while ((m = re.exec(s))) {
       any = true;
-      if (m[1] !== undefined) blocks.push(m[1].replace(/<br\s*\/?>/gi, '\n').trim());
+      if (m[1] !== undefined) blocks.push(m[0].trim());     // 기사형 블록: 원문 그대로
+      else if (m[2] !== undefined) blocks.push(m[2].replace(/<br\s*\/?>/gi, '\n').trim());
       else blocks.push(m[0].trim());                        // 단독 <img>
     }
     if (!any) {
