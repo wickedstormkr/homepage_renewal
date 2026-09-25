@@ -121,15 +121,12 @@
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.14); --line3:rgba(255,255,255,.38);
   --magenta:#e930b0; --violet:#7c4dff; --blue:#2f7cff; --cyan:#22e0d6;
   --grad:linear-gradient(92deg,#e930b0,#7c4dff 52%,#2f7cff);
-  --grad-c:linear-gradient(92deg,#7c4dff,#22e0d6);
   /* AA 대비용 파생 그라디언트: 흰 텍스트가 얹히는 .ntag 전용, 양 끝 스톱을 4.6:1+로 낮춤 */
   --grad-tag:linear-gradient(92deg,#cf2b9d,#7c4dff 52%,#2a70e6);
-  /* 제품 고유색: 브랜드 그라디언트의 세 끝점을 한 제품씩 나눠 가진다(가운데 보라는 제품에 쓰지 않음)
-     Lecognizer = 파랑, Lecognizer AI = 청록(AI 그라디언트 끝), LearnHubble AI = 마젠타. -t는 어두운 배경 위 글자용 */
-  --lec:#2f7cff; --lec-t:#6ea2ff;
-  --lai:#22e0d6; --lai-t:#4fe7de;
-  --lhb:#e930b0; --lhb-t:#f46acb;
-  --grad-m:linear-gradient(92deg,#e930b0,#b04dff);
+  /* 제품 색은 새 색을 만들지 않고 브랜드 그라디언트를 둘로 나눠 쓴다.
+     파랑 쪽 = Lecognizer·Lecognizer AI(LRS 계열), 마젠타 쪽 = LearnHubble AI. 가운데 보라에서 만난다 */
+  --grad-lec:linear-gradient(92deg,#6a5cff,#2f7cff);
+  --grad-lhb:linear-gradient(92deg,#e930b0,#9a4bf0);
   --font:"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif;
   --en:"Sora",var(--font);
   --wrap:1240px;
@@ -166,7 +163,8 @@ html.lenis,html.lenis body{height:auto}
 h1,h2,h3{letter-spacing:-.035em;line-height:1.12;font-weight:800}
 .h-lg{font-size:clamp(30px,4.4vw,56px)}
 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.gc{background:var(--grad-c);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* .gc는 예전 보라→청록 그라디언트. 글자 그라디언트를 브랜드 그라디언트 하나로 통일해 .g와 같다(번역 키 때문에 클래스 이름은 유지) */
+.gc{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sec-lead{margin-top:20px;max-width:44em;text-wrap:balance;color:#b3b8d4;font-size:clamp(15px,1.5vw,18px);font-weight:500}
 /* 줄바꿈: 단어 단위(body keep-all) + 데스크톱에서는 의미 단위로 끊는 <br class="br-d">.
    1280px 미만에서는 br-d를 숨기고 자연 줄바꿈에 맡긴다. .nw는 끊으면 뜻이 흐려지는 구. 끝줄 한 단어 고아는 pretty로 줄인다. */
@@ -377,9 +375,9 @@ nav.main .cta:hover{color:#fff}
 .pl-title{margin-top:.7cqw;font-size:2.4cqw;font-weight:800;letter-spacing:-.02em;color:#fff}
 .pl-sub{margin-top:.7cqw;font-size:1.28cqw;font-weight:500;color:#9aa3ad}
 .pl-steps{list-style:none;position:absolute;left:0;right:0;top:29.5%;display:grid;grid-template-columns:repeat(3,26%);column-gap:4.2%;justify-content:center}
-.pl-step{--c:#8f66ff;--d:0s}
-.pl-step.s2{--c:#2f7cff;--d:-8s}
-.pl-step.s3{--c:#22e0d6;--d:-4s}
+.pl-step{--c:#8a5cff;--d:0s}
+.pl-step.s2{--c:#5c6cff;--d:-8s}
+.pl-step.s3{--c:#2f7cff;--d:-4s}
 .pl-lab{text-align:center;font-size:1.95cqw;font-weight:800;color:#fff;animation:pl-lab 12s linear infinite var(--d)}
 .pl-lab i{font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:1.05cqw;font-weight:600;color:var(--c);margin-right:.6cqw}
 .pl-note{margin:.35cqw 0 1.25cqw;text-align:center;font-size:1.08cqw;font-weight:500;color:#9aa3ad;white-space:nowrap}
@@ -439,12 +437,11 @@ nav.main .cta:hover{color:#fff}
 .feature .feat-copy li::before{content:"";position:absolute;left:0;top:9px;width:11px;height:2px;background:var(--grad)}
 .feature .feat-badge{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-family:var(--en);font-size:12px;font-weight:700;
   letter-spacing:.06em;padding:7px 14px;border-radius:999px;background:rgba(34,224,214,.12);color:#7bece3}
-/* 제품 feature: 제목은 제품 이름(같은 위계), 제품 고유색으로 제목·불릿·배지·프레임 글로우를 맞춘다 */
-.feature.p-lec{--pc:var(--lec);--pc-t:var(--lec-t)}
-.feature.p-lai{--pc:var(--lai);--pc-t:var(--lai-t)}
-.feature .feat-copy h3.pname{font-family:var(--en);color:var(--pc-t);letter-spacing:-.02em}
-.feature[class*="p-"] .feat-copy li::before{background:var(--pc)}
-.feature[class*="p-"] .feat-badge{background:color-mix(in srgb,var(--pc) 14%,transparent);color:var(--pc-t)}
+/* 제품 feature: 제목은 제품 이름(Lecognizer와 Lecognizer AI가 같은 위계·같은 파랑 쪽 그라디언트) */
+.feature .feat-copy h3.pname{width:fit-content;font-family:var(--en);letter-spacing:-.02em;
+  background:var(--grad-lec);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.feature.p-lec .feat-copy li::before{background:var(--grad-lec)}
+.feature.p-lec .feat-badge{background:rgba(80,104,255,.14);color:#a9b6ff}
 
 /* ---- 브라우저 프레임 목업 ---- */
 .frame{position:relative;border-radius:16px;overflow:hidden;background:#0b0d1a;border:1px solid var(--line2);
@@ -457,7 +454,7 @@ nav.main .cta:hover{color:#fff}
 /* feature 프레임은 GSAP가 transform(패럴랙스)을 점유 → hover 피드백은 box-shadow로만 */
 .feature .frame{will-change:transform}
 .feature .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(124,77,255,.2)}
-.feature[class*="p-"] .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px color-mix(in srgb,var(--pc) 24%,transparent)}
+.feature.p-lec .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(80,104,255,.24)}
 /* 영상 루프 프레임 (파이프라인 / 컴퍼니) */
 .media-frame{margin-top:clamp(28px,4vw,48px)}
 .media-frame video{width:100%;height:auto;display:block;background:#0b0d1a}
@@ -507,12 +504,11 @@ nav.main .cta:hover{color:#fff}
 .std-meta .st.soon::before{background:#8a8fb2}
 .std-meta .st.ref::before{background:#b9a6ff}
 /* 제목 색으로 세 상태 구분(눈에 띄는 순서): 적용 = 브랜드 그라디언트 > 설계 참조 = 그라디언트 가운데의 밝은 보라 > 적용 예정 = 한 단계 낮춘 흰색.
-   파랑·청록·마젠타는 제품 고유색이라 상태 표시에 쓰지 않는다 */
+   제품 줄은 중립색 한 가지(카드 안 색을 제목 하나로 줄인다) */
 .std-card .k.ref{color:#b9a6ff}
 .std-card .k.soon{color:#c3c7df}
-.std-meta .pd{font-family:var(--en);font-size:11.5px;font-weight:600;color:var(--faint);line-height:1.4}
-.std-meta .pn.lec{color:var(--lec-t)}
-.std-meta .pn.lhb{color:var(--lhb-t)}
+.std-meta .pd{font-family:var(--en);font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.4}
+
 /* '적용' 카드 진입 시 보더 글로우 1회 펄스 (bounded, 1 iteration) */
 .std-card.pulse.in{animation:cardglow 1.2s ease 1}
 @keyframes cardglow{0%,100%{box-shadow:0 0 0 0 rgba(124,77,255,0)}
@@ -521,9 +517,10 @@ nav.main .cta:hover{color:#fff}
 /* ---- LearnHubble AI ---- */
 .lhub{background:linear-gradient(180deg,#080a16,var(--bg))}
 .lhub-top{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,4vw,56px);align-items:start}
-.lhub-name{margin:18px 0 10px;font-family:var(--en);font-size:clamp(22px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;color:var(--lhb-t)}
-/* 제목 강조(.gc)도 이 섹션에서는 LearnHubble AI 색. background 단축형은 background-clip을 풀어 버리므로 image만 바꾼다 */
-.lhub .sec-head .gc{background-image:var(--grad-m)}
+.lhub-name{width:fit-content;margin:18px 0 10px;font-family:var(--en);font-size:clamp(22px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;
+  background:var(--grad-lhb);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* 제목 강조(.gc)도 이 섹션에서는 LearnHubble AI 쪽 조각. background 단축형은 background-clip을 풀어 버리므로 image만 바꾼다 */
+.lhub .sec-head .gc{background-image:var(--grad-lhb)}
 .lhub-points{list-style:none;display:grid;gap:0;border-top:1px solid var(--line)}
 .lhub-points li{display:grid;grid-template-columns:2.6em 1fr;column-gap:10px;row-gap:3px;padding:16px 0;border-bottom:1px solid var(--line)}
 .lhub-points i{grid-row:span 2;font-style:normal;font-family:var(--en);font-size:12.5px;font-weight:700;color:var(--faint);padding-top:3px}
@@ -550,12 +547,11 @@ nav.main .cta:hover{color:#fff}
 .loop-notes li{position:absolute;left:var(--x);top:var(--y);width:var(--w);text-align:var(--align,left);
   display:flex;flex-direction:column;align-items:flex-start;gap:.45cqw}
 .loop-notes li[style*="--align:right"]{align-items:flex-end}
-/* 솔루션 알약은 세 개 모두 같은 크기, 색은 제품 고유색(Lecognizer 파랑·Lecognizer AI 청록·LearnHubble AI 마젠타) */
+/* 솔루션 알약은 세 개 모두 같은 크기. 색은 브랜드 그라디언트 두 조각: Lecognizer·Lecognizer AI = 파랑 쪽, LearnHubble AI = 마젠타 쪽 */
 .loop-notes .pill{display:inline-block;padding:.3cqw .85cqw;border-radius:999px;color:#fff;
   font-family:var(--en);font-size:clamp(10px,1.08cqw,15px);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.loop-notes .pill.lrs{background:var(--lec);box-shadow:0 0 1.6cqw rgba(47,124,255,.5)}
-.loop-notes .lai .pill{background:var(--lai);color:#04161a;box-shadow:0 0 1.6cqw rgba(34,224,214,.42)}
-.loop-notes .pill.lxp{background:var(--lhb);box-shadow:0 0 1.6cqw rgba(233,48,176,.45)}
+.loop-notes .pill.lrs{background:var(--grad-lec);box-shadow:0 0 1.6cqw rgba(70,100,255,.5)}
+.loop-notes .pill.lxp{background:var(--grad-lhb);box-shadow:0 0 1.6cqw rgba(200,60,200,.42)}
 .loop-notes .ln-role b{font-size:clamp(12px,1.3cqw,18px);font-weight:800;color:#d7c6ff;letter-spacing:-.02em;white-space:nowrap}
 .loop-notes .ln-desc{font-size:clamp(10px,.92cqw,13px);line-height:1.5;color:#c4bde4;text-wrap:balance;text-shadow:0 1px 8px rgba(6,4,24,.9)}
 .loop-figure>figcaption{margin-top:12px}
@@ -633,7 +629,7 @@ html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{
 .ncard .ncover .cover-cat{position:absolute;left:22px;bottom:20px;z-index:1;
   font-family:var(--en);font-weight:700;font-size:clamp(28px,3.4vw,36px);letter-spacing:-.02em;
   line-height:1;text-transform:lowercase;
-  background:var(--grad-c);-webkit-background-clip:text;background-clip:text;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;color:transparent}
 .ncard .nbody{padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
 .ncard .nmeta{display:flex;align-items:center;gap:10px;font-family:var(--en);font-size:12px;color:var(--faint);font-weight:600}
@@ -795,7 +791,7 @@ html.nogsap .hero h1 .line-inner{transform:none}
   color:var(--muted);font-family:var(--en);font-size:13px;font-weight:600;cursor:pointer;
   transition:border-color .2s,color .2s,background .2s}
 .board-tab:hover{border-color:var(--line3);color:var(--ink)}
-.board-tab[aria-pressed="true"]{border-color:transparent;background:var(--grad-c);color:#06070e}
+.board-tab[aria-pressed="true"]{border-color:transparent;background:var(--grad);color:#fff}
 /* 빈 카테고리 · 로드 실패 플레이스홀더 */
 .board-empty{grid-column:1/-1;text-align:center;padding:clamp(48px,8vw,90px) 20px;color:var(--faint);font-size:15px}
 .board-empty a{color:var(--cyan);text-decoration:underline}

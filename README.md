@@ -11,7 +11,7 @@
 - 인스타그램·블로그 연결: `js/site-config.js`의 `SOCIAL` 채우기, 운영 기준은 [docs/SNS_채널_연계_가이드.md](docs/SNS_채널_연계_가이드.md)
 - 인스타그램 프로필 링크: `links.html`
 - 파이프라인 루프: 영상이 아니라 HTML/CSS 애니메이션(`#pipeLoop`, 12초 주기·transform/opacity만 사용). 글자가 HTML이라 다국어 빌드가 그대로 번역하고, 화면에 들어오면 재생·벗어나면 멈춘다(`js/main.js`). 단계 화면은 `img/pipe-{collect,store,analyze}.webp`
-- 제품 고유색(`css/style.css`의 `--lec`·`--lai`·`--lhb`): Lecognizer 파랑, Lecognizer AI 청록, LearnHubble AI 마젠타. 제품 이름 표시(선순환 알약, 제품 제목, 표준 카드의 제품 줄)에만 쓰고 상태 표시에는 쓰지 않는다
+- 색: 글자 그라디언트는 브랜드 그라디언트(`--grad`, 마젠타→보라→파랑) 하나. 제품 색은 새 색 없이 그 두 조각만 쓴다. `--grad-lec`(파랑 쪽) = Lecognizer·Lecognizer AI, `--grad-lhb`(마젠타 쪽) = LearnHubble AI. 선순환 알약·제품 제목·LearnHubble 섹션에만 쓰고, 표준 카드 제품 줄은 중립색
 - 다국어(영·일·베): 국문 `index.html`이 원본. 문구를 고친 뒤
   `python3 scripts/build_i18n.py extract`(번역 단위 → `i18n/ko.json`) → `i18n/{en,ja,vi}.json`에 빠진 키 번역 →
   `python3 scripts/build_i18n.py build`(→ `en/ ja/ vi/index.html`). `check`는 빠진 번역만 보고한다.
