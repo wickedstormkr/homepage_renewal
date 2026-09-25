@@ -1203,6 +1203,25 @@
   })();
 
   /* ============================================================
+   *  파이프라인 루프(HTML/CSS): 화면 밖이면 멈추고 들어오면 곧바로 이어서 돈다.
+   *  reduced-motion이면 CSS 애니메이션은 전역 규칙으로 꺼지고, SVG 호 점도 멈춘다.
+   * ============================================================ */
+  (function () {
+    var el = doc.getElementById('pipeLoop');
+    if (!el) return;
+    var svg = el.querySelector('svg');
+    function run(on) {
+      el.classList.toggle('paused', !on);
+      if (svg && svg.pauseAnimations) { if (on) svg.unpauseAnimations(); else svg.pauseAnimations(); }
+    }
+    if (REDUCE) { run(false); return; }
+    if (!IO) return;
+    var inView = false;
+    new IntersectionObserver(function (ents) { ents.forEach(function (en) { inView = en.isIntersecting; run(inView && !doc.hidden); }); }, { threshold: 0.1 }).observe(el);
+    doc.addEventListener('visibilitychange', function () { run(inView && !doc.hidden); });
+  })();
+
+  /* ============================================================
    *  영상 루프 재생 제어 (파이프라인/컴퍼니) — IO 25% + visibilitychange
    *  상시 rAF 없음: 재생 여부는 전부 IntersectionObserver/이벤트로 결정.
    * ============================================================ */

@@ -200,7 +200,41 @@ gtag('config','G-0Y5QD1HBGN');
         <div class="step"><span class="n"><em>04</em> · Act</span><h3>Insight</h3><p>People review and act</p><p class="step-detail"><span>People review the alerts and raw data and make the decision, and the results are recorded as learning data again.</span></p></div>
       </div>
     </div>
-    <figure class="frame media-frame rv"><video width="1280" height="720" muted loop playsinline autoplay preload="auto" disablepictureinpicture disableremoteplayback poster="../media/pipeline-poster-en.webp" aria-label="Looping video that highlights the Lecognizer collection, storage, and analysis screens in turn"><source src="../media/pipeline-loop-en.mp4" type="video/mp4"></video><figcaption class="note">In Lecognizer, collection, storage, and analysis run as one flow</figcaption></figure>
+    <!-- 파이프라인 루프: 영상 대신 HTML/CSS 애니메이션(자동재생 정책과 무관하게 진입 즉시 무한 반복, 문구는 번역 가능).
+         12초 주기로 01→02→03이 차례로 켜진다. 화면 밖이면 멈추고, reduced-motion이면 정지 화면. -->
+    <figure class="frame media-frame pipe-loop rv" id="pipeLoop">
+      <div class="pl-stage">
+        <div class="pl-head">
+          <p class="pl-idx">ONE PIPELINE</p>
+          <p class="pl-title">Collect · Store · Analyze, in one flow</p>
+          <p class="pl-sub">Learning data collected using global standards is stored in one place and analyzed by AI</p>
+        </div>
+        <ol class="pl-steps">
+          <li class="pl-step s1">
+            <p class="pl-lab"><i>01</i>Collect</p>
+            <p class="pl-note">Real-time collection using global standards</p>
+            <div class="pl-win"><div class="pl-bar"><span></span><span></span><span></span><em>lecognizer.wickedstorm.kr/statements</em></div><div class="pl-shot"><img src="../img/pipe-collect.webp" alt="Lecognizer data view screen: a list of learning activity Statements collected using global standards" width="960" height="600" loading="lazy"><span class="pl-scan" aria-hidden="true"></span></div><span class="pl-flow" aria-hidden="true"><i></i></span></div>
+          </li>
+          <li class="pl-step s2">
+            <p class="pl-lab"><i>02</i>Store</p>
+            <p class="pl-note">Stored with curriculum context</p>
+            <div class="pl-win"><div class="pl-bar"><span></span><span></span><span></span><em>lecognizer.wickedstorm.kr/dashboard</em></div><div class="pl-shot"><img src="../img/pipe-store.webp" alt="Lecognizer dashboard screen: stored learning data and collection trends" width="960" height="600" loading="lazy"><span class="pl-scan" aria-hidden="true"></span></div><span class="pl-flow" aria-hidden="true"><i></i></span></div>
+          </li>
+          <li class="pl-step s3">
+            <p class="pl-lab"><i>03</i>Analyze</p>
+            <p class="pl-note">Lecognizer AI anomaly detection</p>
+            <div class="pl-win"><div class="pl-bar"><span></span><span></span><span></span><em>lecognizer.wickedstorm.kr/ai-signals</em></div><div class="pl-shot"><img src="../img/pipe-analyze.webp" alt="Lecognizer AI screen: learning data loaded per CASE curriculum framework, with AI anomaly detection" width="960" height="600" loading="lazy"><span class="pl-scan" aria-hidden="true"></span></div></div>
+          </li>
+        </ol>
+        <svg class="pl-arc" viewBox="0 0 1600 900" aria-hidden="true">
+          <defs><linearGradient id="plArc" x1="1" x2="0"><stop offset="0" stop-color="#22e0d6" stop-opacity=".65"/></stop><stop offset="1" stop-color="#7c4dff" stop-opacity=".65"/></stop></linearGradient></defs>
+          <path d="M 1283 664 C 1283 772, 317 772, 317 664" fill="none" stroke="url(#plArc)" stroke-width="2.5" stroke-dasharray="7 12"><animate attributeName="stroke-dashoffset" from="0" to="-190" dur="6s" repeatCount="indefinite"/></animate></path>
+          <circle r="7" fill="#fff"><animateMotion dur="12s" repeatCount="indefinite" path="M 1283 664 C 1283 772, 317 772, 317 664"/></animateMotion></circle>
+        </svg>
+        <p class="pl-arc-text">Results applied in teaching become learning data again</p>
+      </div>
+      <figcaption class="note">In Lecognizer, collection, storage, and analysis run as one flow</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -216,10 +250,10 @@ gtag('config','G-0Y5QD1HBGN');
     <figure class="loop-figure rv">
       <div class="loop-stage">
         <img src="../img/learning-loop.webp" alt="Learning Loop: learner activity is recorded in Lecognizer, Lecognizer AI finds signals, the Curriculum Administrator and the Instructor decide and apply changes in LearnHubble AI, and the results return to learners in a continuous cycle" width="1920" height="975" loading="lazy">
-        <!-- 카탈로그 6~7쪽과 같은 위계: 솔루션은 채운 알약, 역할은 색 글자 + 그 역할이 쓰는 솔루션 알약, 설명은 작은 회색 글자 -->
+        <!-- 카탈로그 6~7쪽과 같은 위계: 솔루션은 채운 알약(제품 고유색: Lecognizer 파랑·Lecognizer AI 청록·LearnHubble AI 마젠타), 역할은 색 글자 + 그 역할이 쓰는 솔루션 알약, 설명은 작은 회색 글자 -->
         <ol class="loop-notes">
-          <li class="ln-sol" style="--x:26.5%;--y:4%;--w:18%;--align:right"><span class="pill lrs">Lecognizer</span><span class="ln-desc">Collects and stores learning data using global standards. It links the data to competency frameworks based on 1EdTech CASE.</span></li>
-          <li class="ln-sol" style="--x:85.5%;--y:26.5%;--w:13.5%"><span class="pill lrs">Lecognizer AI</span><span class="ln-desc">Identifies where many learners struggled to inform next semester’s learning design.</span></li>
+          <li class="ln-sol lec" style="--x:26.5%;--y:4%;--w:18%;--align:right"><span class="pill lrs">Lecognizer</span><span class="ln-desc">Collects and stores learning data using global standards. It links the data to competency frameworks based on 1EdTech CASE.</span></li>
+          <li class="ln-sol lai" style="--x:85.5%;--y:26.5%;--w:13.5%"><span class="pill lrs">Lecognizer AI</span><span class="ln-desc">Identifies where many learners struggled to inform next semester’s learning design.</span></li>
           <li class="ln-role" style="--x:79%;--y:74%;--w:19.5%"><b>Curriculum Administrator</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Administrators review AI alerts and raw data. They refine CASE-based <span class="nw">academic and job-related</span> competency frameworks.</span></li>
           <li class="ln-role" style="--x:1.5%;--y:66%;--w:15.5%;--align:right"><b>Instructor</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Instructors use AI alerts to plan additional lessons or support learners who need help.</span></li>
           <li class="ln-role" style="--x:1.5%;--y:28%;--w:15.5%;--align:right"><b>Learner</b><span class="pill lxp">LearnHubble AI</span><span class="ln-desc">Learners interact with AI when they need it, to keep learning effectively.</span></li>
@@ -228,10 +262,10 @@ gtag('config','G-0Y5QD1HBGN');
       <figcaption class="note">This semester’s learning data informs next semester’s learning design.</figcaption>
     </figure>
 
-    <div class="feature stag">
+    <div class="feature p-lec stag">
       <div class="feat-copy">
         <p class="kick rv">Learning Data Repository</p>
-        <h3 class="rv">Lecognizer</h3>
+        <h3 class="pname rv">Lecognizer</h3>
         <p class="rv">A learning data repository built on global standards, with AI anomaly detection. Lecognizer collects and stores learning data from all teaching, learning, and operational activities in real time, together with its 1EdTech CASE curriculum context.</p>
         <ul class="rv">
           <li>Real-time collection and storage using global standards, with learning data that carries over when systems change</li>
@@ -243,10 +277,10 @@ gtag('config','G-0Y5QD1HBGN');
       <figure class="frame rv fade"><img src="../img/dash-main-public.webp" alt="Example of the Lecognizer integrated dashboard screen" width="1319" height="684" loading="lazy"></figure>
     </div>
 
-    <div class="feature reverse stag">
+    <div class="feature reverse p-lai stag">
       <div class="feat-copy">
-        <p class="kick rv">Lecognizer AI</p>
-        <h3 class="rv">Unusual patterns,<br><span class="gc">found and flagged first</span></h3>
+        <p class="kick rv">AI Anomaly Detection</p>
+        <h3 class="pname rv">Lecognizer AI</h3>
         <p class="rv">An AI solution that analyzes learning data stored in Lecognizer. It finds unusual patterns and where many learners struggled, flags them, and then shows the raw data behind each alert.</p>
         <ul class="rv">
           <li>Prioritizes signals that need attention and issues alerts</li>
@@ -255,7 +289,7 @@ gtag('config','G-0Y5QD1HBGN');
         </ul>
         <span class="feat-badge rv">2 granted AI patents · Learning anomaly detection · Learner profiling</span>
       </div>
-      <figure class="frame rv fade"><img src="../img/lecognizer-ai-signals.webp" alt="Example of the Lecognizer AI anomaly detection screen: learning data loaded per CASE curriculum framework, and alerts on sections where learners struggled" width="1600" height="1000" loading="lazy"></figure>
+      <figure class="frame rv fade"><img src="../img/lecognizer-ai-detect.webp" alt="Example of the Lecognizer AI anomaly detection screen: Statements stored in real time, and an anomaly in week 3 where pauses, rewinds, and wrong answers cluster in one segment, with a likely cause" width="1100" height="898" loading="lazy"></figure>
     </div>
     <p class="note rv">※ Subjects, people, and figures on screen are demo data for product illustration.</p>
   </div>
@@ -266,7 +300,7 @@ gtag('config','G-0Y5QD1HBGN');
   <div class="wrap">
     <div class="sec-head rv">
       <p class="eyebrow"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> Learning Experience Platform</p>
-      <p class="lhub-name">LearnHubble <span class="gc">AI</span></p>
+      <p class="lhub-name">LearnHubble AI</p>
       <h2 class="h-lg">A personalized teaching and <span class="gc nw">learning platform</span> with AI interaction</h2>
       <p class="sec-lead lead-1">In lectures and assignments, AI offers explanations and hints when needed.</p>
     </div>
@@ -342,16 +376,16 @@ gtag('config','G-0Y5QD1HBGN');
       <p class="std-badge"><span class="powered"><img class="sym" src="../img/symbol.png" alt="" width="16" height="16" loading="lazy"> 1EdTech Korea founding board member · <b>Contributing&nbsp;Member</b></span></p>
     </div>
     <div class="std-grid stag">
-      <a class="std-card rv pulse" href="https://github.com/adlnet/xAPI-Spec" target="_blank" rel="noopener noreferrer" aria-label="xAPI official specification (opens in a new window)"><div class="k on">xAPI</div><p>Standard for collecting learning activity data</p><div class="std-meta"><span class="st apply">Applied</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
-      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/case" target="_blank" rel="noopener noreferrer" aria-label="CASE official specification (opens in a new window)"><div class="k on">CASE</div><p>Standard for curriculum, achievement standard, and competency frameworks</p><div class="std-meta"><span class="st apply">Applied</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
-      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/caliper" target="_blank" rel="noopener noreferrer" aria-label="Caliper official specification (opens in a new window)"><div class="k on">Caliper</div><p>Standard for learning event data</p><div class="std-meta"><span class="st apply">Applied</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/standards/open-badges" target="_blank" rel="noopener noreferrer" aria-label="Open Badges 3.0 official specification (opens in a new window)"><div class="k soon">Open Badges 3.0</div><p>Standard for issuing digital evidence of achievement (badges)</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/standards/clr" target="_blank" rel="noopener noreferrer" aria-label="CLR 2.0 official specification (opens in a new window)"><div class="k soon">CLR 2.0</div><p>Standard for a learner’s comprehensive learning record</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/standards/edu-api" target="_blank" rel="noopener noreferrer" aria-label="EduAPI official specification (opens in a new window)"><div class="k soon">EduAPI</div><p>Next-generation API for education data integration</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd">LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/workstream/credentials" target="_blank" rel="noopener noreferrer" aria-label="Digital Credentials official specification (opens in a new window)"><div class="k soon">Digital Credentials</div><p>Ecosystem for verifiable digital credentials</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd">Lecognizer · LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/standards/oneroster" target="_blank" rel="noopener noreferrer" aria-label="OneRoster official specification (opens in a new window)"><div class="k ref">OneRoster</div><p>Standard for roster and grade exchange</p><div class="std-meta"><span class="st ref">Design reference</span><span class="pd">LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/standards/lti" target="_blank" rel="noopener noreferrer" aria-label="LTI official specification (opens in a new window)"><div class="k ref">LTI</div><p>Standard for learning tool interoperability</p><div class="std-meta"><span class="st ref">Design reference</span><span class="pd">LearnHubble AI</span></div></a>
-      <a class="std-card rv" href="https://www.1edtech.org/standards/qti" target="_blank" rel="noopener noreferrer" aria-label="QTI official specification (opens in a new window)"><div class="k ref">QTI</div><p>Standard for assessment item interoperability</p><div class="std-meta"><span class="st ref">Design reference</span><span class="pd">LearnHubble AI</span></div></a>
+      <a class="std-card rv pulse" href="https://github.com/adlnet/xAPI-Spec" target="_blank" rel="noopener noreferrer" aria-label="xAPI official specification (opens in a new window)"><div class="k on">xAPI</div><p>Standard for collecting learning activity data</p><div class="std-meta"><span class="st apply">Applied</span><span class="pd"><span class="pn lec">Lecognizer</span> · <span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/case" target="_blank" rel="noopener noreferrer" aria-label="CASE official specification (opens in a new window)"><div class="k on">CASE</div><p>Standard for curriculum, achievement standard, and competency frameworks</p><div class="std-meta"><span class="st apply">Applied</span><span class="pd"><span class="pn lec">Lecognizer</span> · <span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv pulse" href="https://www.1edtech.org/standards/caliper" target="_blank" rel="noopener noreferrer" aria-label="Caliper official specification (opens in a new window)"><div class="k on">Caliper</div><p>Standard for learning event data</p><div class="std-meta"><span class="st apply">Applied</span><span class="pd"><span class="pn lec">Lecognizer</span> · <span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/open-badges" target="_blank" rel="noopener noreferrer" aria-label="Open Badges 3.0 official specification (opens in a new window)"><div class="k soon">Open Badges 3.0</div><p>Standard for issuing digital evidence of achievement (badges)</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd"><span class="pn lec">Lecognizer</span> · <span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/clr" target="_blank" rel="noopener noreferrer" aria-label="CLR 2.0 official specification (opens in a new window)"><div class="k soon">CLR 2.0</div><p>Standard for a learner’s comprehensive learning record</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd"><span class="pn lec">Lecognizer</span> · <span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/edu-api" target="_blank" rel="noopener noreferrer" aria-label="EduAPI official specification (opens in a new window)"><div class="k soon">EduAPI</div><p>Next-generation API for education data integration</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd"><span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/workstream/credentials" target="_blank" rel="noopener noreferrer" aria-label="Digital Credentials official specification (opens in a new window)"><div class="k soon">Digital Credentials</div><p>Ecosystem for verifiable digital credentials</p><div class="std-meta"><span class="st soon">Planned</span><span class="pd"><span class="pn lec">Lecognizer</span> · <span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/oneroster" target="_blank" rel="noopener noreferrer" aria-label="OneRoster official specification (opens in a new window)"><div class="k ref">OneRoster</div><p>Standard for roster and grade exchange</p><div class="std-meta"><span class="st ref">Design reference</span><span class="pd"><span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/lti" target="_blank" rel="noopener noreferrer" aria-label="LTI official specification (opens in a new window)"><div class="k ref">LTI</div><p>Standard for learning tool interoperability</p><div class="std-meta"><span class="st ref">Design reference</span><span class="pd"><span class="pn lhb">LearnHubble AI</span></span></div></a>
+      <a class="std-card rv" href="https://www.1edtech.org/standards/qti" target="_blank" rel="noopener noreferrer" aria-label="QTI official specification (opens in a new window)"><div class="k ref">QTI</div><p>Standard for assessment item interoperability</p><div class="std-meta"><span class="st ref">Design reference</span><span class="pd"><span class="pn lhb">LearnHubble AI</span></span></div></a>
     </div>
   </div>
 </section>

@@ -124,6 +124,12 @@
   --grad-c:linear-gradient(92deg,#7c4dff,#22e0d6);
   /* AA 대비용 파생 그라디언트: 흰 텍스트가 얹히는 .ntag 전용, 양 끝 스톱을 4.6:1+로 낮춤 */
   --grad-tag:linear-gradient(92deg,#cf2b9d,#7c4dff 52%,#2a70e6);
+  /* 제품 고유색: 브랜드 그라디언트의 세 끝점을 한 제품씩 나눠 가진다(가운데 보라는 제품에 쓰지 않음)
+     Lecognizer = 파랑, Lecognizer AI = 청록(AI 그라디언트 끝), LearnHubble AI = 마젠타. -t는 어두운 배경 위 글자용 */
+  --lec:#2f7cff; --lec-t:#6ea2ff;
+  --lai:#22e0d6; --lai-t:#4fe7de;
+  --lhb:#e930b0; --lhb-t:#f46acb;
+  --grad-m:linear-gradient(92deg,#e930b0,#b04dff);
   --font:"Pretendard Variable",Pretendard,-apple-system,system-ui,"Noto Sans KR",sans-serif;
   --en:"Sora",var(--font);
   --wrap:1240px;
@@ -361,6 +367,66 @@ nav.main .cta:hover{color:#fff}
 .step-detail span{overflow:hidden;min-height:0;display:block;padding-top:2px;color:var(--muted);font-size:13px;line-height:1.6}
 .pipe .step.lit .step-detail{opacity:1;transform:none}
 
+/* ---- 파이프라인 루프(HTML/CSS 애니메이션, 12초 주기) ----
+   01→02→03이 4초씩 켜진다. 모든 움직임은 transform/opacity(+SVG SMIL 호 점)만 쓴다.
+   음수 animation-delay로 세 단계의 위상을 1/3씩 어긋나게 해 첫 프레임부터 이음새 없이 돈다. */
+.pipe-loop .pl-stage{position:relative;aspect-ratio:16/9;container-type:inline-size;overflow:hidden;
+  background:radial-gradient(60% 50% at 50% 52%,rgba(124,77,255,.13),transparent 70%),#000}
+.pl-head{position:absolute;left:0;right:0;top:8.5%;text-align:center}
+.pl-idx{font-family:ui-monospace,Menlo,monospace;font-size:.95cqw;letter-spacing:.22em;color:#6b7280}
+.pl-title{margin-top:.7cqw;font-size:2.4cqw;font-weight:800;letter-spacing:-.02em;color:#fff}
+.pl-sub{margin-top:.7cqw;font-size:1.28cqw;font-weight:500;color:#9aa3ad}
+.pl-steps{list-style:none;position:absolute;left:0;right:0;top:29.5%;display:grid;grid-template-columns:repeat(3,26%);column-gap:4.2%;justify-content:center}
+.pl-step{--c:#8f66ff;--d:0s}
+.pl-step.s2{--c:#2f7cff;--d:-8s}
+.pl-step.s3{--c:#22e0d6;--d:-4s}
+.pl-lab{text-align:center;font-size:1.95cqw;font-weight:800;color:#fff;animation:pl-lab 12s linear infinite var(--d)}
+.pl-lab i{font-style:normal;font-family:ui-monospace,Menlo,monospace;font-size:1.05cqw;font-weight:600;color:var(--c);margin-right:.6cqw}
+.pl-note{margin:.35cqw 0 1.25cqw;text-align:center;font-size:1.08cqw;font-weight:500;color:#9aa3ad;white-space:nowrap}
+.pl-win{position:relative;border-radius:.75cqw;border:1px solid color-mix(in srgb,var(--c) 45%,transparent);background:#0b0c0e;
+  animation:pl-lift 12s ease-in-out infinite var(--d)}
+.pl-win::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;
+  box-shadow:0 0 0 1px var(--c),0 0 2.4cqw color-mix(in srgb,var(--c) 55%,transparent);animation:pl-on 12s ease-in-out infinite var(--d)}
+.pl-bar{display:flex;align-items:center;gap:.4cqw;height:2.1cqw;padding:0 .8cqw;background:#17191d;border-bottom:1px solid #25282e;border-radius:.75cqw .75cqw 0 0}
+.pl-bar span{width:.55cqw;height:.55cqw;border-radius:50%;background:#ff5f57}
+.pl-bar span:nth-child(2){background:#febc2e}.pl-bar span:nth-child(3){background:#28c840}
+.pl-bar em{flex:1;margin-left:.5cqw;padding:.2cqw .6cqw;border-radius:.35cqw;background:#0c0d10;font-style:normal;
+  font-family:ui-monospace,Menlo,monospace;font-size:.68cqw;color:#6b7280;white-space:nowrap;overflow:hidden}
+.pl-shot{position:relative;overflow:hidden;border-radius:0 0 .75cqw .75cqw}
+.pl-shot img{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover}
+.pl-shot::after{content:"";position:absolute;inset:0;background:rgba(6,7,14,.45);opacity:0;animation:pl-dim 12s ease-in-out infinite var(--d)}
+.pl-scan{position:absolute;inset:0;z-index:1;opacity:0;transform:translateY(-100%);
+  background:linear-gradient(180deg,transparent 78%,color-mix(in srgb,var(--c) 22%,transparent) 93%,color-mix(in srgb,var(--c) 75%,transparent));
+  animation:pl-scan 12s linear infinite var(--d)}
+.pl-flow{position:absolute;left:100%;top:50%;width:16.2%;height:1cqw;transform:translateY(-50%);overflow:hidden;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 40%,transparent),rgba(124,77,255,.4)) center/100% 2px no-repeat}
+.pl-flow i{position:absolute;inset:0 auto 0 0;width:200%;
+  background:radial-gradient(circle,#fff 0 .28cqw,transparent .34cqw) 0 50%/12.5% 100% repeat-x;animation:pl-flow 1.6s linear infinite}
+.pl-arc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pl-arc circle{filter:drop-shadow(0 0 6px #e930b0)}
+.pl-arc-text{position:absolute;left:0;right:0;top:87%;text-align:center;font-size:1.08cqw;font-weight:500;color:#8b93a1}
+@keyframes pl-on{0%{opacity:0}6%{opacity:1}30%{opacity:1}36%{opacity:0}100%{opacity:0}}
+@keyframes pl-dim{0%{opacity:1}6%{opacity:0}30%{opacity:0}36%{opacity:1}100%{opacity:1}}
+@keyframes pl-lab{0%{opacity:.55}6%{opacity:1}30%{opacity:1}36%{opacity:.55}100%{opacity:.55}}
+@keyframes pl-lift{0%{transform:none}6%{transform:scale(1.035)}30%{transform:scale(1.035)}36%{transform:none}100%{transform:none}}
+@keyframes pl-scan{0%{opacity:0;transform:translateY(-100%)}3%{opacity:1}31%{opacity:1;transform:translateY(0)}34%{opacity:0;transform:translateY(0)}100%{opacity:0;transform:translateY(0)}}
+@keyframes pl-flow{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.pipe-loop.paused *{animation-play-state:paused!important}
+/* 좁은 화면: 16:9 안 글자가 너무 작아지므로 세로 배치 */
+@media (max-width:760px){
+  .pipe-loop .pl-stage{aspect-ratio:auto;container-type:normal;padding:22px 18px 20px}
+  .pl-head,.pl-steps,.pl-arc-text{position:static}
+  .pl-idx{font-size:11px}.pl-title{font-size:19px;margin-top:6px}.pl-sub{font-size:13px;margin-top:6px}
+  .pl-steps{display:grid;grid-template-columns:1fr;row-gap:22px;margin-top:22px}
+  .pl-lab{font-size:17px}.pl-lab i{font-size:12px;margin-right:6px}
+  .pl-note{font-size:13px;margin:4px 0 10px;white-space:normal}
+  .pl-win{border-radius:10px}.pl-bar{height:22px;gap:5px;padding:0 9px;border-radius:10px 10px 0 0}
+  .pl-bar span{width:7px;height:7px}.pl-bar em{font-size:9.5px;padding:2px 7px;border-radius:5px}
+  .pl-shot{border-radius:0 0 10px 10px}
+  .pl-flow,.pl-arc{display:none}
+  .pl-arc-text{margin-top:18px;font-size:13px}
+}
+
 /* ---- 제품 feature ---- */
 .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .feature{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,64px);align-items:center;margin-top:clamp(44px,6vw,84px)}
@@ -373,6 +439,12 @@ nav.main .cta:hover{color:#fff}
 .feature .feat-copy li::before{content:"";position:absolute;left:0;top:9px;width:11px;height:2px;background:var(--grad)}
 .feature .feat-badge{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-family:var(--en);font-size:12px;font-weight:700;
   letter-spacing:.06em;padding:7px 14px;border-radius:999px;background:rgba(34,224,214,.12);color:#7bece3}
+/* 제품 feature: 제목은 제품 이름(같은 위계), 제품 고유색으로 제목·불릿·배지·프레임 글로우를 맞춘다 */
+.feature.p-lec{--pc:var(--lec);--pc-t:var(--lec-t)}
+.feature.p-lai{--pc:var(--lai);--pc-t:var(--lai-t)}
+.feature .feat-copy h3.pname{font-family:var(--en);color:var(--pc-t);letter-spacing:-.02em}
+.feature[class*="p-"] .feat-copy li::before{background:var(--pc)}
+.feature[class*="p-"] .feat-badge{background:color-mix(in srgb,var(--pc) 14%,transparent);color:var(--pc-t)}
 
 /* ---- 브라우저 프레임 목업 ---- */
 .frame{position:relative;border-radius:16px;overflow:hidden;background:#0b0d1a;border:1px solid var(--line2);
@@ -385,6 +457,7 @@ nav.main .cta:hover{color:#fff}
 /* feature 프레임은 GSAP가 transform(패럴랙스)을 점유 → hover 피드백은 box-shadow로만 */
 .feature .frame{will-change:transform}
 .feature .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px rgba(124,77,255,.2)}
+.feature[class*="p-"] .frame:hover{box-shadow:0 50px 110px rgba(0,0,0,.55),0 0 96px color-mix(in srgb,var(--pc) 24%,transparent)}
 /* 영상 루프 프레임 (파이프라인 / 컴퍼니) */
 .media-frame{margin-top:clamp(28px,4vw,48px)}
 .media-frame video{width:100%;height:auto;display:block;background:#0b0d1a}
@@ -421,6 +494,8 @@ nav.main .cta:hover{color:#fff}
 .std-card::after{content:"↗";position:absolute;top:12px;right:14px;font-size:11px;color:var(--faint);opacity:0;transition:opacity .25s}
 .std-card:hover::after,.std-card:focus-visible::after{opacity:1}
 .std-card .k{font-family:var(--en);font-size:17px;font-weight:800;letter-spacing:-.01em}
+/* 그라디언트가 카드 폭이 아니라 글자 폭에 걸리도록(짧은 이름이 마젠타 끝만 보여 LearnHubble AI 색처럼 읽히지 않게) */
+.std-card .k{align-self:flex-start;width:fit-content;max-width:100%}
 .std-card .k.on{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .std-card p{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5}
 /* 상태(점+글자)와 해당 제품. 카드 아래쪽에 맞춰 정렬 */
@@ -428,13 +503,16 @@ nav.main .cta:hover{color:#fff}
 .std-card p+.std-meta{margin-top:auto}
 .std-meta .st{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#dfe3f7}
 .std-meta .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--faint)}
-.std-meta .st.apply::before{background:#22e0d6}
-.std-meta .st.soon::before{background:#9b7bff}
-.std-meta .st.ref::before{background:#8fb4ff}
-/* 제목 색으로 세 상태 구분(눈에 띄는 순서): 적용 = 브랜드 그라디언트 > 설계 참조 = 그라디언트 끝의 밝은 파랑 > 적용 예정 = 한 단계 낮춘 흰색 */
-.std-card .k.ref{color:#8fb4ff}
+.std-meta .st.apply::before{background:var(--grad)}
+.std-meta .st.soon::before{background:#8a8fb2}
+.std-meta .st.ref::before{background:#b9a6ff}
+/* 제목 색으로 세 상태 구분(눈에 띄는 순서): 적용 = 브랜드 그라디언트 > 설계 참조 = 그라디언트 가운데의 밝은 보라 > 적용 예정 = 한 단계 낮춘 흰색.
+   파랑·청록·마젠타는 제품 고유색이라 상태 표시에 쓰지 않는다 */
+.std-card .k.ref{color:#b9a6ff}
 .std-card .k.soon{color:#c3c7df}
 .std-meta .pd{font-family:var(--en);font-size:11.5px;font-weight:600;color:var(--faint);line-height:1.4}
+.std-meta .pn.lec{color:var(--lec-t)}
+.std-meta .pn.lhb{color:var(--lhb-t)}
 /* '적용' 카드 진입 시 보더 글로우 1회 펄스 (bounded, 1 iteration) */
 .std-card.pulse.in{animation:cardglow 1.2s ease 1}
 @keyframes cardglow{0%,100%{box-shadow:0 0 0 0 rgba(124,77,255,0)}
@@ -443,7 +521,9 @@ nav.main .cta:hover{color:#fff}
 /* ---- LearnHubble AI ---- */
 .lhub{background:linear-gradient(180deg,#080a16,var(--bg))}
 .lhub-top{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,4vw,56px);align-items:start}
-.lhub-name{margin:18px 0 10px;font-family:var(--en);font-size:clamp(22px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;color:#fff}
+.lhub-name{margin:18px 0 10px;font-family:var(--en);font-size:clamp(22px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;color:var(--lhb-t)}
+/* 제목 강조(.gc)도 이 섹션에서는 LearnHubble AI 색. background 단축형은 background-clip을 풀어 버리므로 image만 바꾼다 */
+.lhub .sec-head .gc{background-image:var(--grad-m)}
 .lhub-points{list-style:none;display:grid;gap:0;border-top:1px solid var(--line)}
 .lhub-points li{display:grid;grid-template-columns:2.6em 1fr;column-gap:10px;row-gap:3px;padding:16px 0;border-bottom:1px solid var(--line)}
 .lhub-points i{grid-row:span 2;font-style:normal;font-family:var(--en);font-size:12.5px;font-weight:700;color:var(--faint);padding-top:3px}
@@ -470,11 +550,12 @@ nav.main .cta:hover{color:#fff}
 .loop-notes li{position:absolute;left:var(--x);top:var(--y);width:var(--w);text-align:var(--align,left);
   display:flex;flex-direction:column;align-items:flex-start;gap:.45cqw}
 .loop-notes li[style*="--align:right"]{align-items:flex-end}
-/* 솔루션 알약은 세 개 모두 같은 크기, 색으로만 LRS(Lecognizer 계열, 파랑)와 LXP(LearnHubble AI, 보라)를 구분 */
+/* 솔루션 알약은 세 개 모두 같은 크기, 색은 제품 고유색(Lecognizer 파랑·Lecognizer AI 청록·LearnHubble AI 마젠타) */
 .loop-notes .pill{display:inline-block;padding:.3cqw .85cqw;border-radius:999px;color:#fff;
   font-family:var(--en);font-size:clamp(10px,1.08cqw,15px);font-weight:700;letter-spacing:-.01em;white-space:nowrap}
-.loop-notes .pill.lrs{background:#3a63e8;box-shadow:0 0 1.6cqw rgba(58,99,232,.5)}
-.loop-notes .pill.lxp{background:#7b3fe4;box-shadow:0 0 1.6cqw rgba(123,63,228,.5)}
+.loop-notes .pill.lrs{background:var(--lec);box-shadow:0 0 1.6cqw rgba(47,124,255,.5)}
+.loop-notes .lai .pill{background:var(--lai);color:#04161a;box-shadow:0 0 1.6cqw rgba(34,224,214,.42)}
+.loop-notes .pill.lxp{background:var(--lhb);box-shadow:0 0 1.6cqw rgba(233,48,176,.45)}
 .loop-notes .ln-role b{font-size:clamp(12px,1.3cqw,18px);font-weight:800;color:#d7c6ff;letter-spacing:-.02em;white-space:nowrap}
 .loop-notes .ln-desc{font-size:clamp(10px,.92cqw,13px);line-height:1.5;color:#c4bde4;text-wrap:balance;text-shadow:0 1px 8px rgba(6,4,24,.9)}
 .loop-figure>figcaption{margin-top:12px}

@@ -225,11 +225,6 @@ def post(lang, text):
     text = re.sub(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{BASE_URL}{lang}/">', text, count=1)
     text = re.sub(r'<meta property="og:locale" content="[^"]*">', f'<meta property="og:locale" content="{OG_LOCALE[lang]}">', text, count=1)
     text = text.replace(f"{BASE_URL}img/og-home.jpg", f"{BASE_URL}img/og-home-{lang}.jpg")
-    # 언어별 파이프라인 루프 영상(없으면 국문 영상 유지)
-    for ext in ("mp4", "webp"):
-        name = "pipeline-loop" if ext == "mp4" else "pipeline-poster"
-        if os.path.exists(os.path.join(ROOT, "media", f"{name}-{lang}.{ext}")):
-            text = text.replace(f"../media/{name}.{ext}", f"../media/{name}-{lang}.{ext}")
     # 영문판은 히어로 제목이 곧 영문 슬로건이라, 위 eyebrow(영문 슬로건)를 회사 소개 한 줄로 바꾼다
     if lang == "en":
         text = text.replace('<span>Every Learning Moment, <span class="nw">Designed for Growth.</span></span>', '<span>Wicked Storm · Learning Data &amp; AI</span>', 1)
