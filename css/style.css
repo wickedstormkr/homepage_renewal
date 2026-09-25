@@ -211,6 +211,14 @@ nav.main .cta:hover{color:#fff}
 .drawer a{font-family:var(--en);font-size:28px;font-weight:700;color:#fff;padding:14px 0;border-bottom:1px solid var(--line)}
 .drawer a.cta{border:0;margin-top:20px;color:var(--cyan)}
 
+/* ---- 언어 선택 ---- */
+.lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px}
+.lang-switch a{padding:5px 9px;border-radius:999px;font-family:var(--en);font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--faint);transition:color .2s}
+.lang-switch a:hover{color:#fff}
+.lang-switch a[aria-current="true"]{color:#fff;background:rgba(255,255,255,.08)}
+.drawer .lang-switch{margin-top:8px;align-self:flex-start}
+.drawer .lang-switch a{font-size:13px;padding:7px 12px}
+
 /* ---- 버튼 ---- */
 .btn{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 28px;border-radius:999px;
   font-weight:700;font-size:15px;transition:transform .2s,box-shadow .2s,border-color .2s}
@@ -221,6 +229,7 @@ nav.main .cta:hover{color:#fff}
 
 /* ---- 히어로 ---- */
 .hero{position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center;padding:96px 0 60px}
+.hero-grid>*{min-width:0}
 .hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;
   gap:clamp(32px,4vw,64px);align-items:center;width:min(var(--wrap),100% - 48px);margin-inline:auto}
 .hero h1{font-size:clamp(32px,4.2vw,56px);line-height:1.14;font-weight:800}
@@ -376,6 +385,10 @@ nav.main .cta:hover{color:#fff}
 /* 영상 루프 프레임 (파이프라인 / 컴퍼니) */
 .media-frame{margin-top:clamp(28px,4vw,48px)}
 .media-frame video{width:100%;height:auto;display:block;background:#0b0d1a}
+/* 무음 루프 영상은 재생 컨트롤을 절대 보이지 않는다(Safari 오버레이 포함) */
+.media-frame:not(.film) video{pointer-events:none}
+.media-frame:not(.film) video::-webkit-media-controls{display:none!important}
+.media-frame:not(.film) video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
 .media-frame figcaption{padding:12px 18px;font-size:12.5px;color:var(--faint);border-top:1px solid var(--line);background:#0e1020}
 
 /* ---- 레퍼런스 ---- */
@@ -399,7 +412,7 @@ nav.main .cta:hover{color:#fff}
   border:1px solid var(--line2);background:rgba(124,77,255,.08);font-family:var(--en);font-weight:600;font-size:14px;color:#d7dbf3}
 .powered b{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .std-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:44px}
-.std-card{display:block;position:relative;padding:22px 20px;border-radius:16px;background:var(--panel);border:1px solid var(--line);
+.std-card{display:flex;flex-direction:column;position:relative;padding:22px 20px 18px;border-radius:16px;background:var(--panel);border:1px solid var(--line);
   transition:border-color .25s,transform .25s}
 .std-card:hover{border-color:var(--line2);transform:translateY(-3px)}
 .std-card::after{content:"↗";position:absolute;top:12px;right:14px;font-size:11px;color:var(--faint);opacity:0;transition:opacity .25s}
@@ -407,11 +420,17 @@ nav.main .cta:hover{color:#fff}
 .std-card .k{font-family:var(--en);font-size:17px;font-weight:800;letter-spacing:-.01em}
 .std-card .k.on{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .std-card p{margin-top:8px;color:var(--muted);font-size:13px;line-height:1.5}
-.std-card .tag{display:inline-block;margin-top:12px;font-size:10.5px;font-family:var(--en);font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;padding:3px 9px;border-radius:6px}
-.tag.apply{background:rgba(34,224,214,.14);color:#7bece3}
-.tag.soon{background:rgba(124,77,255,.16);color:#b3a1ff}
-.tag.ref{background:rgba(255,255,255,.06);color:var(--muted)}
+/* 상태(점+글자)와 해당 제품. 카드 아래쪽에 맞춰 정렬 */
+.std-meta{margin-top:auto;padding-top:16px;display:grid;gap:5px}
+.std-card p+.std-meta{margin-top:auto}
+.std-meta .st{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:#dfe3f7}
+.std-meta .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--faint)}
+.std-meta .st.apply::before{background:#22e0d6}
+.std-meta .st.soon::before{background:#9b7bff}
+.std-meta .st.ref{color:#dfe3f7}
+/* 설계 참조: 적용과 같은 청록 계열의 빈 원(설계에 반영됨), 적용 예정(보라)과 구분 */
+.std-meta .st.ref::before{background:transparent;box-shadow:inset 0 0 0 2px #22e0d6}
+.std-meta .pd{font-family:var(--en);font-size:11.5px;font-weight:600;color:var(--faint);line-height:1.4}
 /* '적용' 카드 진입 시 보더 글로우 1회 펄스 (bounded, 1 iteration) */
 .std-card.pulse.in{animation:cardglow 1.2s ease 1}
 @keyframes cardglow{0%,100%{box-shadow:0 0 0 0 rgba(124,77,255,0)}
@@ -419,13 +438,14 @@ nav.main .cta:hover{color:#fff}
 
 /* ---- LearnHubble AI ---- */
 .lhub{background:linear-gradient(180deg,#080a16,var(--bg))}
-.lhub-top{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(30px,4vw,60px);align-items:center}
+.lhub-top{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(30px,4vw,56px);align-items:start}
 .lhub-name{margin:18px 0 10px;font-family:var(--en);font-size:clamp(22px,2.4vw,28px);font-weight:800;letter-spacing:-.02em;color:#fff}
-.lhub-points{list-style:none;display:grid;gap:14px}
-.lhub-points li{display:grid;grid-template-columns:8.5em 1fr;gap:14px;padding-top:14px;border-top:1px solid var(--line);font-size:14.5px}
-.lhub-points b{font-weight:700;color:#fff}
-.lhub-points span{color:var(--muted);line-height:1.6}
-.lhub-principle{margin-top:22px;font-size:14.5px;font-weight:600;color:#dfe3f7}
+.lhub-points{list-style:none;display:grid;gap:0;border-top:1px solid var(--line)}
+.lhub-points li{display:grid;grid-template-columns:2.6em 1fr;column-gap:10px;row-gap:3px;padding:16px 0;border-bottom:1px solid var(--line)}
+.lhub-points i{grid-row:span 2;font-style:normal;font-family:var(--en);font-size:12.5px;font-weight:700;color:var(--faint);padding-top:3px}
+.lhub-points b{font-size:16px;font-weight:700;color:#fff}
+.lhub-points span{color:var(--muted);font-size:14.5px;line-height:1.6}
+.lhub-principle{margin-top:20px;font-size:14.5px;font-weight:600;color:#dfe3f7}
 .lhub-cta{margin-top:26px}
 .feat{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
 .feat span{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#c7cbe6}
@@ -435,25 +455,33 @@ nav.main .cta:hover{color:#fff}
 .lhub-sub .frame img{aspect-ratio:16/10;object-fit:cover;object-position:left top}
 .lhub-sub .frame::before{height:24px;background-image:radial-gradient(circle 3.5px at 14px 12px,#ff5f57 98%,transparent),radial-gradient(circle 3.5px at 27px 12px,#febc2e 98%,transparent),radial-gradient(circle 3.5px at 40px 12px,#28c840 98%,transparent)}
 .lhub-sub .frame figcaption{padding:8px 10px;font-size:11.5px}
-.lhub .frame figcaption{padding:10px 14px;font-size:12px;color:var(--faint);border-top:1px solid var(--line);background:#0e1020}
+.lhub .frame figcaption{padding:10px 14px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);background:#0e1020}
+.lhub .frame figcaption i{font-style:normal;font-family:var(--en);font-weight:700;color:var(--faint);margin-right:8px}
 
-/* ---- 학습의 선순환: 기업 홍보 영상 장면(글자 제거) + HTML 라벨(다국어 대응) ---- */
+/* ---- 학습의 선순환: 기업 홍보 영상 1:00 장면(글자 제거) + 아래 설명(솔루션 / 역할 두 층) ---- */
 .loop-figure{margin:0 0 clamp(20px,3vw,36px)}
-.loop-stage{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#07061a}
+.loop-stage{position:relative;border-radius:20px 20px 0 0;overflow:hidden;border:1px solid var(--line);border-bottom:0;background:#07061a}
 .loop-stage img{display:block;width:100%;height:auto}
-.loop-labels{list-style:none}
-.loop-labels li{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);text-align:center;white-space:nowrap;
-  text-shadow:0 2px 12px rgba(6,4,24,.9)}
-.loop-labels b{display:inline-flex;align-items:center;gap:8px;font-size:clamp(13px,1.35vw,19px);font-weight:800;color:#d9c8ff}
-.loop-labels i{font-style:normal;display:inline-grid;place-items:center;width:1.45em;height:1.45em;border-radius:50%;
-  font-family:var(--en);font-size:.72em;font-weight:800;color:#0b0820;background:#c9b2ff}
-.loop-labels span{display:block;margin-top:3px;font-size:clamp(11px,.95vw,13.5px);font-weight:600;color:#a99ad6}
-@media (max-width:760px){
-  .loop-labels{position:static;display:grid;gap:10px;padding:18px 18px 20px;border-top:1px solid var(--line)}
-  .loop-labels li{position:static;transform:none;text-align:left;white-space:normal;text-shadow:none}
-  .loop-labels b{font-size:14.5px}
-  .loop-labels span{display:inline;margin-left:6px;font-size:13px}
-}
+.loop-pins{list-style:none}
+.loop-pins li{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);display:grid;place-items:center;
+  width:clamp(22px,2.2vw,30px);height:clamp(22px,2.2vw,30px);border-radius:50%;font-family:var(--en);font-size:clamp(11px,1vw,14px);font-weight:800;
+  color:#0b0820;background:#d4c1ff;box-shadow:0 0 0 4px rgba(212,193,255,.18),0 0 18px rgba(155,107,255,.55)}
+.loop-legend{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:0 0 20px 20px;background:var(--panel)}
+.loop-tier{padding:clamp(20px,2.4vw,30px)}
+.loop-tier+.loop-tier{border-left:1px solid var(--line)}
+.loop-tier-k{font-family:var(--en);font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.loop-tier ul{list-style:none;display:grid;gap:14px}
+.loop-tier li{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline}
+.loop-tier b{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.loop-tier i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  font-family:var(--en);font-size:11px;font-weight:800;color:#0b0820;background:#d4c1ff}
+.loop-tier span{color:var(--muted);font-size:14px;line-height:1.55}
+/* 위계: 솔루션은 제품명(영문, 굵게·밝게), 역할은 한 단계 낮은 글자 */
+.loop-tier:not(.roles) b{font-family:var(--en);font-size:16px;font-weight:800;color:#fff;min-width:9.2em}
+.loop-tier i.blank{visibility:hidden}
+.loop-tier.roles b{font-size:14.5px;font-weight:700;color:#dcd2ff;min-width:10em}
+@media (max-width:960px){.loop-legend{grid-template-columns:1fr}.loop-tier+.loop-tier{border-left:0;border-top:1px solid var(--line)}}
+@media (max-width:560px){.loop-tier li{grid-template-columns:1fr;row-gap:2px}.loop-tier b{min-width:0!important}.loop-tier i.blank{display:none}}
 
 /* ---- 레퍼런스 로고 띠 ---- */
 .ref-logos{margin-top:28px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
@@ -482,6 +510,9 @@ nav.main .cta:hover{color:#fff}
 .res-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px}
 .res-links a{font-size:14px;font-weight:700;color:#fff;border-bottom:1px solid var(--line2);padding-bottom:2px;transition:border-color .2s}
 .res-links a:hover{border-color:#fff}
+/* 보고 있는 페이지 언어의 자료를 맨 앞에, 밑줄을 밝게 */
+html[lang="ko"] .res-links a[lang="ko"],html[lang="en"] .res-links a[lang="en"],
+html[lang="ja"] .res-links a[lang="ja"],html[lang="vi"] .res-links a[lang="vi"]{order:-1;border-color:#fff}
 
 /* ---- 회사 슬로건 ---- */
 .co-slogan{margin-top:22px;font-size:15px;font-weight:600;color:#dfe3f7}
@@ -730,3 +761,9 @@ a.ncard:hover .nmore i{transform:translateX(3px)}
 .detail-back a{display:inline-flex;align-items:center;gap:8px;font-family:var(--en);
   font-size:14px;font-weight:600;color:var(--muted);transition:color .2s}
 .detail-back a:hover{color:var(--cyan)}
+
+/* 한 줄 도입문(데스크톱) */
+.sec-lead.lead-1{max-width:none;text-wrap:wrap}
+/* 일본어: 한글용 keep-all 대신 구 단위 줄바꿈 */
+html:lang(ja) body{word-break:auto-phrase;line-break:strict}
+html:lang(ja) .lhub .h-lg{font-size:clamp(26px,4.4vw,56px)}

@@ -12,6 +12,91 @@
   var hasLenis = (typeof win.Lenis !== 'undefined');
   var IO = ('IntersectionObserver' in win);
 
+  /* ============================================================
+   *  다국어 문자열 — <html lang>에 맞춰 스크립트가 만드는 문구를 고른다.
+   *  마크업 문구는 scripts/build_i18n.py가 i18n/<lang>.json으로 번역한다.
+   * ============================================================ */
+  var LANG = (root.getAttribute('lang') || 'ko').slice(0, 2);
+  var I18N = {
+    ko: {
+      menuOpen: '메뉴 열기', menuClose: '메뉴 닫기',
+      actors: ['학습자', '학습자', '학습자', '교수자'],
+      events: [
+        { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '2회 반복', '구간 멈춤'] },
+        { v: '응답함', o: ['확인 퀴즈', '실시간 퀴즈', '수업 설문'], r: ['정답', '참여', '재시도'] },
+        { v: '제출함', o: ['서술형 과제', '프로젝트 보고서', '실습 과제'], r: ['제출 완료', '기한 내', '1회 수정'] },
+        { v: '질문함', o: ['강의 Q&A', '과제 Q&A', '토론 활동'], r: ['답변 3', '해결', '공감 5'] },
+        { v: '열람함', o: ['AI 힌트', '보충 자료', '역량맵'], r: ['힌트 1', '열람', '확인'] }
+      ],
+      insights: ['신호 · 반복 재생 구간', '신호 · 과제 작성 멈춤', '알림 · 어려워한 구간', '제안 · 보충 자료 초안'],
+      field: { userName: '이름을 입력해 주세요.', userCompany: '소속을 입력해 주세요.', userEmail: '이메일을 입력해 주세요.',
+        userTraffic: '유입 경로를 선택해 주세요.', userTrafficEtc: '유입 경로를 입력해 주세요.', userMemo: '문의사항을 입력해 주세요.',
+        checkPrivacy: '개인정보 수집·이용에 동의해 주세요.' },
+      emailFmt: '이메일 형식을 확인해 주세요.', required: '필수 항목입니다.',
+      etcDirect: '유입 경로 직접 입력 *', etcOther: '기타 내용 *',
+      sending: '전송 중입니다…', sent: '문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.',
+      failed: '전송에 실패했습니다. manager@wickedstorm.kr로 보내주세요.'
+    },
+    en: {
+      menuOpen: 'Open menu', menuClose: 'Close menu',
+      actors: ['Learner', 'Learner', 'Learner', 'Instructor'],
+      events: [
+        { v: 'watched', o: ['Concept lecture 04', 'Explainer video', 'Review lecture'], r: ['100% complete', 'Replayed 2×', 'Paused here'] },
+        { v: 'answered', o: ['Check quiz', 'Live quiz', 'Class survey'], r: ['Correct', 'Joined', 'Retried'] },
+        { v: 'submitted', o: ['Essay task', 'Project report', 'Lab task'], r: ['Submitted', 'On time', 'Revised once'] },
+        { v: 'asked', o: ['Lecture Q&A', 'Task Q&A', 'Discussion'], r: ['3 replies', 'Resolved', '5 upvotes'] },
+        { v: 'opened', o: ['AI hint', 'Extra material', 'Competency map'], r: ['1 hint', 'Viewed', 'Checked'] }
+      ],
+      insights: ['Signal · Replayed section', 'Signal · Writing paused', 'Alert · Difficult section', 'Proposal · Review material draft'],
+      field: { userName: 'Please enter your name.', userCompany: 'Please enter your organization.', userEmail: 'Please enter your email.',
+        userTraffic: 'Please choose how you found us.', userTrafficEtc: 'Please tell us how you found us.', userMemo: 'Please enter your inquiry.',
+        checkPrivacy: 'Please agree to the collection and use of personal information.' },
+      emailFmt: 'Please check the email format.', required: 'This field is required.',
+      etcDirect: 'How you found us *', etcOther: 'Details *',
+      sending: 'Sending…', sent: 'Your inquiry has been received. We will get back to you soon.',
+      failed: 'Sending failed. Please email manager@wickedstorm.kr.'
+    },
+    ja: {
+      menuOpen: 'メニューを開く', menuClose: 'メニューを閉じる',
+      actors: ['学習者', '学習者', '学習者', '教員'],
+      events: [
+        { v: '視聴', o: ['概念講義 04', '解説動画', '補充講義'], r: ['進捗 100%', '2回リピート', '区間で停止'] },
+        { v: '回答', o: ['確認クイズ', 'ライブクイズ', '授業アンケート'], r: ['正解', '参加', '再挑戦'] },
+        { v: '提出', o: ['記述式課題', 'プロジェクト報告書', '実習課題'], r: ['提出済み', '期限内', '1回修正'] },
+        { v: '質問', o: ['講義Q&A', '課題Q&A', 'ディスカッション'], r: ['回答 3', '解決', 'いいね 5'] },
+        { v: '閲覧', o: ['AIヒント', '補充資料', 'コンピテンシーマップ'], r: ['ヒント 1', '閲覧', '確認'] }
+      ],
+      insights: ['兆候 · 繰り返し再生の箇所', '兆候 · 課題作成の停止', 'アラート · つまずいた箇所', '提案 · 補充資料の下書き'],
+      field: { userName: 'お名前を入力してください。', userCompany: 'ご所属を入力してください。', userEmail: 'メールアドレスを入力してください。',
+        userTraffic: 'お知りになったきっかけを選択してください。', userTrafficEtc: 'お知りになったきっかけを入力してください。', userMemo: 'お問い合わせ内容を入力してください。',
+        checkPrivacy: '個人情報の収集・利用に同意してください。' },
+      emailFmt: 'メールアドレスの形式をご確認ください。', required: '必須項目です。',
+      etcDirect: 'きっかけを入力 *', etcOther: 'その他の内容 *',
+      sending: '送信中です…', sent: 'お問い合わせを受け付けました。追ってご連絡いたします。',
+      failed: '送信に失敗しました。manager@wickedstorm.kr までお送りください。'
+    },
+    vi: {
+      menuOpen: 'Mở menu', menuClose: 'Đóng menu',
+      actors: ['Người học', 'Người học', 'Người học', 'Giảng viên'],
+      events: [
+        { v: 'đã xem', o: ['Bài giảng khái niệm 04', 'Video giải thích', 'Bài giảng bổ trợ'], r: ['Hoàn thành 100%', 'Xem lại 2 lần', 'Dừng ở đoạn này'] },
+        { v: 'đã trả lời', o: ['Câu hỏi kiểm tra', 'Quiz trực tiếp', 'Khảo sát lớp học'], r: ['Đúng', 'Tham gia', 'Làm lại'] },
+        { v: 'đã nộp', o: ['Bài tự luận', 'Báo cáo dự án', 'Bài thực hành'], r: ['Đã nộp', 'Đúng hạn', 'Sửa 1 lần'] },
+        { v: 'đã hỏi', o: ['Hỏi đáp bài giảng', 'Hỏi đáp bài tập', 'Thảo luận'], r: ['3 trả lời', 'Đã giải quyết', '5 lượt thích'] },
+        { v: 'đã mở', o: ['Gợi ý AI', 'Tài liệu bổ trợ', 'Bản đồ năng lực'], r: ['1 gợi ý', 'Đã xem', 'Đã kiểm tra'] }
+      ],
+      insights: ['Tín hiệu · Đoạn xem lại', 'Tín hiệu · Dừng viết bài', 'Cảnh báo · Đoạn khó', 'Đề xuất · Bản nháp tài liệu bổ trợ'],
+      field: { userName: 'Vui lòng nhập họ tên.', userCompany: 'Vui lòng nhập tổ chức.', userEmail: 'Vui lòng nhập email.',
+        userTraffic: 'Vui lòng chọn kênh biết đến chúng tôi.', userTrafficEtc: 'Vui lòng nhập kênh biết đến chúng tôi.', userMemo: 'Vui lòng nhập nội dung yêu cầu.',
+        checkPrivacy: 'Vui lòng đồng ý thu thập và sử dụng thông tin cá nhân.' },
+      emailFmt: 'Vui lòng kiểm tra định dạng email.', required: 'Trường này là bắt buộc.',
+      etcDirect: 'Kênh biết đến chúng tôi *', etcOther: 'Nội dung khác *',
+      sending: 'Đang gửi…', sent: 'Yêu cầu của bạn đã được tiếp nhận. Chúng tôi sẽ sớm phản hồi.',
+      failed: 'Gửi không thành công. Vui lòng gửi email tới manager@wickedstorm.kr.'
+    }
+  };
+  var TX = I18N[LANG] || I18N.ko;
+
   if (!hasGSAP) root.classList.add('nogsap');
   if (hasGSAP) gsap.registerPlugin(ScrollTrigger);
 
@@ -80,7 +165,7 @@
     function set(next) {
       open = next;
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      btn.setAttribute('aria-label', open ? TX.menuClose : TX.menuOpen);
       if (open) {
         clearTimeout(hideTimer);
         drawer.hidden = false;
@@ -889,17 +974,8 @@
     var track = doc.getElementById('streamTrack');
     if (!track) return;
     var GAP = 9;
-    // 표본 문장: 주체는 운영자·교수자·학습자 표기(2026-08 제품 문구 기준)
-    var actors = ['학습자', '학습자', '학습자', '교수자'];
-    var events = [
-      { v: '시청함', o: ['개념 강의 04', '해설 영상', '보충 강의'], r: ['진도 100%', '2회 반복', '구간 멈춤'] },
-      { v: '응답함', o: ['확인 퀴즈', '실시간 퀴즈', '수업 설문'], r: ['정답', '참여', '재시도'] },
-      { v: '제출함', o: ['서술형 과제', '프로젝트 보고서', '실습 과제'], r: ['제출 완료', '기한 내', '1회 수정'] },
-      { v: '질문함', o: ['강의 Q&A', '과제 Q&A', '토론 활동'], r: ['답변 3', '해결', '공감 5'] },
-      { v: '열람함', o: ['AI 힌트', '보충 자료', '역량맵'], r: ['힌트 1', '열람', '확인'] }
-    ];
-    // AI는 찾고 제안까지. 판단·적용은 사람(제품 원칙)
-    var insights = ['신호 · 반복 재생 구간', '신호 · 과제 작성 멈춤', '알림 · 어려워한 구간', '제안 · 보충 자료 초안'];
+    // 표본 문장(언어별): 주체는 운영자·교수자·학습자 표기, AI는 찾고 제안까지
+    var actors = TX.actors, events = TX.events, insights = TX.insights;
     var rnd = function (a) { return a[Math.floor(Math.random() * a.length)]; };
     var chip = doc.getElementById('insChip'), sl = doc.getElementById('sparkline');
     var spark = [8, 10, 9, 12, 14, 13, 17, 16, 20, 19, 24];
@@ -1036,16 +1112,11 @@
     // 인라인 검증: novalidate 폼에서 제출 시 필수 항목을 일괄 검사해 각 필드 아래
     // 한국어 오류를 붙인다(네이티브 말풍선은 로케일 종속 + 첫 필드만 알림). required·
     // type=email 속성은 그대로 두고 el.validity로 판정 → 서버측 검증 계약 불변.
-    var FIELD_MSG = {
-      userName: '이름을 입력해 주세요.', userCompany: '소속을 입력해 주세요.',
-      userEmail: '이메일을 입력해 주세요.', userTraffic: '유입 경로를 선택해 주세요.',
-      userTrafficEtc: '유입 경로를 입력해 주세요.', userMemo: '문의사항을 입력해 주세요.',
-      checkPrivacy: '개인정보 수집·이용에 동의해 주세요.'
-    };
+    var FIELD_MSG = TX.field;
     var FIELDS = ['userName', 'userCompany', 'userEmail', 'userTraffic', 'userTrafficEtc', 'userMemo', 'checkPrivacy'];
     function msgFor(el) {
-      if (el.validity.typeMismatch && el.type === 'email') return '이메일 형식을 확인해 주세요.';
-      return FIELD_MSG[el.name] || '필수 항목입니다.';
+      if (el.validity.typeMismatch && el.type === 'email') return TX.emailFmt;
+      return FIELD_MSG[el.name] || TX.required;
     }
     function errHost(el) { return el.closest('label') || el.parentNode; }
     function showErr(el) {
@@ -1069,7 +1140,7 @@
       var auto = autoOf(), n = NEED.indexOf(sel.value) >= 0 && !auto;
       etc.hidden = !n; etcIn.required = n;
       if (auto) { etcIn.value = auto; clearErr(etcIn); }
-      else if (n) { etcIn.value = ''; etcLab.textContent = sel.value === 'direct' ? '유입 경로 직접 입력 *' : '기타 내용 *'; if (focus) etcIn.focus(); }
+      else if (n) { etcIn.value = ''; etcLab.textContent = sel.value === 'direct' ? TX.etcDirect : TX.etcOther; if (focus) etcIn.focus(); }
       else { etcIn.value = ''; clearErr(etcIn); }                   // 숨김 전환 시 잔여 오류 정리
     }
     sel.addEventListener('change', function () { syncTraffic(true); });
@@ -1115,18 +1186,18 @@
       var name = f.userName.value.trim(), aff = f.userCompany.value.trim();
       var payload = {
         name: name, affiliation: aff, email: f.userEmail.value.trim(), inquiry: f.userMemo.value.trim(),
-        userTraffic: f.userTraffic.value, subject: 'Contact Us 문의 접수: ' + name + '님 (소속: ' + aff + ')'
+        userTraffic: f.userTraffic.value, subject: 'Contact Us 문의 접수' + (LANG === 'ko' ? '' : ' [' + LANG.toUpperCase() + ']') + ': ' + name + '님 (소속: ' + aff + ')'
       };
       if (NEED.indexOf(f.userTraffic.value) >= 0 && f.userTrafficEtc.value.trim()) payload.userTrafficEtc = f.userTrafficEtc.value.trim();
-      btn.disabled = true; set('전송 중입니다…');
+      btn.disabled = true; set(TX.sending);
       // 15초 타임아웃: 서버 무응답 시 abort → catch 폴백으로 넘어가 버튼이 영구 비활성되지 않는다.
       fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(15000) })
         .then(function (r) {
           if (!r.ok) throw new Error('bad');
-          set('문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.', 'ok');
+          set(TX.sent, 'ok');
           f.reset(); etc.hidden = true; etcIn.required = false;
         })
-        .catch(function () { set('전송에 실패했습니다. manager@wickedstorm.kr로 보내주세요.', 'err'); })
+        .catch(function () { set(TX.failed, 'err'); })
         .then(function () { btn.disabled = false; });
     });
   })();
@@ -1136,20 +1207,34 @@
    *  상시 rAF 없음: 재생 여부는 전부 IntersectionObserver/이벤트로 결정.
    * ============================================================ */
   (function () {
-    // 소리 있는 기업 영상(.film)은 자동재생하지 않는다(사용자가 재생). 나머지는 무음 루프.
+    // 소리 있는 기업 영상(.film)은 자동재생하지 않는다(사용자가 재생). 나머지는 무음 무한 루프:
+    // 컨트롤을 보이지 않고, 자동재생이 막히면(저전력 모드 등) 첫 스크롤·터치 때 다시 튼다.
     var vids = [].slice.call(doc.querySelectorAll('.media-frame:not(.film) video'));
     if (!vids.length) return;
-    if (REDUCE) {                                                   // reduced-motion: 자동재생 안 함, 수동 재생만
-      vids.forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); v.setAttribute('controls', ''); });
+    vids.forEach(function (v) { v.muted = true; v.loop = true; v.removeAttribute('controls'); });
+    if (REDUCE) {                                                   // reduced-motion: 첫 프레임에 멈춰 둔다
+      vids.forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); });
       return;
     }
-    if (!IO) return;
+    var blocked = false;
+    function retryOnGesture() {
+      if (blocked) return; blocked = true;
+      var go = function () {
+        ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function (e) { win.removeEventListener(e, go, true); });
+        blocked = false;
+        vids.forEach(function (v) { if (inView.get(v)) safePlay(v); });
+      };
+      ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function (e) { win.addEventListener(e, go, { capture: true, passive: true }); });
+    }
     function safePlay(v) {
       var p = v.play();
-      // 저전력 모드 등으로 자동재생이 막히면 조용히 넘기지 않고 재생 버튼을 보여 준다
-      if (p && p.catch) p.catch(function () { v.setAttribute('controls', ''); });
+      if (p && p.catch) p.catch(function (err) {
+        // pause()에 끊긴 AbortError는 무시, 정책 차단(NotAllowedError)만 사용자 동작 뒤 재시도
+        if (err && err.name === 'NotAllowedError') retryOnGesture();
+      });
     }
     var inView = new WeakMap();
+    if (!IO) { vids.forEach(function (v) { inView.set(v, true); safePlay(v); }); return; }
     var io = new IntersectionObserver(function (ents) {
       ents.forEach(function (en) {
         var v = en.target;
@@ -1163,6 +1248,8 @@
       if (doc.hidden) { vids.forEach(function (v) { v.pause(); }); }
       else { vids.forEach(function (v) { if (inView.get(v)) safePlay(v); }); }
     });
+    // 끝에서 멈추는 브라우저 대비: loop 속성과 별개로 ended 때 처음부터 다시
+    vids.forEach(function (v) { v.addEventListener('ended', function () { v.currentTime = 0; safePlay(v); }); });
   })();
 
   /* ============================================================

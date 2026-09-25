@@ -10,7 +10,17 @@
   var doc = document, win = window;
   var REDUCE = win.matchMedia && win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var IO = ('IntersectionObserver' in win);
-  var POSTS_URL = './data/posts.json';
+  // 다국어 페이지(en/ 등 하위 폴더)는 <html data-base="../">로 사이트 루트를 알려 준다
+  var BASE = doc.documentElement.getAttribute('data-base') || './';
+  var LANG = (doc.documentElement.getAttribute('lang') || 'ko').slice(0, 2);
+  var TXT = ({
+    ko: { more: '자세히 보기', go: '바로가기', win: '(새 창)' },
+    en: { more: 'Read more', go: 'Open', win: '(new window)' },
+    ja: { more: '詳しく見る', go: '開く', win: '(新しいウィンドウ)' },
+    vi: { more: 'Xem thêm', go: 'Mở', win: '(cửa sổ mới)' }
+  })[LANG] || { more: '자세히 보기', go: '바로가기', win: '(새 창)' };
+  function asset(p) { return typeof p === 'string' && p.indexOf('./') === 0 ? BASE + p.slice(2) : p; }
+  var POSTS_URL = BASE + 'data/posts.json';
   var CAT_LABEL = { news: 'NEWS', story: 'STORY', insight: 'INSIGHT' };
 
   function esc(s) {
@@ -59,7 +69,7 @@
   function boardCardEl(post) {
     var tag = CAT_LABEL[post.category] || 'NEWS';
     var img = post.thumb
-      ? '<div class="nimg"><img src="' + esc(post.thumb) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
+      ? '<div class="nimg"><img src="' + esc(asset(post.thumb)) + '" alt="' + esc(post.title) + '" loading="lazy"></div>'
       : coverHtml(post);
     var meta = '<div class="nbody"><div class="nmeta"><span class="ntag">' + esc(tag) + '</span> ' + esc(post.date) + '</div>';
     var el = doc.createElement('a');
@@ -69,13 +79,13 @@
       el.href = extUrl;
       el.target = '_blank';
       el.rel = 'noopener noreferrer';
-      el.setAttribute('aria-label', post.title + ' (새 창)');
+      el.setAttribute('aria-label', post.title + ' ' + TXT.win);
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">바로가기 <i aria-hidden="true">↗</i></span></div>';
+        '<span class="nmore">' + TXT.go + ' <i aria-hidden="true">↗</i></span></div>';
     } else {
-      el.href = './news/' + encodeURIComponent(post.id || '') + '.html';
+      el.href = BASE + 'news/' + encodeURIComponent(post.id || '') + '.html';
       el.innerHTML = img + meta + '<h3>' + esc(post.title) + '</h3>' +
-        '<span class="nmore">자세히 보기 <i aria-hidden="true">→</i></span></div>';
+        '<span class="nmore">' + TXT.more + ' <i aria-hidden="true">→</i></span></div>';
     }
     el.setAttribute('data-cat', post.category || 'news');
     el.setAttribute('data-id', post.id || '');

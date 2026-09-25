@@ -429,6 +429,9 @@ export function renderSitemap(posts, options = {}) {
 
   const defaultStaticEntries = [
     { path: '/', lastmod: updated, changefreq: 'monthly', priority: '1.0' },
+    { path: '/en/', lastmod: updated, changefreq: 'monthly', priority: '0.8' },
+    { path: '/ja/', lastmod: updated, changefreq: 'monthly', priority: '0.8' },
+    { path: '/vi/', lastmod: updated, changefreq: 'monthly', priority: '0.8' },
     { path: '/news.html', lastmod: updated, changefreq: 'weekly', priority: '0.7' },
     { path: '/privacy.html', lastmod: '2026-07-08', changefreq: 'yearly', priority: '0.3' },
   ];
